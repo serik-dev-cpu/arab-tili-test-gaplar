@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Al-Manhajul A1 — Mashqlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#0B0E14;color:#EDEFF5;font-family:'Inter',system-ui,-apple-system,sans-serif}
+body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .35s ease both}
+
+.wrap{width:100%;max-width:480px}
+
+.header{text-align:center;margin-bottom:36px}
+.kicker{color:#D4A23A;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.title{font-family:'Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl}
+.subtitle{color:#8A93A6;font-size:14px;font-weight:500}
+
+.section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:28px 0 12px 4px}
+
+.bolim-card{
+  display:flex;align-items:center;gap:16px;
+  width:100%;padding:18px 20px;margin-bottom:12px;
+  background:linear-gradient(165deg,#161A24 0%,#12151E 100%);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+  text-decoration:none;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1), border-color .15s ease;
+}
+.bolim-card:active{transform:scale(.97)}
+.bolim-card.active{border-color:rgba(212,162,58,0.35)}
+
+.bolim-num{
+  flex-shrink:0;
+  width:48px;height:48px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;
+  background:linear-gradient(135deg,#D4A23A,#B8841F);
+  color:#0B0E14;
+}
+.bolim-num.locked{background:rgba(255,255,255,0.05);color:#5A6275}
+
+.bolim-info{flex:1;min-width:0}
+.bolim-title{font-size:16px;font-weight:700;color:#EDEFF5;margin-bottom:3px}
+.bolim-desc{font-size:13px;color:#8A93A6}
+
+.bolim-arrow{flex-shrink:0;color:#D4A23A;font-size:20px}
+
+.locked-card{opacity:.45;cursor:default}
+.locked-card .bolim-title{color:#8A93A6}
+.locked-badge{
+  flex-shrink:0;font-size:11px;font-weight:700;color:#5A6275;
+  background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:20px;
+}
+
+.footer-note{
+  margin-top:32px;text-align:center;color:#5A6275;font-size:12px;line-height:1.6;
+}
+.footer-note b{color:#8A93A6}
+</style>
+</head>
+<body>
+
+<div class="wrap fade-in">
+  <div class="header">
+    <div class="kicker">Al-Manhajul Al-A'lamiy</div>
+    <div class="title">المنهج الألمعي</div>
+    <div class="subtitle">A1 daraja · Interaktiv mashqlar</div>
+  </div>
+
+  <div class="section-label">Tayyor bo'limlar</div>
+
+  <a href="ManhajA1-bolim5.html" class="bolim-card active">
+    <div class="bolim-num">5</div>
+    <div class="bolim-info">
+      <div class="bolim-title">5-bo'lim</div>
+      <div class="bolim-desc">Lug'at qo'llanma</div>
+    </div>
+    <div class="bolim-arrow">›</div>
+  </a>
+
+  <a href="ManhajA1-bolim6.html" class="bolim-card active">
+    <div class="bolim-num">6</div>
+    <div class="bolim-info">
+      <div class="bolim-title">6-bo'lim</div>
+      <div class="bolim-desc">Mini test · Gap tuzish</div>
+    </div>
+    <div class="bolim-arrow">›</div>
+  </a>
+
+  <div class="section-label">Tez kunda</div>
+
+  <div class="bolim-card locked-card">
+    <div class="bolim-num locked">7</div>
+    <div class="bolim-info">
+      <div class="bolim-title">7-bo'lim</div>
+      <div class="bolim-desc">Tayyorlanmoqda</div>
+    </div>
+    <div class="locked-badge">Tez kunda</div>
+  </div>
+
+  <div class="bolim-card locked-card">
+    <div class="bolim-num locked">8</div>
+    <div class="bolim-info">
+      <div class="bolim-title">8-bo'lim</div>
+      <div class="bolim-desc">Tayyorlanmoqda</div>
+    </div>
+    <div class="locked-badge">Tez kunda</div>
+  </div>
+
+  <div class="bolim-card locked-card">
+    <div class="bolim-num locked">9</div>
+    <div class="bolim-info">
+      <div class="bolim-title">9-bo'lim</div>
+      <div class="bolim-desc">Tayyorlanmoqda</div>
+    </div>
+    <div class="locked-badge">Tez kunda</div>
+  </div>
+
+  <div class="footer-note">
+    Yangi bo'limlar qo'shilganda shu sahifa avtomatik yangilanadi.<br/>
+    Linkni saqlab qo'ying — <b>bitta link, barcha bo'limlar</b>.
+  </div>
+</div>
+
+</body>
+</html>

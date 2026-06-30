@@ -218,7 +218,7 @@ const ALL_WORDS=[
   {ar:"كَلْبٌ",uz:"ит / кучук",cat:"Отлар"},
   {ar:"كَلِمَةُ السِّرِّ",uz:"махфий сўз, парол",cat:"Отлар"},
   {ar:"كُلِّيَّةُ الطِّبِّ",uz:"тиббиёт факультети",cat:"Отлар"},
-  {ar:"كِيلُو",uz:"килограмм",cat:"Отлар"},
+  {ar:"كِيلُو",uz:"килограмм / кило",cat:"Отлар"},
   {ar:"اللَّاعِبُ",uz:"ўйинчи, спортчи",cat:"Отлар"},
   {ar:"اللُّغَاتُ",uz:"тиллар",cat:"Отлар"},
   {ar:"لُغَتَيْنِ",uz:"иккита тил",cat:"Отлар"},
@@ -247,12 +247,12 @@ const ALL_WORDS=[
   {ar:"النَّصُّ",uz:"матн",cat:"Отлар"},
   {ar:"النَّفْسُ",uz:"ўзи, шахс",cat:"Отлар"},
   {ar:"نَهَارٌ",uz:"кундуз / кун",cat:"Отлар"},
-  {ar:"الوَاجِبُ",uz:"уй вазифаси",cat:"Отлар"},
+  {ar:"الوَاجِبُ الْمَنْزِلِيُّ",uz:"уй вазифаси",cat:"Отлар"},
   {ar:"وَزْنٌ",uz:"вазн / оғирлик",cat:"Отлар"},
   {ar:"وَسِيلَةُ المَوَاصَلَاتِ",uz:"транспорт воситаси",cat:"Отлар"},
   {ar:"وَقْتٌ",uz:"вақт",cat:"Отлар"},
-  {ar:"يَسَارٌ",uz:"чап тараф",cat:"Отлар"},
-  {ar:"يَمِينٌ",uz:"ўнг тараф",cat:"Отлар"},
+  {ar:"يَسَارٌ",uz:"чап",cat:"Отлар"},
+  {ar:"يَمِينٌ",uz:"ўнг",cat:"Отлар"},
   {ar:"يَوْمَانِ",uz:"икки кун",cat:"Отлар"},
   {ar:"بَارِدٌ",uz:"совуқ",cat:"Сифатлар"},
   {ar:"جَوِّيٌّ",uz:"ҳавога оид / аэро",cat:"Сифатлар"},
@@ -271,7 +271,7 @@ const ALL_WORDS=[
   {ar:"رُبَّمَا",uz:"эҳтимол / балки",cat:"Равишлар"},
   {ar:"صَبَاحًا",uz:"эрталаб",cat:"Равишлар"},
   {ar:"طَوَالَ الْيَوْمِ",uz:"кун бўйи / бутун кун",cat:"Равишлар"},
-  {ar:"غَالِبًا",uz:"кўпинча / одатда / аксар",cat:"Равишлар"},
+  {ar:"غَالِبًا",uz:"кўпинча",cat:"Равишлар"},
   {ar:"كَيْفَ",uz:"қандай / қай тарзда",cat:"Равишлар"},
   {ar:"لِمَاذَا",uz:"нима учун / нега",cat:"Равишлар"},
   {ar:"لَيْلًا",uz:"кечаси / тунда",cat:"Равишлар"},
@@ -1951,11 +1951,18 @@ function renderQuizScreen(){
 
         const correctAr = q.word.ar;
         const cBase = stripAr(clean(correctAr));
-        const gBase = stripAr(clean(givenRaw));
+        let gBase = stripAr(clean(givenRaw));
         const cStrict = normArStrict(cBase), gStrict = normArStrict(gBase);
 
+        // "ёнг/чап" сўзлари учун "عن اليمين/عن اليسار" каби кўмакчили
+        // шаклларни ҳам тўғри деб қабул қилиш (бошидаги "عن"/"عن ال" ни олиб ташлаш)
+        if(cBase==='يمين' || cBase==='يسار'){
+          gBase = gBase.replace(/^عن\s*(ال)?\s*/,'');
+        }
+        const gStrict2 = normArStrict(gBase);
+
         qs.hamzaHint = false; qs.alHint = false;
-        if(gBase.length>0 && cStrict===gStrict){
+        if(gBase.length>0 && cStrict===gStrict2){
           // Даража 1: тўлиқ тўғри (ёки ҳамза ўрнига оддий алиф ёзилган бўлса ҳам мос)
           correct = true;
           if(hamzaOmitted(cBase, gBase)) qs.hamzaHint = true;
@@ -1965,7 +1972,7 @@ function renderQuizScreen(){
             // Даража 2: ал бор, фақат ҳамза тушган
             correct = true; qs.hamzaHint = true;
           } else {
-            const cNoAl = stripAl(cStrict), gNoAl = stripAl(gStrict);
+            const cNoAl = stripAl(cStrict), gNoAl = stripAl(gStrict2);
             const hadAl = cNoAl !== cStrict;
             if(hadAl && gNoAl.length>1 && cNoAl===gNoAl){
               // Даража 3: "ал" артикли тушган (ҳамза тўғри/йўқ)

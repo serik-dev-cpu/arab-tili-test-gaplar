@@ -4627,10 +4627,34 @@ document.addEventListener('click', function(ev){
 }, true);
 
 // ═══════════════════════════════════
+// TELEFON "ORQAGA" TUGMASINI USHLASH
+// ═══════════════════════════════════
+// Sahifa yuklanganda brauzer tarixiga "dummy" yozuv qo'shamiz.
+// Foydalanuvchi tizim "Orqaga" tugmasini bosganida, biz popstate eventini
+// ushlap, uni ilova ichidagi orqaga harakatiga yo'naltiramiz.
+// Bu "‹ Menyu" tugmasi sahifadan chiqib ketishining oldini oladi.
+function appGoBack(){
+  if(gapQuizState){ gapQuizState=null; screen='mode'; render(); return; }
+  if(screen==='quiz'||screen==='mode'||screen==='vocab'||screen==='stats'){
+    screen='mode'; render(); return;
+  }
+  // Boshqa holatlarda menyuga chiqish
+  location.replace('index.html');
+}
+
+window.addEventListener('popstate', function(){
+  // Har safar "Orqaga" bosilganda yangi dummy yozuv qo'shamiz (ketmaketlik)
+  history.pushState({app:true}, '');
+  appGoBack();
+});
+
+// ═══════════════════════════════════
 // INIT
 // ═══════════════════════════════════
 try {
   render();
+  // Birinchi dummy yozuv — sahifa yuklangandan keyin
+  history.pushState({app:true}, '');
 } catch(e) {
   document.getElementById('app').innerHTML =
     '<div style="padding:30px;color:#E8765C;font-family:monospace;font-size:13px;background:#0B0E14;min-height:100vh">' +

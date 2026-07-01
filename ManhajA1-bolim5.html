@@ -3182,10 +3182,28 @@ function renderHisobot(){
 }
 
 // ═══════════════════════════════════
+// TELEFON "ORQAGA" TUGMASINI USHLASH
+// ═══════════════════════════════════
+function appGoBack(){
+  if(screen==='quiz'||screen==='results'||screen==='lugat'||
+     screen==='xatolar'||screen==='zamirlar'||screen==='zamirlar_quiz'||
+     screen==='zamirlar_results'){
+    screen='mode'; render(); return;
+  }
+  location.replace('index.html');
+}
+
+window.addEventListener('popstate', function(){
+  history.pushState({app:true}, '');
+  appGoBack();
+});
+
+// ═══════════════════════════════════
 // INIT
 // ═══════════════════════════════════
 try {
   render();
+  history.pushState({app:true}, '');
 } catch(e) {
   document.getElementById('app').innerHTML =
     '<div style="padding:30px;color:#E87D54;font-family:monospace;font-size:13px;background:#0F1419;min-height:100vh">' +

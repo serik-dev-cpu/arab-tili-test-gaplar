@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>8-bo'lim — Taom va Ichimliklar | Al-Manhajul A1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#0B0E14; --text:#EDEFF5; --gold:#D4A23A; --gold2:#F0C56B;
+  --card:#12151D; --border:#2A2416; --muted:#9590AC;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overscroll-behavior-y:none;}
+body{padding-bottom:90px; min-height:100vh;}
+h1,h2,h3{font-weight:600; margin:0 0 8px;}
+.ar{font-family:'Amiri',serif; direction:rtl;}
+.screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto;}
+.screen.active{display:block; animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.top-header{text-align:center; padding:18px 16px 10px;}
+.top-header .badge{display:inline-block; background:rgba(212,162,58,.12); border:1px solid rgba(212,162,58,.35); color:var(--gold2); font-size:12px; padding:4px 12px; border-radius:20px; margin-bottom:10px;}
+.top-header h1{font-size:20px; color:var(--gold2);}
+.top-header .ar-title{font-size:26px; color:var(--gold); margin-top:4px;}
+
+.menu-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+.menu-card{background:linear-gradient(160deg,#161310,var(--card)); border:1px solid var(--border); border-radius:16px; padding:20px 14px; text-align:center; cursor:pointer; transition:transform .15s, border-color .15s;}
+.menu-card:active{transform:scale(.97);}
+.menu-card i{font-size:30px; color:var(--gold); display:block; margin-bottom:10px;}
+.menu-card .t{font-size:14px; font-weight:600; color:var(--text);}
+.menu-card .s{font-size:11px; color:var(--muted); margin-top:4px;}
+
+.premium-card{
+  background:linear-gradient(160deg,#1a1710,var(--bg));
+  border:1px solid var(--gold);
+  border-radius:14px;
+  padding:18px 12px;
+  text-align:center;
+}
+.word-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+@media (max-width:420px){.word-grid{grid-template-columns:repeat(2,1fr);}}
+.word-card{cursor:pointer;}
+.word-card .icon-circle{width:48px; height:48px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px var(--halo);}
+.word-card .icon-circle i{font-size:22px; color:#0B0E14;}
+.word-card .ar{font-size:19px; color:var(--gold2); margin-bottom:6px; line-height:1.5;}
+.word-card .uz{font-size:12px; color:var(--text); line-height:1.3;}
+.word-card .box-dots{margin-top:8px; display:flex; justify-content:center; gap:3px;}
+.word-card .box-dots span{width:5px; height:5px; border-radius:50%; background:var(--border);}
+.word-card .box-dots span.on{background:var(--gold);}
+
+.filter-row{display:flex; gap:8px; overflow-x:auto; padding:4px 0 14px; -ms-overflow-style:none; scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex:0 0 auto; padding:7px 14px; border-radius:20px; border:1px solid var(--border); font-size:12px; color:var(--muted); cursor:pointer; white-space:nowrap;}
+.filter-chip.active{border-color:var(--gold); color:var(--gold2); background:rgba(212,162,58,.1);}
+
+.premium-btn-primary{
+  display:block; width:100%; text-align:center; padding:14px; border-radius:12px; border:none;
+  background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; font-weight:600; font-size:15px;
+  cursor:pointer; margin-top:10px;
+}
+.premium-btn-secondary{
+  display:block; width:100%; text-align:center; padding:14px; border-radius:12px;
+  background:transparent; border:1px solid var(--border); color:var(--text); font-weight:500; font-size:14px;
+  cursor:pointer; margin-top:10px;
+}
+
+.progress-bar-outer{width:100%; height:8px; background:var(--card); border-radius:8px; overflow:hidden; margin:14px 0;}
+.progress-bar-inner{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold2)); border-radius:8px; transition:width .3s;}
+
+.quiz-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 18px; text-align:center; margin-top:10px;}
+.quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:1.6;}
+.opt-btn{display:block; width:100%; text-align:right; padding:14px 16px; margin-top:10px; border-radius:12px; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:15px; cursor:pointer; direction:rtl;}
+.opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8;}
+.opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188;}
+
+.gt-pool{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:16px 0; min-height:50px; padding:12px; border:1px dashed var(--border); border-radius:12px;}
+.gt-answer{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:16px 0; min-height:50px; padding:12px; background:var(--card); border-radius:12px;}
+.gt-tok{padding:10px 14px; background:var(--card); border:1px solid var(--gold); border-radius:10px; font-family:'Amiri',serif; font-size:19px; color:var(--gold2); cursor:pointer; direction:rtl;}
+.gt-tok.placed{background:rgba(212,162,58,.12);}
+
+.floating-menu-btn{
+  position:fixed; left:14px; bottom:16px; z-index:50;
+  background:var(--card); border:1px solid var(--gold); color:var(--gold2);
+  padding:10px 16px; border-radius:24px; font-size:13px; font-weight:500;
+  display:flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.4);
+}
+.floating-menu-btn i{font-size:16px;}
+
+.back-row{margin-bottom:6px;}
+.back-link{color:var(--muted); font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;}
+
+.stat-row{display:flex; gap:10px; margin-top:16px;}
+.stat-box{flex:1; background:var(--card); border-radius:12px; padding:14px; text-align:center;}
+.stat-box .num{font-size:22px; font-weight:600; color:var(--gold2);}
+.stat-box .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
+
+.level-tabs{display:flex; gap:8px; margin:14px 0;}
+.level-tab{flex:1; text-align:center; padding:10px; border-radius:10px; border:1px solid var(--border); font-size:13px; color:var(--muted); cursor:pointer;}
+.level-tab.active{border-color:var(--gold); color:var(--gold2); background:rgba(212,162,58,.1);}
+
+.center-note{text-align:center; color:var(--muted); font-size:13px; margin-top:20px;}
+</style>
+</head>
+<body>
+
+<!-- ================= EKRAN: Bosh menyu ================= -->
+<div class="screen active" id="screen-home">
+  <div class="top-header">
+    <div class="badge">8-bo'lim</div>
+    <div class="ar-title ar">الطَّعَامُ وَالْمَشْرُوبَاتُ</div>
+    <h1>Taom va Ichimliklar</h1>
+  </div>
+
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="home-progress-bar" style="width:0%"></div></div>
+  <div class="center-note" id="home-progress-text">0 / 62 so'z o'rganildi</div>
+
+  <div class="menu-grid">
+    <div class="menu-card" onclick="goScreen('lugat')">
+      <i class="ti ti-book-2"></i>
+      <div class="t">Lug'at</div>
+      <div class="s">62 ta so'z</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('quiz-setup')">
+      <i class="ti ti-brain"></i>
+      <div class="t">Test</div>
+      <div class="s">SRS takrorlash</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('gap-setup')">
+      <i class="ti ti-puzzle"></i>
+      <div class="t">Gap tuzish</div>
+      <div class="s">60 ta mashq</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('stats')">
+      <i class="ti ti-chart-bar"></i>
+      <div class="t">Natijalar</div>
+      <div class="s">Progress</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Lug'at ================= -->
+<div class="screen" id="screen-lugat">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Lug'at</h2>
+  <div class="filter-row" id="cat-filters"></div>
+  <div class="word-grid" id="word-grid"></div>
+</div>
+
+<!-- ================= EKRAN: Test sozlash ================= -->
+<div class="screen" id="screen-quiz-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Test (SRS)</h2>
+  <p style="color:var(--muted); font-size:14px;">Tizim siz ko'proq xato qilgan so'zlarni tez-tez, yaxshi bilganlaringizni kamroq qaytaradi.</p>
+  <div class="premium-card" style="margin-top:16px;">
+    <i class="ti ti-brain" style="font-size:32px;color:var(--gold);"></i>
+    <div style="margin-top:10px; font-size:14px;">Savollar soni: <b id="quiz-count-label">10</b></div>
+    <input type="range" min="5" max="30" value="10" step="5" id="quiz-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('quiz-count-label').textContent=this.value">
+  </div>
+  <button class="premium-btn-primary" onclick="startQuiz()">Testni boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Test (savol) ================= -->
+<div class="screen" id="screen-quiz">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="quiz-progress-bar" style="width:0%"></div></div>
+  <div class="quiz-card">
+    <div class="ar-big ar" id="quiz-word"></div>
+    <div id="quiz-options"></div>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Test natijasi ================= -->
+<div class="screen" id="screen-quiz-result">
+  <div class="top-header">
+    <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
+    <h1 style="margin-top:10px;">Test tugadi!</h1>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="result-correct">0</div><div class="lbl">To'g'ri</div></div>
+    <div class="stat-box"><div class="num" id="result-wrong">0</div><div class="lbl">Xato</div></div>
+    <div class="stat-box"><div class="num" id="result-percent">0%</div><div class="lbl">Natija</div></div>
+  </div>
+  <button class="premium-btn-primary" onclick="goScreen('quiz-setup')">Yana test</button>
+  <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
+</div>
+
+<!-- ================= EKRAN: Gap tuzish sozlash ================= -->
+<div class="screen" id="screen-gap-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Gap tuzish</h2>
+  <p style="color:var(--muted); font-size:14px;">Darajani tanlang va so'zlarni to'g'ri tartibda joylashtirib gap tuzing.</p>
+  <div class="level-tabs">
+    <div class="level-tab active" data-lvl="oson" onclick="selectGapLevel('oson',this)">Oson</div>
+    <div class="level-tab" data-lvl="ortacha" onclick="selectGapLevel('ortacha',this)">O'rtacha</div>
+    <div class="level-tab" data-lvl="profi" onclick="selectGapLevel('profi',this)">Profi</div>
+  </div>
+  <button class="premium-btn-primary" onclick="startGapTuzish()">Boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Gap tuzish (mashq) ================= -->
+<div class="screen" id="screen-gap">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="gap-progress-bar" style="width:0%"></div></div>
+  <div class="quiz-card">
+    <div style="font-size:13px; color:var(--muted); margin-bottom:10px;" id="gap-cyr"></div>
+    <div class="gt-answer" id="gt-answer"></div>
+    <div class="gt-pool" id="gt-pool"></div>
+    <div id="gt-feedback" style="margin-top:10px; font-size:14px; min-height:20px;"></div>
+  </div>
+  <button class="premium-btn-primary" id="gt-check-btn" onclick="checkGapAnswer()">Tekshirish</button>
+  <button class="premium-btn-secondary" onclick="clearGapAnswer()">Tozalash</button>
+</div>
+
+<!-- ================= EKRAN: Statistika ================= -->
+<div class="screen" id="screen-stats">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Natijalar</h2>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="stat-learned">0</div><div class="lbl">O'rganilgan so'z</div></div>
+    <div class="stat-box"><div class="num" id="stat-total">62</div><div class="lbl">Jami so'z</div></div>
+  </div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="stats-progress-bar" style="width:0%"></div></div>
+  <div class="center-note" id="stats-progress-text">0%</div>
+</div>
+
+<a href="index.html" onclick="event.preventDefault();location.replace('index.html')" style="position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">‹ Menyu</a>
+
+<script>
+const LS_KEY = "arabic_uz_8bolim_v1";
+const ACH_KEY = "arabic_achievements_v1";
+
+const CAT_COLORS = {
+  "Буюмлар":"#D4A23A","Уй":"#7C8FE8","Феъллар":"#6FBF8B","Сифатлар":"#C97AAE",
+  "Равишлар":"#E8765C","Иборалар":"#5FBFBF","Оила":"#8DCB8D","Олмошлар":"#A878C9",
+  "Кўмакчилар":"#C9A877","Грамматика":"#C97878","Жойлар":"#6FA8D9","Рангlar":"#E0A879",
+  "Бошқалар":"#9590AC","Сонлар":"#74B4C4","Боғловчилар":"#C2B374","Озиқ-овқат":"#8FBB7C",
+  "Замирлар":"#7FAEEE","Отлар":"#6FA8D9"
+};
+
+const ALL_WORDS = [{"id": "b8-001", "ar": "طَبَخَ", "uz": "пиширди, пиширади, пиширмоқ", "cat": "Феъллар", "icon": "tools-kitchen-2"}, {"id": "b8-002", "ar": "أَعَدَّ", "uz": "тайёрлади, тайёрлайди, тайёрламоқ", "cat": "Феъллар", "icon": "chef-hat"}, {"id": "b8-003", "ar": "تَنَاوَلَ", "uz": "тановул қилди, тановул қилади, тановул қилмоқ, емоқ", "cat": "Феъллар", "icon": "cup"}, {"id": "b8-004", "ar": "أَكَلَ", "uz": "еди, ейди, емоқ", "cat": "Феъллар", "icon": "tools-kitchen-2"}, {"id": "b8-005", "ar": "شَرِبَ", "uz": "ичди, ичади, ичмоқ", "cat": "Феъллар", "icon": "glass-full"}, {"id": "b8-006", "ar": "وَضَعَ", "uz": "қўйди, қўяди, қўймоқ", "cat": "Феъллар", "icon": "table"}, {"id": "b8-007", "ar": "أَبْدَلَ", "uz": "алмаштирди, алмаштиради, алмаштирмоқ", "cat": "Феъллар", "icon": "exchange"}, {"id": "b8-008", "ar": "أَشَمَّ", "uz": "ҳидлади, ҳидлайди, ҳидламоқ", "cat": "Феъллар", "icon": "wind"}, {"id": "b8-009", "ar": "اِنْتَظَرَ", "uz": "кутди, кутади, кутмоқ", "cat": "Феъллар", "icon": "clock"}, {"id": "b8-010", "ar": "مَائِدَةٌ", "uz": "дастурхон", "cat": "Отлар", "icon": "table"}, {"id": "b8-011", "ar": "طَعَامٌ", "uz": "таом", "cat": "Отлар", "icon": "tools-kitchen-2"}, {"id": "b8-012", "ar": "مَشْرُوبَاتٌ", "uz": "ичимликлар", "cat": "Отлар", "icon": "glass-full"}, {"id": "b8-013", "ar": "رُزٌّ", "uz": "гуруч, палов", "cat": "Отлар", "icon": "bowl"}, {"id": "b8-014", "ar": "حَسَاءٌ", "uz": "шўрва", "cat": "Отлар", "icon": "cup"}, {"id": "b8-015", "ar": "شَطِيرَةٌ", "uz": "сендвич", "cat": "Отлар", "icon": "bread"}, {"id": "b8-016", "ar": "فَاصُولْيَا", "uz": "ловия", "cat": "Отлар", "icon": "leaf"}, {"id": "b8-017", "ar": "فَطُورٌ", "uz": "нонушта", "cat": "Отлар", "icon": "coffee"}, {"id": "b8-018", "ar": "غَدَاءٌ", "uz": "тушлик", "cat": "Отлар", "icon": "sun"}, {"id": "b8-019", "ar": "عَشَاءٌ", "uz": "кечки овқат", "cat": "Отлар", "icon": "moon"}, {"id": "b8-020", "ar": "وَجْبَةٌ", "uz": "таом порцияси", "cat": "Отлар", "icon": "scale"}, {"id": "b8-021", "ar": "قَائِمَةُ الطَّعَامِ", "uz": "таомнома", "cat": "Отлар", "icon": "list"}, {"id": "b8-022", "ar": "لَحْمٌ", "uz": "гўшт", "cat": "Отлар", "icon": "meat"}, {"id": "b8-023", "ar": "مَكَرُونَةٌ", "uz": "макарон", "cat": "Отлар", "icon": "tools-kitchen-2"}, {"id": "b8-024", "ar": "خِيَارٌ", "uz": "бодринг", "cat": "Отлар", "icon": "leaf"}, {"id": "b8-025", "ar": "دَجَاجٌ", "uz": "товуқ", "cat": "Отлар", "icon": "meat"}, {"id": "b8-026", "ar": "سَمَكٌ", "uz": "балиқ", "cat": "Отлар", "icon": "fish"}, {"id": "b8-027", "ar": "سَلَطَةٌ", "uz": "салат", "cat": "Отлар", "icon": "leaf"}, {"id": "b8-028", "ar": "بُرْتُقَالٌ", "uz": "апельсин", "cat": "Отлар", "icon": "apple"}, {"id": "b8-029", "ar": "جُبْنٌ", "uz": "пишлоқ", "cat": "Отлар", "icon": "cheese"}, {"id": "b8-030", "ar": "تُفَّاحٌ", "uz": "олма", "cat": "Отлар", "icon": "apple"}, {"id": "b8-031", "ar": "لَيْمُونٌ", "uz": "лимон", "cat": "Отлар", "icon": "lemon"}, {"id": "b8-032", "ar": "بَيْضٌ", "uz": "тухум", "cat": "Отлар", "icon": "egg"}, {"id": "b8-033", "ar": "عَسَلٌ", "uz": "асал", "cat": "Отлар", "icon": "droplet"}, {"id": "b8-034", "ar": "مُرَبَّى", "uz": "мураббо", "cat": "Отлар", "icon": "bowl"}, {"id": "b8-035", "ar": "حَلْوَى", "uz": "ширинлик", "cat": "Отлар", "icon": "candy"}, {"id": "b8-036", "ar": "خَضْرَاوَاتٌ", "uz": "сабзавотлар", "cat": "Отлар", "icon": "leaf"}, {"id": "b8-037", "ar": "مَوْزٌ", "uz": "банан", "cat": "Отлар", "icon": "apple"}, {"id": "b8-038", "ar": "حَلِيبٌ", "uz": "сут", "cat": "Отлар", "icon": "milk"}, {"id": "b8-039", "ar": "زَيْتُونٌ", "uz": "зайтун", "cat": "Отлар", "icon": "leaf"}, {"id": "b8-040", "ar": "مَاءٌ", "uz": "сув", "cat": "Отлар", "icon": "glass-full"}, {"id": "b8-041", "ar": "دِينَارٌ", "uz": "динор (пул бирлиги)", "cat": "Отлар", "icon": "coin"}, {"id": "b8-042", "ar": "نَادِلٌ", "uz": "официант", "cat": "Отлар", "icon": "user"}, {"id": "b8-043", "ar": "الْحِسَابُ", "uz": "ҳисоб", "cat": "Отлар", "icon": "receipt"}, {"id": "b8-044", "ar": "بَاقٍ", "uz": "қолдиқ, қайтим", "cat": "Отлар", "icon": "coin"}, {"id": "b8-045", "ar": "رَائِحَةٌ", "uz": "ҳид, бўй", "cat": "Отлар", "icon": "wind"}, {"id": "b8-046", "ar": "ثَلاَّجَةٌ", "uz": "музлатгич", "cat": "Отлар", "icon": "box"}, {"id": "b8-047", "ar": "لَذِيذٌ", "uz": "мазали, лаззатли", "cat": "Сифатлар", "icon": "heart"}, {"id": "b8-048", "ar": "مَقْلِيٌّ", "uz": "қовурилган", "cat": "Сифатлар", "icon": "flame"}, {"id": "b8-049", "ar": "مَشْوِيٌّ", "uz": "кабоб қилинган", "cat": "Сифатлар", "icon": "flame"}, {"id": "b8-050", "ar": "مَسْلُوقٌ", "uz": "қайнатилган", "cat": "Сифатлар", "icon": "droplet"}, {"id": "b8-051", "ar": "شَبْعَانٌ", "uz": "тўқ (қорни)", "cat": "Сифатлар", "icon": "mood-smile"}, {"id": "b8-052", "ar": "جَائِعٌ", "uz": "оч (қорни)", "cat": "Сифатлар", "icon": "mood-sad"}, {"id": "b8-053", "ar": "نَبَاتِيٌّ", "uz": "вегетариан", "cat": "Сифатлар", "icon": "leaf"}, {"id": "b8-054", "ar": "جَاهِزٌ", "uz": "тайёр", "cat": "Сифатлар", "icon": "check"}, {"id": "b8-055", "ar": "طَازِجٌ", "uz": "янги, табиий", "cat": "Сифатлар", "icon": "leaf"}, {"id": "b8-056", "ar": "فَارِغٌ", "uz": "бўш", "cat": "Сифатлар", "icon": "circle-dashed"}, {"id": "b8-057", "ar": "دَسِمَةٌ", "uz": "тўйимли, кучли (овқат)", "cat": "Сифатлар", "icon": "flame"}, {"id": "b8-058", "ar": "سَرِيعَةٌ", "uz": "тезкор (таомлар)", "cat": "Сифатлар", "icon": "bolt"}, {"id": "b8-059", "ar": "بِالْهَنَاءِ وَالشِّفَاءِ", "uz": "ёқимли иштаҳа", "cat": "Иборалар", "icon": "message-circle"}, {"id": "b8-060", "ar": "سَلِمَتْ يَدَاكَ", "uz": "қўлларингиз дард кўрмасин", "cat": "Иборалар", "icon": "message-circle"}, {"id": "b8-061", "ar": "كَمَا تُحِبُّ", "uz": "сиз хоҳлагандек", "cat": "Иборалар", "icon": "message-circle"}, {"id": "b8-062", "ar": "تَفَضَّلْ", "uz": "марҳамат", "cat": "Иборалар", "icon": "message-circle"}];
+const GAP_TUZISH_DATA = [{"id": 1, "level": "oson", "words": ["اللَّحْمُ", "مَشْوِيٌّ"], "answer": ["اللَّحْمُ", "مَشْوِيٌّ"], "cyr": "Гўшт кабоб қилинган."}, {"id": 2, "level": "oson", "words": ["السَّمَكُ", "طَازِجٌ"], "answer": ["السَّمَكُ", "طَازِجٌ"], "cyr": "Балиқ янги."}, {"id": 3, "level": "oson", "words": ["الْحَسَاءُ", "لَذِيذٌ"], "answer": ["الْحَسَاءُ", "لَذِيذٌ"], "cyr": "Шўрва мазали."}, {"id": 4, "level": "oson", "words": ["الرُّزُّ", "جَاهِزٌ"], "answer": ["الرُّزُّ", "جَاهِزٌ"], "cyr": "Гуруч тайёр."}, {"id": 5, "level": "oson", "words": ["الْجُبْنُ", "لَذِيذٌ"], "answer": ["الْجُبْنُ", "لَذِيذٌ"], "cyr": "Пишлоқ мазали."}, {"id": 6, "level": "oson", "words": ["التُّفَّاحُ", "طَازِجٌ"], "answer": ["التُّفَّاحُ", "طَازِجٌ"], "cyr": "Олма янги."}, {"id": 7, "level": "oson", "words": ["الثَّلَّاجَةُ", "فَارِغَةٌ"], "answer": ["الثَّلَّاجَةُ", "فَارِغَةٌ"], "cyr": "Музлатгич бўш."}, {"id": 8, "level": "oson", "words": ["الْحِسَابُ", "جَاهِزٌ"], "answer": ["الْحِسَابُ", "جَاهِزٌ"], "cyr": "Ҳисоб тайёр."}, {"id": 9, "level": "oson", "words": ["أَنَا", "جَائِعٌ"], "answer": ["أَنَا", "جَائِعٌ"], "cyr": "Мен очман."}, {"id": 10, "level": "oson", "words": ["أَنَا", "شَبْعَانٌ"], "answer": ["أَنَا", "شَبْعَانٌ"], "cyr": "Мен тўқман."}, {"id": 11, "level": "oson", "words": ["هُوَ", "جَائِعٌ"], "answer": ["هُوَ", "جَائِعٌ"], "cyr": "У оч."}, {"id": 12, "level": "oson", "words": ["هِيَ", "شَبْعَانَةٌ"], "answer": ["هِيَ", "شَبْعَانَةٌ"], "cyr": "У (аёл) тўқ."}, {"id": 13, "level": "oson", "words": ["الطَّعَامُ", "جَاهِزٌ"], "answer": ["الطَّعَامُ", "جَاهِزٌ"], "cyr": "Таом тайёр."}, {"id": 14, "level": "oson", "words": ["الْمَكَرُونَةُ", "لَذِيذَةٌ"], "answer": ["الْمَكَرُونَةُ", "لَذِيذَةٌ"], "cyr": "Макарон мазали."}, {"id": 15, "level": "oson", "words": ["الْبَيْضُ", "مَسْلُوقٌ"], "answer": ["الْبَيْضُ", "مَسْلُوقٌ"], "cyr": "Тухум қайнатилган."}, {"id": 16, "level": "oson", "words": ["الدَّجَاجُ", "مَقْلِيٌّ"], "answer": ["الدَّجَاجُ", "مَقْلِيٌّ"], "cyr": "Товуқ қовурилган."}, {"id": 17, "level": "oson", "words": ["الْوَجْبَةُ", "سَرِيعَةٌ"], "answer": ["الْوَجْبَةُ", "سَرِيعَةٌ"], "cyr": "Таом порцияси тезкор."}, {"id": 18, "level": "oson", "words": ["الْمَشْرُوبَاتُ", "جَاهِزَةٌ"], "answer": ["الْمَشْرُوبَاتُ", "جَاهِزَةٌ"], "cyr": "Ичимликлар тайёр."}, {"id": 19, "level": "oson", "words": ["هُوَ", "يَشْرَبُ", "الْمَاءَ"], "answer": ["هُوَ", "يَشْرَبُ", "الْمَاءَ"], "cyr": "У сув ичяпти."}, {"id": 20, "level": "oson", "words": ["هِيَ", "تَأْكُلُ", "التُّفَّاحَ"], "answer": ["هِيَ", "تَأْكُلُ", "التُّفَّاحَ"], "cyr": "У (аёл) олма ейяпти."}, {"id": 21, "level": "ortacha", "words": ["أَنَا", "أَشْرَبُ", "الْحَلِيبَ", "الطَّازِجَ"], "answer": ["أَنَا", "أَشْرَبُ", "الْحَلِيبَ", "الطَّازِجَ"], "cyr": "Мен янги сут ичаман."}, {"id": 22, "level": "ortacha", "words": ["هُوَ", "يَطْبُخُ", "الرُّزَّ", "وَالدَّجَاجَ"], "answer": ["هُوَ", "يَطْبُخُ", "الرُّزَّ", "وَالدَّجَاجَ"], "cyr": "У гуруч ва товуқ пиширяпти."}, {"id": 23, "level": "ortacha", "words": ["هِيَ", "تُعِدُّ", "السَّلَطَةَ", "الطَّازِجَةَ"], "answer": ["هِيَ", "تُعِدُّ", "السَّلَطَةَ", "الطَّازِجَةَ"], "cyr": "У янги салат тайёрлаяпти."}, {"id": 24, "level": "ortacha", "words": ["النَّادِلُ", "يُعِدُّ", "الْحِسَابَ", "وَيَنْتَظِرُ"], "answer": ["النَّادِلُ", "يُعِدُّ", "الْحِسَابَ", "وَيَنْتَظِرُ"], "cyr": "Официант ҳисобни тайёрлайди ва кутади."}, {"id": 25, "level": "ortacha", "words": ["أَنَا", "أَنْتَظِرُ", "الطَّعَامَ", "اللَّذِيذَ"], "answer": ["أَنَا", "أَنْتَظِرُ", "الطَّعَامَ", "اللَّذِيذَ"], "cyr": "Мен мазали таомни кутяпман."}, {"id": 26, "level": "ortacha", "words": ["هِيَ", "تَضَعُ", "الْمُرَبَّى", "عَلَى", "الشَّطِيرَةِ"], "answer": ["هِيَ", "تَضَعُ", "الْمُرَبَّى", "عَلَى", "الشَّطِيرَةِ"], "cyr": "У мураббони сендвич устига қўяди."}, {"id": 27, "level": "ortacha", "words": ["أَنَا", "أُبْدِلُ", "السَّمَكَ", "بِالدَّجَاجِ"], "answer": ["أَنَا", "أُبْدِلُ", "السَّمَكَ", "بِالدَّجَاجِ"], "cyr": "Мен балиқни товуққа алмаштираман."}, {"id": 28, "level": "ortacha", "words": ["هُوَ", "يَشُمُّ", "رَائِحَةَ", "الطَّعَامِ"], "answer": ["هُوَ", "يَشُمُّ", "رَائِحَةَ", "الطَّعَامِ"], "cyr": "У таом ҳидини ҳидлаяпти."}, {"id": 29, "level": "ortacha", "words": ["الْخَضْرَاوَاتُ", "طَازِجَةٌ", "جِدًّا"], "answer": ["الْخَضْرَاوَاتُ", "طَازِجَةٌ", "جِدًّا"], "cyr": "Сабзавотлар жуда янги."}, {"id": 30, "level": "ortacha", "words": ["أَنَا", "أَتَنَاوَلُ", "فَطُورًا", "لَذِيذًا"], "answer": ["أَنَا", "أَتَنَاوَلُ", "فَطُورًا", "لَذِيذًا"], "cyr": "Мен мазали нонушта қиляпман."}, {"id": 31, "level": "ortacha", "words": ["هِيَ", "تَأْكُلُ", "الْبُرْتُقَالَ", "وَالْمَوْزَ"], "answer": ["هِيَ", "تَأْكُلُ", "الْبُرْتُقَالَ", "وَالْمَوْزَ"], "cyr": "У апельсин ва банан ейди."}, {"id": 32, "level": "ortacha", "words": ["نَحْنُ", "نَتَنَاوَلُ", "الْغَدَاءَ", "وَالْعَشَاءَ"], "answer": ["نَحْنُ", "نَتَنَاوَلُ", "الْغَدَاءَ", "وَالْعَشَاءَ"], "cyr": "Биз тушлик ва кечки овқат ейяпмиз."}, {"id": 33, "level": "ortacha", "words": ["هُوَ", "يُعِدُّ", "وَجْبَةً", "دَسِمَةً"], "answer": ["هُوَ", "يُعِدُّ", "وَجْبَةً", "دَسِمَةً"], "cyr": "У тўйимли таом тайёрлайди."}, {"id": 34, "level": "ortacha", "words": ["هَلْ", "الطَّعَامُ", "جَاهِزٌ؟"], "answer": ["هَلْ", "الطَّعَامُ", "جَاهِزٌ؟"], "cyr": "Таом тайёрми?"}, {"id": 35, "level": "ortacha", "words": ["هَلْ", "أَنْتَ", "جَائِعٌ", "أَمْ", "شَبْعَانٌ؟"], "answer": ["هَلْ", "أَنْتَ", "جَائِعٌ", "أَمْ", "شَبْعَانٌ؟"], "cyr": "Сен очмисан ёки тўқмисан?"}, {"id": 36, "level": "ortacha", "words": ["لَيْسَ", "الطَّعَامُ", "جَاهِزًا"], "answer": ["لَيْسَ", "الطَّعَامُ", "جَاهِزًا"], "cyr": "Таом тайёр эмас."}, {"id": 37, "level": "ortacha", "words": ["كُلْ", "وَاشْرَبْ", "بِالْهَنَاءِ", "وَالشِّفَاءِ"], "answer": ["كُلْ", "وَاشْرَبْ", "بِالْهَنَاءِ", "وَالشِّفَاءِ"], "cyr": "Е ва ич, ёқимли иштаҳа билан."}, {"id": 38, "level": "ortacha", "words": ["سَلِمَتْ", "يَدَاكَ", "عَلَى", "الطَّعَامِ"], "answer": ["سَلِمَتْ", "يَدَاكَ", "عَلَى", "الطَّعَامِ"], "cyr": "Қўлларингиз дард кўрмасин, таом учун."}, {"id": 39, "level": "ortacha", "words": ["كُلْ", "كَمَا", "تُحِبُّ"], "answer": ["كُلْ", "كَمَا", "تُحِبُّ"], "cyr": "Хоҳлагандек е."}, {"id": 40, "level": "ortacha", "words": ["تَفَضَّلْ،", "الطَّعَامُ", "جَاهِزٌ"], "answer": ["تَفَضَّلْ،", "الطَّعَامُ", "جَاهِزٌ"], "cyr": "Марҳамат, таом тайёр."}, {"id": 41, "level": "profi", "words": ["أَنَا", "آكُلُ", "الْفَطُورَ", "ثُمَّ", "أَشْرَبُ", "الْحَلِيبَ"], "answer": ["أَنَا", "آكُلُ", "الْفَطُورَ", "ثُمَّ", "أَشْرَبُ", "الْحَلِيبَ"], "cyr": "Мен нонушта қиламан, сўнгра сут ичаман."}, {"id": 42, "level": "profi", "words": ["هُوَ", "يَطْبُخُ", "الرُّزَّ", "اللَّذِيذَ", "وَيُعِدُّ", "السَّلَطَةَ"], "answer": ["هُوَ", "يَطْبُخُ", "الرُّزَّ", "اللَّذِيذَ", "وَيُعِدُّ", "السَّلَطَةَ"], "cyr": "У мазали гуруч пиширади ва салат тайёрлайди."}, {"id": 43, "level": "profi", "words": ["النَّادِلُ", "يُعِدُّ", "الْحِسَابَ", "وَنَحْنُ", "نَنْتَظِرُ"], "answer": ["النَّادِلُ", "يُعِدُّ", "الْحِسَابَ", "وَنَحْنُ", "نَنْتَظِرُ"], "cyr": "Официант ҳисобни тайёрлайди, биз эса кутамиз."}, {"id": 44, "level": "profi", "words": ["لَيْسَ", "عِنْدِي", "طَعَامٌ", "لِأَنَّ", "الثَّلَّاجَةَ", "فَارِغَةٌ"], "answer": ["لَيْسَ", "عِنْدِي", "طَعَامٌ", "لِأَنَّ", "الثَّلَّاجَةَ", "فَارِغَةٌ"], "cyr": "Менда таом йўқ, чунки музлатгич бўш."}, {"id": 45, "level": "profi", "words": ["أَنَا", "جَائِعٌ", "جِدًّا", "وَلَكِنَّ", "الطَّعَامَ", "لَيْسَ", "جَاهِزًا"], "answer": ["أَنَا", "جَائِعٌ", "جِدًّا", "وَلَكِنَّ", "الطَّعَامَ", "لَيْسَ", "جَاهِزًا"], "cyr": "Мен жуда очман, лекин таом тайёр эмас."}, {"id": 46, "level": "profi", "words": ["أَنَا", "أُبْدِلُ", "السَّمَكَ", "بِالدَّجَاجِ", "الْمَشْوِيِّ"], "answer": ["أَنَا", "أُبْدِلُ", "السَّمَكَ", "بِالدَّجَاجِ", "الْمَشْوِيِّ"], "cyr": "Мен балиқни кабоб қилинган товуққа алмаштираман."}, {"id": 47, "level": "profi", "words": ["هِيَ", "تَضَعُ", "الْعَسَلَ", "وَالْمُرَبَّى", "عَلَى", "الشَّطِيرَةِ"], "answer": ["هِيَ", "تَضَعُ", "الْعَسَلَ", "وَالْمُرَبَّى", "عَلَى", "الشَّطِيرَةِ"], "cyr": "У асал ва мураббони сендвич устига қўяди."}, {"id": 48, "level": "profi", "words": ["هَلْ", "تَشْرَبُ", "الْمَاءَ", "أَمِ", "الْحَلِيبَ", "الطَّازِجَ؟"], "answer": ["هَلْ", "تَشْرَبُ", "الْمَاءَ", "أَمِ", "الْحَلِيبَ", "الطَّازِجَ؟"], "cyr": "Сув ичасанми ёки янги сутни?"}, {"id": 49, "level": "profi", "words": ["نَحْنُ", "نَتَنَاوَلُ", "الطَّعَامَ", "ثُمَّ", "نَشْرَبُ", "الْمَاءَ"], "answer": ["نَحْنُ", "نَتَنَاوَلُ", "الطَّعَامَ", "ثُمَّ", "نَشْرَبُ", "الْمَاءَ"], "cyr": "Биз таом ейямиз, сўнгра сув ичамиз."}, {"id": 50, "level": "profi", "words": ["هُوَ", "يَشُمُّ", "رَائِحَةَ", "اللَّحْمِ", "الْمَشْوِيِّ", "ثُمَّ", "يَأْكُلُ"], "answer": ["هُوَ", "يَشُمُّ", "رَائِحَةَ", "اللَّحْمِ", "الْمَشْوِيِّ", "ثُمَّ", "يَأْكُلُ"], "cyr": "У кабоб гўштининг ҳидини ҳидлайди, сўнгра ейди."}, {"id": 51, "level": "profi", "words": ["الطَّعَامُ", "لَذِيذٌ", "جِدًّا", "وَالْوَجْبَةُ", "سَرِيعَةٌ"], "answer": ["الطَّعَامُ", "لَذِيذٌ", "جِدًّا", "وَالْوَجْبَةُ", "سَرِيعَةٌ"], "cyr": "Таом жуда мазали ва порция тезкор."}, {"id": 52, "level": "profi", "words": ["أَنَا", "أَنْتَظِرُ", "النَّادِلَ", "وَالْحِسَابَ"], "answer": ["أَنَا", "أَنْتَظِرُ", "النَّادِلَ", "وَالْحِسَابَ"], "cyr": "Мен официант ва ҳисобни кутяпман."}, {"id": 53, "level": "profi", "words": ["هَلْ", "الْمَشْرُوبَاتُ", "جَاهِزَةٌ", "أَمْ", "لَا؟"], "answer": ["هَلْ", "الْمَشْرُوبَاتُ", "جَاهِزَةٌ", "أَمْ", "لَا؟"], "cyr": "Ичимликлар тайёрми ёки йўқми?"}, {"id": 54, "level": "profi", "words": ["نَحْنُ", "نُبْدِلُ", "السَّلَطَةَ", "بِالْحَسَاءِ", "لِأَنَّهُ", "لَذِيذٌ"], "answer": ["نَحْنُ", "نُبْدِلُ", "السَّلَطَةَ", "بِالْحَسَاءِ", "لِأَنَّهُ", "لَذِيذٌ"], "cyr": "Биз салатни шўрвага алмаштирамиз, чунки у мазали."}, {"id": 55, "level": "profi", "words": ["هِيَ", "تَأْكُلُ", "الْبَيْضَ", "وَالْجُبْنَ", "فِي", "الْفَطُورِ"], "answer": ["هِيَ", "تَأْكُلُ", "الْبَيْضَ", "وَالْجُبْنَ", "فِي", "الْفَطُورِ"], "cyr": "У нонуштада тухум ва пишлоқ ейди."}, {"id": 56, "level": "profi", "words": ["أَنَا", "لَا", "أَشْرَبُ", "الْحَلِيبَ", "لِأَنَّهُ", "لَيْسَ", "طَازِجًا"], "answer": ["أَنَا", "لَا", "أَشْرَبُ", "الْحَلِيبَ", "لِأَنَّهُ", "لَيْسَ", "طَازِجًا"], "cyr": "Мен сут ичмайман, чунки у янги эмас."}, {"id": 57, "level": "profi", "words": ["هُوَ", "يَتَنَاوَلُ", "الْعَشَاءَ", "ثُمَّ", "يَنْتَظِرُ", "الْحِسَابَ"], "answer": ["هُوَ", "يَتَنَاوَلُ", "الْعَشَاءَ", "ثُمَّ", "يَنْتَظِرُ", "الْحِسَابَ"], "cyr": "У кечки овқат ейди, сўнгра ҳисобни кутади."}, {"id": 58, "level": "profi", "words": ["فِي", "الثَّلَّاجَةِ", "رَائِحَةُ", "الطَّعَامِ", "الطَّازِجِ", "جِدًّا"], "answer": ["فِي", "الثَّلَّاجَةِ", "رَائِحَةُ", "الطَّعَامِ", "الطَّازِجِ", "جِدًّا"], "cyr": "Музлатгичда жуда янги таом ҳиди бор."}, {"id": 59, "level": "profi", "words": ["نَحْنُ", "جَائِعُونَ", "وَلَكِنَّ", "الطَّعَامَ", "لَيْسَ", "جَاهِزًا"], "answer": ["نَحْنُ", "جَائِعُونَ", "وَلَكِنَّ", "الطَّعَامَ", "لَيْسَ", "جَاهِزًا"], "cyr": "Биз очмиз, лекин таом тайёр эмас."}, {"id": 60, "level": "profi", "words": ["تَفَضَّلْ", "وَكُلْ", "الطَّعَامَ", "بِالْهَنَاءِ", "وَالشِّفَاءِ"], "answer": ["تَفَضَّلْ", "وَكُلْ", "الطَّعَامَ", "بِالْهَنَاءِ", "وَالشِّفَاءِ"], "cyr": "Марҳамат, таомни ёқимли иштаҳа билан е."}];
+
+function hexToRgba(hex, a){
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+
+// ---------------- Progress / SRS state ----------------
+function loadProgress(){
+  try{
+    const d = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    return { learned: d.learned || [], box: d.box || {} };
+  }catch(e){ return { learned: [], box: {} }; }
+}
+function saveProgress(state){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function addAchievementXP(xp){
+  try{
+    const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
+    d.xp = (Number(d.xp)||0) + xp;
+    localStorage.setItem(ACH_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+
+// ---------------- Navigation (SPA + popstate) ----------------
+let screenStack = ['home'];
+function goScreen(name, push){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if(el) el.classList.add('active');
+  if(push !== false){
+    history.pushState({screen:name}, '', '#'+name);
+  }
+  if(name === 'home') renderHome();
+  if(name === 'lugat') renderLugat();
+  if(name === 'stats') renderStats();
+  window.scrollTo(0,0);
+}
+window.addEventListener('popstate', function(e){
+  if(e.state && e.state.screen){
+    goScreen(e.state.screen, false);
+  } else {
+    goScreen('home', false);
+  }
+});
+history.replaceState({screen:'home'}, '', '#home');
+
+// ---------------- Bosh ekran ----------------
+function renderHome(){
+  const state = loadProgress();
+  const pct = Math.round((state.learned.length / ALL_WORDS.length) * 100);
+  document.getElementById('home-progress-bar').style.width = pct+'%';
+  document.getElementById('home-progress-text').textContent = state.learned.length + ' / ' + ALL_WORDS.length + ' so\'z o\'rganildi';
+}
+
+// ---------------- Lug'at ekran ----------------
+let activeCatFilter = 'all';
+function renderCatFilters(){
+  const cats = ['all', ...new Set(ALL_WORDS.map(w=>w.cat))];
+  const wrap = document.getElementById('cat-filters');
+  wrap.innerHTML = cats.map(c=>{
+    const label = c==='all' ? 'Hammasi' : c;
+    return '<div class="filter-chip'+(activeCatFilter===c?' active':'')+'" onclick="setCatFilter(\''+c+'\')">'+label+'</div>';
+  }).join('');
+}
+function setCatFilter(c){
+  activeCatFilter = c;
+  renderCatFilters();
+  renderWordGrid();
+}
+function renderWordGrid(){
+  const state = loadProgress();
+  const grid = document.getElementById('word-grid');
+  const list = activeCatFilter==='all' ? ALL_WORDS : ALL_WORDS.filter(w=>w.cat===activeCatFilter);
+  grid.innerHTML = list.map(w=>{
+    const color = CAT_COLORS[w.cat] || '#D4A23A';
+    const box = state.box[w.ar] || 0;
+    const dots = [1,2,3,4,5].map(i=>'<span class="'+(i<=box?'on':'')+'"></span>').join('');
+    return '<div class="word-card premium-card" onclick="toggleLearned(\''+w.ar.replace(/'/g,"\\'")+'\')">'+
+      '<div class="icon-circle" style="background:linear-gradient(135deg,'+color+','+color+'AA); --halo:'+hexToRgba(color,.12)+'">'+
+      '<i class="ti ti-'+w.icon+'"></i></div>'+
+      '<div class="ar">'+w.ar+'</div>'+
+      '<div class="uz">'+w.uz+'</div>'+
+      '<div class="box-dots">'+dots+'</div>'+
+      '</div>';
+  }).join('');
+}
+function toggleLearned(ar){
+  const state = loadProgress();
+  const idx = state.learned.indexOf(ar);
+  if(idx>=0){ state.learned.splice(idx,1); }
+  else{ state.learned.push(ar); addAchievementXP(2); }
+  saveProgress(state);
+  renderWordGrid();
+}
+function renderLugat(){
+  renderCatFilters();
+  renderWordGrid();
+}
+
+// ---------------- Test (SRS quiz) ----------------
+let quizState = null;
+function buildQuiz(count){
+  const state = loadProgress();
+  const box = state.box || {};
+  const weight = w => Math.max(1, 6-(box[w.ar]||1));
+  let weighted = [];
+  ALL_WORDS.forEach(w=>{ const wt=weight(w); for(let i=0;i<wt;i++) weighted.push(w); });
+  let sel = [];
+  const seenAr = new Set();
+  shuffle(weighted).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  if(sel.length<count){
+    shuffle(ALL_WORDS).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  }
+  return sel;
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function startQuiz(){
+  const count = parseInt(document.getElementById('quiz-count').value,10);
+  const words = buildQuiz(count);
+  quizState = { words, idx:0, results:[] };
+  goScreen('quiz');
+  renderQuizQuestion();
+}
+function renderQuizQuestion(){
+  const q = quizState.words[quizState.idx];
+  document.getElementById('quiz-word').textContent = q.ar;
+  document.getElementById('quiz-progress-bar').style.width = Math.round((quizState.idx/quizState.words.length)*100)+'%';
+  let distractors = shuffle(ALL_WORDS.filter(w=>w.ar!==q.ar)).slice(0,3);
+  let options = shuffle([q, ...distractors]);
+  const opWrap = document.getElementById('quiz-options');
+  opWrap.innerHTML = '';
+  options.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className='opt-btn';
+    btn.textContent = o.uz;
+    btn.onclick = ()=>answerQuiz(o, q, btn, opWrap);
+    opWrap.appendChild(btn);
+  });
+}
+function answerQuiz(chosen, correct, btnEl, wrap){
+  const isCorrect = chosen.ar === correct.ar;
+  Array.from(wrap.children).forEach(b=>b.onclick=null);
+  btnEl.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    Array.from(wrap.children).forEach(b=>{ if(b.textContent===correct.uz) b.classList.add('correct'); });
+  }
+  quizState.results.push({word:correct, correct:isCorrect});
+  setTimeout(()=>{
+    quizState.idx++;
+    if(quizState.idx < quizState.words.length){
+      renderQuizQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 700);
+}
+function finishQuiz(){
+  const state = loadProgress();
+  const newBox = {...(state.box||{})};
+  let correctCount=0;
+  quizState.results.forEach(r=>{
+    const curBox = newBox[r.word.ar]||1;
+    newBox[r.word.ar] = r.correct ? Math.min(5,curBox+1) : 1;
+    if(r.correct){
+      correctCount++;
+      if(state.learned.indexOf(r.word.ar)===-1) state.learned.push(r.word.ar);
+    }
+  });
+  state.box = newBox;
+  saveProgress(state);
+  addAchievementXP(correctCount*3);
+  const total = quizState.results.length;
+  const wrongCount = total - correctCount;
+  document.getElementById('result-correct').textContent = correctCount;
+  document.getElementById('result-wrong').textContent = wrongCount;
+  document.getElementById('result-percent').textContent = Math.round((correctCount/total)*100)+'%';
+  goScreen('quiz-result');
+}
+
+// ---------------- Gap tuzish ----------------
+let gapLevel = 'oson';
+let gapState = null;
+function selectGapLevel(lvl, el){
+  gapLevel = lvl;
+  document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function startGapTuzish(){
+  const pool = shuffle(GAP_TUZISH_DATA.filter(g=>g.level===gapLevel));
+  gapState = { items: pool, idx:0, correct:0 };
+  goScreen('gap');
+  renderGapQuestion();
+}
+function renderGapQuestion(){
+  const item = gapState.items[gapState.idx];
+  document.getElementById('gap-progress-bar').style.width = Math.round((gapState.idx/gapState.items.length)*100)+'%';
+  document.getElementById('gap-cyr').textContent = item.cyr;
+  document.getElementById('gt-feedback').textContent = '';
+  const shuffledWords = shuffle(item.words.map((w,i)=>({w,i})));
+  window.__gapCurrentAnswer = [];
+  window.__gapCurrentPool = shuffledWords;
+  renderGapTokens();
+}
+function renderGapTokens(){
+  const answerWrap = document.getElementById('gt-answer');
+  const poolWrap = document.getElementById('gt-pool');
+  answerWrap.innerHTML = window.__gapCurrentAnswer.map(t=>
+    '<div class="gt-tok placed" onclick="unplaceToken('+t.i+')">'+t.w+'</div>'
+  ).join('');
+  poolWrap.innerHTML = window.__gapCurrentPool.map(t=>
+    '<div class="gt-tok" onclick="placeToken('+t.i+')">'+t.w+'</div>'
+  ).join('');
+}
+function placeToken(i){
+  const idx = window.__gapCurrentPool.findIndex(t=>t.i===i);
+  if(idx<0) return;
+  const [tok] = window.__gapCurrentPool.splice(idx,1);
+  window.__gapCurrentAnswer.push(tok);
+  renderGapTokens();
+}
+function unplaceToken(i){
+  const idx = window.__gapCurrentAnswer.findIndex(t=>t.i===i);
+  if(idx<0) return;
+  const [tok] = window.__gapCurrentAnswer.splice(idx,1);
+  window.__gapCurrentPool.push(tok);
+  renderGapTokens();
+}
+function clearGapAnswer(){
+  const item = gapState.items[gapState.idx];
+  window.__gapCurrentPool = [...window.__gapCurrentPool, ...window.__gapCurrentAnswer];
+  window.__gapCurrentAnswer = [];
+  renderGapTokens();
+}
+function checkGapAnswer(){
+  const item = gapState.items[gapState.idx];
+  const userOrder = window.__gapCurrentAnswer.map(t=>t.w);
+  const isCorrect = JSON.stringify(userOrder) === JSON.stringify(item.answer);
+  const fb = document.getElementById('gt-feedback');
+  if(isCorrect){
+    fb.innerHTML = '<span style="color:#8FD9A8;">To\'g\'ri! ✓</span>';
+    gapState.correct++;
+    addAchievementXP(3);
+  } else {
+    fb.innerHTML = '<span style="color:#F0A188;">Xato. To\'g\'ri javob: </span><span class="ar" style="color:#F0C56B;">'+item.answer.join(' ')+'</span>';
+  }
+  setTimeout(()=>{
+    gapState.idx++;
+    if(gapState.idx < gapState.items.length){
+      renderGapQuestion();
+    } else {
+      goScreen('gap-result-inline');
+      alert('Mashq tugadi! To\'g\'ri: '+gapState.correct+' / '+gapState.items.length);
+      goScreen('home');
+    }
+  }, isCorrect ? 900 : 2200);
+}
+
+// ---------------- Statistika ----------------
+function renderStats(){
+  const state = loadProgress();
+  document.getElementById('stat-learned').textContent = state.learned.length;
+  document.getElementById('stat-total').textContent = ALL_WORDS.length;
+  const pct = Math.round((state.learned.length/ALL_WORDS.length)*100);
+  document.getElementById('stats-progress-bar').style.width = pct+'%';
+  document.getElementById('stats-progress-text').textContent = pct+'%';
+}
+
+// ---------------- Init ----------------
+renderHome();
+</script>
+</body>
+</html>

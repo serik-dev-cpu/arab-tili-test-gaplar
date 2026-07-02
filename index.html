@@ -187,18 +187,25 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
     <div class="bolim-arrow">›</div>
   </a>
 
-  <div class="section-label">Tez kunda</div>
-
-  <div class="bolim-card locked-card">
+  <a href="ManhajA1-bolim8.html" class="bolim-card active" data-bolim="8">
     <div class="bolim-num-wrap">
-      <div class="bolim-num locked">8</div>
+      <svg class="bolim-num-svg" viewBox="0 0 52 52">
+        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
+        <circle class="bolim-num-fill" data-ring="8" cx="26" cy="26" r="22.5"/>
+      </svg>
+      <div class="bolim-num">8</div>
     </div>
     <div class="bolim-info">
-      <div class="bolim-title">8-bo'lim</div>
-      <div class="bolim-desc">Tayyorlanmoqda</div>
+      <div class="bolim-title-row">
+        <div class="bolim-title">8-bo'lim</div>
+        <div class="bolim-pct" data-pct="8">0%</div>
+      </div>
+      <div class="bolim-desc">Taom va ichimliklar</div>
     </div>
-    <div class="locked-badge">Tez kunda</div>
-  </div>
+    <div class="bolim-arrow">›</div>
+  </a>
+
+  <div class="section-label">Tez kunda</div>
 
   <div class="bolim-card locked-card">
     <div class="bolim-num-wrap">
@@ -224,7 +231,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
 var BOLIMLAR = [
   {num:5, key:'arabic_uz_5bolim_v5', total:294},
   {num:6, key:'arabic_uz_6bolim_v1', total:272},
-  {num:7, key:'arabic_uz_7bolim_v1', total:162}
+  {num:7, key:'arabic_uz_7bolim_v1', total:162},
+  {num:8, key:'arabic_uz_8bolim_v1', total:62}
 ];
 
 function getLearnedCount(key){

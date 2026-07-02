@@ -18,7 +18,7 @@ html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-fam
 body{padding-bottom:90px; min-height:100vh;}
 h1,h2,h3{font-weight:600; margin:0 0 8px;}
 .ar{font-family:'Amiri',serif; direction:rtl;}
-.screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto;}
+.screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto; position:relative;}
 .screen.active{display:block; animation:fadeIn .25s ease;}
 @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
@@ -46,12 +46,16 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 .word-card{cursor:pointer;}
 .word-card .icon-circle{width:48px; height:48px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px var(--halo);}
 .word-card .icon-circle i{font-size:22px; color:#0B0E14;}
-.word-card .ar{font-size:19px; color:var(--gold2); margin-bottom:6px; line-height:1.5;}
+.word-card .ar{font-size:22px; color:var(--gold2); margin-bottom:7px; line-height:1.5;}
+.word-card .ar-verb-pair{margin-bottom:7px;}
+.word-card .ar-verb-line{display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:3px;}
+.word-card .ar-verb-line .ar{font-size:17px; margin-bottom:0;}
+.word-card .ar-verb-label{font-size:9px; color:var(--muted); min-width:34px; text-align:left; font-family:'Inter',sans-serif; letter-spacing:.3px;}
 .word-card .ar-verb-pair{margin-bottom:6px;}
 .word-card .ar-verb-line{display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:2px;}
 .word-card .ar-verb-line .ar{font-size:15px; margin-bottom:0;}
 .word-card .ar-verb-label{font-size:8px; color:var(--muted); min-width:32px; text-align:left; font-family:'Inter',sans-serif; letter-spacing:.3px;}
-.word-card .uz{font-size:12px; color:var(--text); line-height:1.3;}
+.word-card .uz{font-size:14px; color:var(--text); line-height:1.4;}
 .word-card .box-dots{margin-top:8px; display:flex; justify-content:center; gap:3px;}
 .word-card .box-dots span{width:5px; height:5px; border-radius:50%; background:var(--border);}
 .word-card .box-dots span.on{background:var(--gold);}
@@ -77,7 +81,7 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 
 .quiz-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 18px; text-align:center; margin-top:10px;}
 .quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:1.6;}
-.opt-btn{display:block; width:100%; text-align:right; padding:14px 16px; margin-top:10px; border-radius:12px; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:15px; cursor:pointer; direction:rtl;}
+.opt-btn{display:block; width:100%; text-align:right; padding:15px 16px; margin-top:10px; border-radius:12px; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:16px; cursor:pointer; direction:rtl;}
 .opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8;}
 .opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188;}
 
@@ -102,28 +106,55 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 
 .center-note{text-align:center; color:var(--muted); font-size:13px; margin-top:20px;}
 
+.alifbo-toggle{
+  position:absolute; top:18px; right:16px; z-index:10;
+  display:flex; align-items:center; gap:5px;
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  padding:6px 12px; font-size:11px; color:var(--gold2); cursor:pointer;
+}
+.alifbo-toggle i{font-size:13px;}
+body{padding-bottom:130px;}
+.screen{padding-bottom:60px;}
+.gram-section:last-child{margin-bottom:80px;}
+
 /* ===== Grammatika ekrani ===== */
 .gram-section{margin-bottom:26px;}
 .gram-section h3{color:var(--gold2); font-size:15px; margin-bottom:6px;}
-.gram-note{color:var(--muted); font-size:13px; line-height:1.6; margin-bottom:14px;}
-.gram-table{width:100%; border-collapse:collapse; margin-bottom:8px; font-size:13px;}
-.gram-table th, .gram-table td{border:1px solid var(--border); padding:8px 6px; text-align:center;}
-.gram-table th{background:rgba(212,162,58,.1); color:var(--gold2); font-weight:600; font-size:11px;}
-.gram-table td.ar-cell{font-family:'Amiri',serif; direction:rtl; font-size:17px; color:var(--gold2);}
-.gram-table td.uz-cell{color:var(--muted); font-size:11px;}
-.gram-example{background:var(--card); border-left:3px solid var(--gold); border-radius:8px; padding:10px 14px; margin-top:10px;}
-.gram-example .ar{font-size:18px; color:var(--gold2);}
-.gram-example .uz{font-size:12px; color:var(--muted); margin-top:4px;}
+.gram-note{color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:14px;}
+.gram-table{width:100%; border-collapse:collapse; margin-bottom:8px; font-size:14px;}
+.gram-table th, .gram-table td{border:1px solid var(--border); padding:10px 7px; text-align:center;}
+.gram-table th{background:rgba(212,162,58,.1); color:var(--gold2); font-weight:600; font-size:12px;}
+.gram-table td.ar-cell{font-family:'Amiri',serif; direction:rtl; font-size:19px; color:var(--gold2);}
+.gram-table td.uz-cell{color:var(--muted); font-size:13px;}
+.gram-example{background:var(--card); border-left:3px solid var(--gold); border-radius:8px; padding:12px 14px; margin-top:10px;}
+.gram-example .ar{font-size:20px; color:var(--gold2);}
+.gram-example .uz{font-size:13px; color:var(--muted); margin-top:5px;}
 .future-box{display:flex; gap:10px; margin-top:10px;}
 .future-item{flex:1; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center;}
 .future-item .particle{font-family:'Amiri',serif; font-size:22px; color:var(--gold); margin-bottom:6px;}
 .future-item .label{font-size:11px; color:var(--muted);}
+
+/* ===== Flashkard ===== */
+.fc-card{background:var(--card); border:1px solid var(--gold); border-radius:20px; padding:40px 20px; text-align:center; margin-top:16px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;}
+.fc-card .ar-big{font-size:38px; color:var(--gold2); line-height:1.6;}
+.fc-card .ar-big2{font-size:26px; color:var(--gold); margin-top:6px; display:none;}
+.fc-card .uz-reveal{font-size:18px; color:var(--text); margin-top:14px; display:none;}
+.fc-card.flipped .uz-reveal{display:block;}
+.fc-hint{text-align:center; color:var(--muted); font-size:12px; margin-top:10px;}
+.fc-btn-row{display:flex; gap:10px; margin-top:16px;}
+.fc-btn{flex:1; padding:16px; border-radius:12px; border:none; font-weight:600; font-size:15px; cursor:pointer;}
+.fc-btn-know{background:linear-gradient(135deg,#6FBF8B,#8FD9A8); color:#0B0E14;}
+.fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
 </style>
 </head>
 <body>
 
 <!-- ================= EKRAN: Bosh menyu ================= -->
 <div class="screen active" id="screen-home">
+  <div class="alifbo-toggle" onclick="toggleAlifbo()">
+    <span id="alifbo-label">Кирилл</span>
+    <i class="ti ti-repeat"></i>
+  </div>
   <div class="top-header">
     <div class="badge">9-bo'lim</div>
     <div class="ar-title ar">التَّسَوُّقُ</div>
@@ -143,6 +174,11 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
       <i class="ti ti-brain"></i>
       <div class="t">Test</div>
       <div class="s">SRS takrorlash</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('flashcard-setup')">
+      <i class="ti ti-cards"></i>
+      <div class="t">Flashkard</div>
+      <div class="s">Flip + o'z-o'zini baholash</div>
     </div>
     <div class="menu-card" onclick="goScreen('gap-setup')">
       <i class="ti ti-puzzle"></i>
@@ -168,6 +204,49 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
   <h2>Lug'at</h2>
   <div class="filter-row" id="cat-filters"></div>
   <div class="word-grid" id="word-grid"></div>
+</div>
+
+<!-- ================= EKRAN: Flashkard sozlash ================= -->
+<div class="screen" id="screen-flashcard-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Flashkard</h2>
+  <p style="color:var(--muted); font-size:14px;">Arabcha so'zni ko'rasiz, xayolingizda tarjimasini ayting, so'ng bosib "ochasiz". Keyin o'zingiz "Bildim" yoki "Bilmadim" deb belgilaysiz — bu SRS tizimiga to'g'ridan-to'g'ri ta'sir qiladi.</p>
+  <div class="premium-card" style="margin-top:16px;">
+    <i class="ti ti-cards" style="font-size:32px;color:var(--gold);"></i>
+    <div style="margin-top:10px; font-size:14px;">Kartochkalar soni: <b id="fc-count-label">15</b></div>
+    <input type="range" min="5" max="79" value="15" step="1" id="fc-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('fc-count-label').textContent=this.value">
+  </div>
+  <button class="premium-btn-primary" onclick="startFlashcard()">Boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Flashkard (mashq) ================= -->
+<div class="screen" id="screen-flashcard">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="fc-progress-bar" style="width:0%"></div></div>
+  <div class="fc-card" id="fc-card" onclick="flipCard()">
+    <div class="ar-big ar" id="fc-word"></div>
+    <div class="ar-big ar-big2 ar" id="fc-word2"></div>
+    <div class="uz-reveal" id="fc-translation"></div>
+  </div>
+  <div class="fc-hint" id="fc-hint">Kartochkaga bosib javobni oching</div>
+  <div class="fc-btn-row" id="fc-btn-row" style="display:none;">
+    <button class="fc-btn fc-btn-dontknow" onclick="answerFlashcard(false)">Bilmadim ✗</button>
+    <button class="fc-btn fc-btn-know" onclick="answerFlashcard(true)">Bildim ✓</button>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Flashkard natijasi ================= -->
+<div class="screen" id="screen-flashcard-result">
+  <div class="top-header">
+    <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
+    <h1 style="margin-top:10px;">Flashkard tugadi!</h1>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="fc-result-know">0</div><div class="lbl">Bildim</div></div>
+    <div class="stat-box"><div class="num" id="fc-result-dontknow">0</div><div class="lbl">Bilmadim</div></div>
+  </div>
+  <button class="premium-btn-primary" onclick="goScreen('flashcard-setup')">Yana flashkard</button>
+  <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
 </div>
 
 <!-- ================= EKRAN: Test sozlash ================= -->
@@ -226,7 +305,7 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="gap-progress-bar" style="width:0%"></div></div>
   <div class="quiz-card">
-    <div style="font-size:13px; color:var(--muted); margin-bottom:10px;" id="gap-cyr"></div>
+    <div style="font-size:15px; color:var(--muted); margin-bottom:10px;" id="gap-cyr"></div>
     <div class="gt-answer" id="gt-answer"></div>
     <div class="gt-pool" id="gt-pool"></div>
     <div id="gt-feedback" style="margin-top:10px; font-size:14px; min-height:20px;"></div>
@@ -306,6 +385,57 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 <script>
 const LS_KEY = "arabic_uz_9bolim_v1";
 const ACH_KEY = "arabic_achievements_v1";
+
+const ALIFBO_KEY = "arabic_alifbo_pref";
+
+// ---------------- Kirill -> Lotin ----------------
+const CYR_TO_LAT = {
+  'а':'a','б':'b','в':'v','г':'g','д':'d','ё':'yo','ж':'j','з':'z','и':'i','й':'y',
+  'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u',
+  'ф':'f','х':'x','ц':'ts','ч':'ch','ш':'sh','щ':'sh','ъ':"'",'ы':'i','ь':'',
+  'э':'e','ю':'yu','я':'ya','ў':"o'",'қ':'q','ғ':"g'",'ҳ':'h'
+};
+function toLatin(str){
+  if(!str) return str;
+  let result = '';
+  let atWordStart = true;
+  for(let i=0;i<str.length;i++){
+    const ch = str[i];
+    const lower = ch.toLowerCase();
+    if(lower === 'е'){
+      let piece = atWordStart ? 'ye' : 'e';
+      if(ch !== lower) piece = piece.charAt(0).toUpperCase()+piece.slice(1);
+      result += piece;
+      atWordStart = false;
+      continue;
+    }
+    if(CYR_TO_LAT.hasOwnProperty(lower)){
+      let piece = CYR_TO_LAT[lower];
+      if(ch !== lower && piece.length>0) piece = piece.charAt(0).toUpperCase()+piece.slice(1);
+      result += piece;
+      atWordStart = false;
+    } else {
+      result += ch;
+      atWordStart = /[\s\-.,!?()«»"'\/]/.test(ch);
+    }
+  }
+  return result;
+}
+let currentAlifbo = localStorage.getItem(ALIFBO_KEY) || 'kr';
+function dtxt(str){
+  return currentAlifbo === 'lt' ? toLatin(str) : str;
+}
+function toggleAlifbo(){
+  currentAlifbo = currentAlifbo === 'kr' ? 'lt' : 'kr';
+  localStorage.setItem(ALIFBO_KEY, currentAlifbo);
+  updateAlifboLabel();
+  renderWordGrid();
+}
+function updateAlifboLabel(){
+  const el = document.getElementById('alifbo-label');
+  if(el) el.textContent = currentAlifbo === 'kr' ? 'Кирилл' : 'Lotin';
+}
+
 
 const CAT_COLORS = {
   "Буюмлар":"#D4A23A","Уй":"#7C8FE8","Феъллар":"#6FBF8B","Сифатлар":"#C97AAE",
@@ -401,7 +531,7 @@ function renderWordGrid(){
       '<div class="icon-circle" style="background:linear-gradient(135deg,'+color+','+color+'AA); --halo:'+hexToRgba(color,.12)+'">'+
       '<i class="ti ti-'+w.icon+'"></i></div>'+
       arBlock+
-      '<div class="uz">'+w.uz+'</div>'+
+      '<div class="uz">'+dtxt(w.uz)+'</div>'+
       '<div class="box-dots">'+dots+'</div>'+
       '</div>';
   }).join('');
@@ -417,6 +547,60 @@ function toggleLearned(ar){
 function renderLugat(){
   renderCatFilters();
   renderWordGrid();
+}
+
+/* ---------------- Flashkard rejimi ---------------- */
+let fcState = null;
+function startFlashcard(){
+  const count = parseInt(document.getElementById('fc-count').value,10);
+  const words = shuffle(ALL_WORDS).slice(0, count);
+  fcState = { words, idx:0, know:0, dontknow:0, flipped:false };
+  goScreen('flashcard');
+  renderFlashcard();
+}
+function renderFlashcard(){
+  const w = fcState.words[fcState.idx];
+  document.getElementById('fc-progress-bar').style.width = Math.round((fcState.idx/fcState.words.length)*100)+'%';
+  document.getElementById('fc-word').textContent = w.ar;
+  const w2el = document.getElementById('fc-word2');
+  if(w.ar2){ w2el.textContent = w.ar2; w2el.style.display = 'block'; }
+  else { w2el.style.display = 'none'; }
+  document.getElementById('fc-translation').textContent = dtxt(w.uz);
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-btn-row').style.display = 'none';
+  document.getElementById('fc-hint').style.display = 'block';
+  fcState.flipped = false;
+}
+function flipCard(){
+  if(fcState.flipped) return;
+  fcState.flipped = true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-btn-row').style.display = 'flex';
+  document.getElementById('fc-hint').style.display = 'none';
+}
+function answerFlashcard(knew){
+  const w = fcState.words[fcState.idx];
+  const state = loadProgress();
+  const newBox = {...(state.box||{})};
+  const curBox = newBox[w.ar]||1;
+  newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1;
+  state.box = newBox;
+  if(knew){
+    fcState.know++;
+    if(state.learned.indexOf(w.ar)===-1) state.learned.push(w.ar);
+    addAchievementXP(2);
+  } else {
+    fcState.dontknow++;
+  }
+  saveProgress(state);
+  fcState.idx++;
+  if(fcState.idx < fcState.words.length){
+    renderFlashcard();
+  } else {
+    document.getElementById('fc-result-know').textContent = fcState.know;
+    document.getElementById('fc-result-dontknow').textContent = fcState.dontknow;
+    goScreen('flashcard-result');
+  }
 }
 
 let quizState = null;
@@ -460,7 +644,7 @@ function renderQuizQuestion(){
   options.forEach(o=>{
     const btn = document.createElement('button');
     btn.className='opt-btn';
-    btn.textContent = o.uz;
+    btn.textContent = dtxt(o.uz);
     btn.onclick = ()=>answerQuiz(o, q, btn, opWrap);
     opWrap.appendChild(btn);
   });
@@ -521,7 +705,7 @@ function startGapTuzish(){
 function renderGapQuestion(){
   const item = gapState.items[gapState.idx];
   document.getElementById('gap-progress-bar').style.width = Math.round((gapState.idx/gapState.items.length)*100)+'%';
-  document.getElementById('gap-cyr').textContent = item.cyr;
+  document.getElementById('gap-cyr').textContent = dtxt(item.cyr);
   document.getElementById('gt-feedback').textContent = '';
   const shuffledWords = shuffle(item.words.map((w,i)=>({w,i})));
   window.__gapCurrentAnswer = [];
@@ -589,6 +773,7 @@ function renderStats(){
   document.getElementById('stats-progress-text').textContent = pct+'%';
 }
 
+updateAlifboLabel();
 renderHome();
 </script>
 </body>

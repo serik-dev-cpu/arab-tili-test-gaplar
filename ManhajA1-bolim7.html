@@ -385,14 +385,14 @@ function loadProgress(){
     return {learned:new Set(d.learned||[]), rounds:d.rounds||[], mistakes:d.mistakes||{}, savedName:d.savedName||"",
       gapMistakes:d.gapMistakes||{}, gapLearned:new Set(d.gapLearned||[]),
       gapCycles:d.gapCycles||{oson:0,ortacha:0,profi:0,barchasi:0},
-      gapDeck:d.gapDeck||{}};
+      gapDeck:d.gapDeck||{}, box:d.box||{}};
   }catch{ return {learned:new Set(),rounds:[],mistakes:{},savedName:"",gapMistakes:{},gapLearned:new Set(),
-    gapCycles:{oson:0,ortacha:0,profi:0,barchasi:0}, gapDeck:{}}; }
+    gapCycles:{oson:0,ortacha:0,profi:0,barchasi:0}, gapDeck:{}, box:{}}; }
 }
 function saveProgress(p){
   try{ localStorage.setItem(LS_KEY, JSON.stringify({learned:[...p.learned],rounds:p.rounds,mistakes:p.mistakes,savedName:p.savedName,
     gapMistakes:p.gapMistakes||{}, gapLearned:[...(p.gapLearned||new Set())],
-    gapCycles:p.gapCycles||{oson:0,ortacha:0,profi:0,barchasi:0}, gapDeck:p.gapDeck||{}})); }catch{}
+    gapCycles:p.gapCycles||{oson:0,ortacha:0,profi:0,barchasi:0}, gapDeck:p.gapDeck||{}, box:p.box||{}})); }catch{}
 }
 
 // ═══════════════════════════════════
@@ -1658,10 +1658,20 @@ function buildQuiz(){
     if(shortPool.length>=4) pool = shortPool;
   }
   const count = mode==='blitz'?30:20;
-  let unseen = pool.filter(w=>!learned.has(w.ar));
-  let sel = unseen.length>=count ? shuffle(unseen).slice(0,count)
-    : [...shuffle(unseen), ...shuffle(pool.filter(w=>learned.has(w.ar))).slice(0,Math.max(0,count-unseen.length))];
-  if(sel.length<count&&pool.length>=count) sel=shuffle(pool).slice(0,count);
+  // SRS (Leitner qutisi): box qanча кичик булса, сўз шунча кўп такрорланади.
+  // Кўрилмаган сўз ва хато қилинган сўз (box=1) энг юқори устуворликка эга,
+  // яхши ўзлаштирилган сўз (box=5) камроқ такрорланади.
+  const box = state.box||{};
+  const weight = w => Math.max(1, 6-(box[w.ar]||1));
+  let weighted = [];
+  pool.forEach(w=>{ const wt=weight(w); for(let i=0;i<wt;i++) weighted.push(w); });
+  let sel = [];
+  { const seenAr=new Set();
+    shuffle(weighted).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+    if(sel.length<count){
+      shuffle(pool).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+    }
+  }
   if(sel.length<4) sel=shuffle(ALL_WORDS).slice(0,count);
   return sel.map(w=>{
     // "Ёзма" режимида арабча ёзишни кoпроқ машq қилдириш учун (қoл oрганиши учун)
@@ -1927,11 +1937,17 @@ function renderQuizScreen(){
       if(r.correct) newLearned.add(r.word.ar);
       if(!r.correct) newMistakes[r.word.ar]=(newMistakes[r.word.ar]||0)+1;
     });
+    const newBox={...(state.box||{})};
+    qs.results.forEach(r=>{
+      const curBox=newBox[r.word.ar]||1;
+      newBox[r.word.ar]=r.correct?Math.min(5,curBox+1):1;
+    });
     const correct=qs.results.filter(r=>r.correct).length;
     const pct=Math.round(correct/qs.results.length*100);
     const totalSec=Math.round((Date.now()-qs.tStart)/1000);
     state.learned=newLearned;
     state.mistakes=newMistakes;
+    state.box=newBox;
     saveProgress(state);
     // Категория бўйича натижа (ҳар сўзнинг cat'и асосида)
     const catResults={};

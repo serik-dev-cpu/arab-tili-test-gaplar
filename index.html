@@ -205,18 +205,41 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
     <div class="bolim-arrow">›</div>
   </a>
 
-  <div class="section-label">Tez kunda</div>
-
-  <div class="bolim-card locked-card">
+  <a href="ManhajA1-bolim9.html" class="bolim-card active" data-bolim="9">
     <div class="bolim-num-wrap">
-      <div class="bolim-num locked">9</div>
+      <svg class="bolim-num-svg" viewBox="0 0 52 52">
+        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
+        <circle class="bolim-num-fill" data-ring="9" cx="26" cy="26" r="22.5"/>
+      </svg>
+      <div class="bolim-num">9</div>
     </div>
     <div class="bolim-info">
-      <div class="bolim-title">9-bo'lim</div>
-      <div class="bolim-desc">Tayyorlanmoqda</div>
+      <div class="bolim-title-row">
+        <div class="bolim-title">9-bo'lim</div>
+        <div class="bolim-pct" data-pct="9">0%</div>
+      </div>
+      <div class="bolim-desc">Xarid qilish</div>
     </div>
-    <div class="locked-badge">Tez kunda</div>
-  </div>
+    <div class="bolim-arrow">›</div>
+  </a>
+
+  <a href="ManhajA1-bolim10.html" class="bolim-card active" data-bolim="10">
+    <div class="bolim-num-wrap">
+      <svg class="bolim-num-svg" viewBox="0 0 52 52">
+        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
+        <circle class="bolim-num-fill" data-ring="10" cx="26" cy="26" r="22.5"/>
+      </svg>
+      <div class="bolim-num">10</div>
+    </div>
+    <div class="bolim-info">
+      <div class="bolim-title-row">
+        <div class="bolim-title">10-bo'lim</div>
+        <div class="bolim-pct" data-pct="10">0%</div>
+      </div>
+      <div class="bolim-desc">Shifokorda</div>
+    </div>
+    <div class="bolim-arrow">›</div>
+  </a>
 
   <div class="footer-note">
     Yangi bo'limlar qo'shilganda shu sahifa avtomatik yangilanadi.<br/>
@@ -232,7 +255,9 @@ var BOLIMLAR = [
   {num:5, key:'arabic_uz_5bolim_v5', total:294},
   {num:6, key:'arabic_uz_6bolim_v1', total:272},
   {num:7, key:'arabic_uz_7bolim_v1', total:162},
-  {num:8, key:'arabic_uz_8bolim_v1', total:62}
+  {num:8, key:'arabic_uz_8bolim_v1', total:62},
+  {num:9, key:'arabic_uz_9bolim_v1', total:79},
+  {num:10, key:'arabic_uz_10bolim_v1', total:54}
 ];
 
 function getLearnedCount(key){

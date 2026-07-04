@@ -395,6 +395,7 @@ body{padding-bottom:130px;}
 <div class="screen" id="screen-stats">
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Natijalar</h2>
+  <div class="center-note" id="stats-student-name" style="color:var(--gold2); font-weight:700; margin-bottom:10px;"></div>
   <div class="stat-row">
     <div class="stat-box"><div class="num" id="stat-learned">0</div><div class="lbl">O'rganilgan so'z</div></div>
     <div class="stat-box"><div class="num" id="stat-total">79</div><div class="lbl">Jami so'z</div></div>
@@ -410,6 +411,11 @@ const LS_KEY = "arabic_uz_9bolim_v1";
 const ACH_KEY = "arabic_achievements_v1";
 
 const ALIFBO_KEY = "arabic_alifbo_pref";
+
+// ═══ UMUMIY ISM TIZIMI ═══
+const SHARED_NAME_KEY = "arabic_student_name";
+let currentName = localStorage.getItem(SHARED_NAME_KEY) || "";
+if(!currentName){ location.replace('index.html'); }
 
 // ---------------- Kirill -> Lotin ----------------
 const CYR_TO_LAT = {
@@ -838,6 +844,8 @@ function nextGapQuestion(){
 
 function renderStats(){
   const state = loadProgress();
+  const nameEl = document.getElementById('stats-student-name');
+  if(nameEl) nameEl.textContent = 'Talaba: ' + currentName;
   document.getElementById('stat-learned').textContent = state.learned.length;
   document.getElementById('stat-total').textContent = ALL_WORDS.length;
   const pct = Math.round((state.learned.length/ALL_WORDS.length)*100);

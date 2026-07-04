@@ -10,7 +10,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;background:#0B0E14;color:#EDEFF5;font-family:'Inter',system-ui,-apple-system,sans-serif}
-body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60px}
+body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60px}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .35s ease both}
@@ -45,69 +45,139 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
 .summary-sub{font-size:13px;color:#9BA3B4;line-height:1.5}
 .summary-sub b{color:#EDEFF5;font-weight:700}
 
-.section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:28px 0 12px 4px}
+.section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
+.section-label .path-dot{width:6px;height:6px;border-radius:50%;background:#D4A23A}
 
-.bolim-card{
-  display:flex;align-items:center;gap:16px;
-  width:100%;padding:16px 20px;margin-bottom:12px;
-  background:linear-gradient(165deg,#161A24 0%,#12151E 100%);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:16px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
-  text-decoration:none;
-  transition:transform .15s cubic-bezier(.34,1.56,.64,1), border-color .15s ease;
+/* ═══════════ YO'L (ROADMAP) ═══════════ */
+.roadmap{position:relative;padding:14px 0 6px}
+
+/* markazdagi vertikal yo'l chizig'i */
+.road-line-bg{
+  position:absolute;left:50%;top:30px;bottom:30px;width:3px;
+  transform:translateX(-50%);
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.10) 0 6px, transparent 6px 12px);
+  border-radius:3px;
+  z-index:0;
 }
-.bolim-card:active{transform:scale(.97)}
-.bolim-card.active{border-color:rgba(212,162,58,0.35)}
+.road-line-fill{
+  position:absolute;left:50%;top:30px;width:3px;
+  transform:translateX(-50%);
+  background:linear-gradient(to bottom,#F0C56B,#D4A23A);
+  border-radius:3px;
+  z-index:0;
+  transition:height 1.2s cubic-bezier(.16,1,.3,1);
+}
 
-/* Raqam endi progress-ring bilan o'ralgan */
-.bolim-num-wrap{position:relative;flex-shrink:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center}
-.bolim-num-svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.bolim-num-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:3.5}
-.bolim-num-fill{fill:none;stroke:#D4A23A;stroke-width:3.5;stroke-linecap:round;
-  stroke-dasharray:141.4;stroke-dashoffset:141.4;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1)}
-.bolim-num{
+.road-row{
   position:relative;z-index:1;
-  width:40px;height:40px;
-  border-radius:11px;
+  display:grid;grid-template-columns:1fr 58px 1fr;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+/* markazdagi tugun (raqam doirasi) */
+.road-node-wrap{position:relative;width:58px;height:58px;display:flex;align-items:center;justify-content:center;grid-column:2}
+.road-node-svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.road-node-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:3.5}
+.road-node-fill{fill:none;stroke:#D4A23A;stroke-width:3.5;stroke-linecap:round;
+  stroke-dasharray:141.4;stroke-dashoffset:141.4;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1)}
+.road-node{
+  position:relative;z-index:1;width:42px;height:42px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:800;
+  font-size:17px;font-weight:800;
   background:linear-gradient(135deg,#D4A23A,#B8841F);
   color:#0B0E14;
+  box-shadow:0 3px 10px rgba(212,162,58,.25);
 }
-.bolim-num.locked{background:rgba(255,255,255,0.05);color:#5A6275}
+.road-node.locked{background:rgba(255,255,255,0.05);color:#5A6275;box-shadow:none;font-size:16px}
 
-.bolim-info{flex:1;min-width:0}
-.bolim-title-row{display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.bolim-title{font-size:16px;font-weight:700;color:#EDEFF5}
-.bolim-pct{
-  font-size:11px;font-weight:800;color:#D4A23A;
-  background:rgba(212,162,58,.12);padding:2px 7px;border-radius:8px;
+/* kartochka (matn qismi) — chapga yoki o'ngga qarab */
+.road-card{
+  padding:13px 16px;border-radius:14px;text-decoration:none;
+  background:linear-gradient(165deg,#161A24 0%,#12151E 100%);
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.25);
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1), border-color .15s ease;
 }
-.bolim-desc{font-size:13px;color:#8A93A6}
+.road-card:active{transform:scale(.96)}
+.road-row.side-left .road-card{grid-column:1;text-align:right;margin-right:2px}
+.road-row.side-right .road-card{grid-column:3;text-align:left;margin-left:2px}
+.road-card.is-active{border-color:rgba(212,162,58,0.3)}
+.road-card.is-locked{opacity:.5}
 
-.bolim-arrow{flex-shrink:0;color:#D4A23A;font-size:20px}
+.road-title-row{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.road-row.side-left .road-title-row{justify-content:flex-end}
+.road-title{font-size:15px;font-weight:700;color:#EDEFF5}
+.road-pct{font-size:10px;font-weight:800;color:#D4A23A;background:rgba(212,162,58,.12);padding:2px 6px;border-radius:7px;white-space:nowrap}
+.road-desc{font-size:12px;color:#8A93A6}
+.road-card.is-locked .road-title{color:#7A8296}
+.road-card.is-locked .road-desc{color:#5A6275;font-style:italic}
 
-.locked-card{opacity:.45;cursor:default}
-.locked-card .bolim-title{color:#8A93A6}
-.locked-badge{
-  flex-shrink:0;font-size:11px;font-weight:700;color:#5A6275;
-  background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:20px;
+/* yo'l boshi va oxiri belgilari */
+.road-flag{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:#5A6275;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  margin-bottom:6px;position:relative;z-index:1;
 }
+.road-flag.start{color:#D4A23A}
+.road-flag-icon{font-size:18px}
 
 .footer-note{
-  margin-top:32px;text-align:center;color:#5A6275;font-size:12px;line-height:1.6;
+  margin-top:20px;text-align:center;color:#5A6275;font-size:12px;line-height:1.6;
 }
 .footer-note b{color:#8A93A6}
+
+/* ═══════════ ISM-GATE (sayohatni boshlash ekrani) ═══════════ */
+.namegate{
+  width:100%;max-width:380px;text-align:center;
+  padding:8px 4px 0;
+}
+.namegate-icon{font-size:44px;margin-bottom:14px;animation:fadeIn .5s ease both}
+.namegate-title{
+  font-family:'Amiri',serif;font-size:24px;font-weight:700;color:#F0C56B;
+  margin-bottom:10px;direction:rtl;
+}
+.namegate-sub{color:#9BA3B4;font-size:14px;line-height:1.6;margin-bottom:26px}
+.namegate-sub b{color:#EDEFF5}
+.namegate-input{
+  width:100%;padding:16px 18px;border-radius:14px;
+  border:1.5px solid rgba(212,162,58,0.3);
+  background:#12151E;color:#EDEFF5;font-size:17px;font-weight:600;
+  text-align:center;margin-bottom:16px;
+}
+.namegate-input:focus{outline:none;border-color:#D4A23A}
+.namegate-input::placeholder{color:#5A6275;font-weight:400}
+.namegate-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,#D4A23A,#F0C56B);
+  color:#0B0E14;font-size:16px;font-weight:800;
+  box-shadow:0 6px 20px rgba(212,162,58,.3);
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1);
+}
+.namegate-btn:active{transform:scale(.97)}
+.namegate-input.shake{animation:shakeX .4s}
+@keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 </style>
 </head>
 <body>
 
-<div class="wrap fade-in">
+<!-- ═══════════ ISM-GATE ═══════════ -->
+<div class="namegate fade-in" id="nameGate" style="display:none">
+  <div class="namegate-icon">🧭</div>
+  <div class="namegate-title">بِسْمِ اللَّٰهِ نَبْدَأُ</div>
+  <div class="namegate-sub">
+    <b>12 bosqichli arabcha sayohat</b> boshlanmoqda.<br/>
+    Yo'lni siz bilan boshlash uchun ismingizni yozing.
+  </div>
+  <input type="text" class="namegate-input" id="nameInput" placeholder="Masalan: Aziz" maxlength="30"/>
+  <button class="namegate-btn" id="nameGoBtn">Sayohatni boshlash 🚀</button>
+</div>
+
+<div class="wrap fade-in" id="mainApp" style="display:none">
   <div class="header">
     <div class="kicker">Al-Manhajul Al-A'lamiy</div>
     <div class="title">المنهج الألمعي</div>
-    <div class="subtitle">A1 daraja · Interaktiv mashqlar</div>
+    <div class="subtitle" id="subtitleText">A1 daraja · 12 bosqichli sayohat</div>
   </div>
 
   <!-- ═══ UMUMIY NATIJA ═══ -->
@@ -131,115 +201,25 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
     </div>
   </div>
 
-  <div class="section-label">Tayyor bo'limlar</div>
+  <div class="section-label"><span class="path-dot"></span>O'quv yo'li</div>
 
-  <a href="ManhajA1-bolim5.html" class="bolim-card active" data-bolim="5">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="5" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">5</div>
-    </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">5-bo'lim</div>
-        <div class="bolim-pct" data-pct="5">0%</div>
-      </div>
-      <div class="bolim-desc">Lug'at qo'llanma</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
+  <!-- ═══════════ ROADMAP ═══════════ -->
+  <div class="roadmap" id="roadmap">
+    <div class="road-line-bg"></div>
+    <div class="road-line-fill" id="roadLineFill"></div>
 
-  <a href="ManhajA1-bolim6.html" class="bolim-card active" data-bolim="6">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="6" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">6</div>
+    <div class="road-flag start">
+      <div class="road-flag-icon">🚩</div>
+      Boshlanish
     </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">6-bo'lim</div>
-        <div class="bolim-pct" data-pct="6">0%</div>
-      </div>
-      <div class="bolim-desc">Mini test · Gap tuzish</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
 
-  <a href="ManhajA1-bolim7.html" class="bolim-card active" data-bolim="7">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="7" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">7</div>
-    </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">7-bo'lim</div>
-        <div class="bolim-pct" data-pct="7">0%</div>
-      </div>
-      <div class="bolim-desc">Safar va transport</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
+    <div id="roadRows"></div>
 
-  <a href="ManhajA1-bolim8.html" class="bolim-card active" data-bolim="8">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="8" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">8</div>
+    <div class="road-flag" style="margin-top:2px">
+      <div class="road-flag-icon">🏁</div>
+      Manzil — A1 yakuni
     </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">8-bo'lim</div>
-        <div class="bolim-pct" data-pct="8">0%</div>
-      </div>
-      <div class="bolim-desc">Taom va ichimliklar</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
-
-  <a href="ManhajA1-bolim9.html" class="bolim-card active" data-bolim="9">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="9" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">9</div>
-    </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">9-bo'lim</div>
-        <div class="bolim-pct" data-pct="9">0%</div>
-      </div>
-      <div class="bolim-desc">Xarid qilish</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
-
-  <a href="ManhajA1-bolim10.html" class="bolim-card active" data-bolim="10">
-    <div class="bolim-num-wrap">
-      <svg class="bolim-num-svg" viewBox="0 0 52 52">
-        <circle class="bolim-num-track" cx="26" cy="26" r="22.5"/>
-        <circle class="bolim-num-fill" data-ring="10" cx="26" cy="26" r="22.5"/>
-      </svg>
-      <div class="bolim-num">10</div>
-    </div>
-    <div class="bolim-info">
-      <div class="bolim-title-row">
-        <div class="bolim-title">10-bo'lim</div>
-        <div class="bolim-pct" data-pct="10">0%</div>
-      </div>
-      <div class="bolim-desc">Shifokorda</div>
-    </div>
-    <div class="bolim-arrow">›</div>
-  </a>
+  </div>
 
   <div class="footer-note">
     Yangi bo'limlar qo'shilganda shu sahifa avtomatik yangilanadi.<br/>
@@ -249,15 +229,63 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 20px 60p
 
 <script>
 'use strict';
-// Har bir bo'limning localStorage kaliti va jami so'zlar soni
+
+// ═══ UMUMIY ISM TIZIMI — barcha bo'limlar shu kalitdan foydalanadi ═══
+var SHARED_NAME_KEY = 'arabic_student_name';
+
+function initNameGate(){
+  var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
+  var gate = document.getElementById('nameGate');
+  var app = document.getElementById('mainApp');
+
+  if(savedName){
+    // Ism allaqachon bor — to'g'ridan-to'g'ri roadmap'ni ko'rsatamiz
+    gate.style.display = 'none';
+    app.style.display = 'block';
+    var subtitle = document.getElementById('subtitleText');
+    if(subtitle) subtitle.textContent = "Xush kelibsiz, " + savedName + "! \uD83D\uDC4B";
+    return true;
+  }
+
+  // Ism yo'q — sayohatni boshlash ekranini ko'rsatamiz
+  gate.style.display = 'block';
+  app.style.display = 'none';
+
+  var input = document.getElementById('nameInput');
+  var goBtn = document.getElementById('nameGoBtn');
+
+  function submitName(){
+    var n = input.value.trim();
+    if(!n){
+      input.classList.add('shake');
+      input.style.borderColor = '#C0392B';
+      setTimeout(function(){ input.classList.remove('shake'); }, 400);
+      return;
+    }
+    localStorage.setItem(SHARED_NAME_KEY, n);
+    location.reload();
+  }
+  goBtn.addEventListener('click', submitName);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submitName(); });
+  input.focus();
+  return false;
+}
+
+// Har bir tayyor bo'limning localStorage kaliti va jami so'zlar soni
 // (bu ikkalasi bo'lim ichidagi ALL_WORDS.length va LS_KEY bilan aynan mos kelishi kerak)
 var BOLIMLAR = [
-  {num:5, key:'arabic_uz_5bolim_v5', total:294},
-  {num:6, key:'arabic_uz_6bolim_v1', total:272},
-  {num:7, key:'arabic_uz_7bolim_v1', total:162},
-  {num:8, key:'arabic_uz_8bolim_v1', total:62},
-  {num:9, key:'arabic_uz_9bolim_v1', total:79},
-  {num:10, key:'arabic_uz_10bolim_v1', total:54}
+  {num:5,  key:'arabic_uz_5bolim_v5',  total:294, desc:"Lug'at qo'llanma"},
+  {num:6,  key:'arabic_uz_6bolim_v1',  total:272, desc:"Mini test · Gap tuzish"},
+  {num:7,  key:'arabic_uz_7bolim_v1',  total:162, desc:"Safar va transport"},
+  {num:8,  key:'arabic_uz_8bolim_v1',  total:62,  desc:"Taom va ichimliklar"},
+  {num:9,  key:'arabic_uz_9bolim_v1',  total:79,  desc:"Xarid qilish"},
+  {num:10, key:'arabic_uz_10bolim_v1', total:54,  desc:"Shifokorda"}
+];
+
+// Hali tayyor bo'lmagan bo'limlar — har biriga alohida chiroyli matn
+var LOCKED_BOLIMLAR = [
+  {num:11, phrase:"Yaqinda ochiladi"},
+  {num:12, phrase:"Sayohat nihoyasi \uD83C\uDFC1"}
 ];
 
 function getLearnedCount(key){
@@ -269,15 +297,67 @@ function getLearnedCount(key){
 
 function animateRing(circleEl, pct, circumference){
   var offset = circumference - (circumference * Math.min(100,Math.max(0,pct)) / 100);
-  // reflow'ni majburlash — animatsiya doim ishga tushishi uchun
   circleEl.style.strokeDasharray = circumference;
-  circleEl.getBoundingClientRect();
+  circleEl.getBoundingClientRect(); // reflow'ni majburlash — animatsiya doim ishga tushishi uchun
   circleEl.style.strokeDashoffset = offset;
 }
 
-(function init(){
+// Bitta "yo'l qatori" (road-row) HTML'ini quradi — tayyor yoki qulflangan bo'lim uchun
+function buildRow(item, isLocked, sideLeft){
+  var side = sideLeft ? 'side-left' : 'side-right';
+  var cardInner =
+    '<div class="road-title-row">' +
+      '<div class="road-title">' + item.num + '-bo\'lim</div>' +
+      (isLocked ? '' : '<div class="road-pct" data-pct="'+item.num+'">0%</div>') +
+    '</div>' +
+    '<div class="road-desc">' + (isLocked ? item.phrase : item.desc) + '</div>';
+
+  var cardTag = isLocked ? 'div' : 'a';
+  var cardHref = isLocked ? '' : ' href="ManhajA1-bolim' + item.num + '.html"';
+  var cardClass = 'road-card ' + (isLocked ? 'is-locked' : 'is-active');
+
+  var nodeInner = isLocked
+    ? '\uD83D\uDD12'
+    : item.num;
+
+  var nodeRing = isLocked ? '' :
+    '<svg class="road-node-svg" viewBox="0 0 58 58">' +
+      '<circle class="road-node-track" cx="29" cy="29" r="25"/>' +
+      '<circle class="road-node-fill" data-ring="' + item.num + '" cx="29" cy="29" r="25"/>' +
+    '</svg>';
+
+  return (
+    '<div class="road-row ' + side + '">' +
+      '<' + cardTag + cardHref + ' class="' + cardClass + '" data-bolim="' + item.num + '">' +
+        cardInner +
+      '</' + cardTag + '>' +
+      '<div class="road-node-wrap">' +
+        nodeRing +
+        '<div class="road-node' + (isLocked ? ' locked' : '') + '">' + nodeInner + '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function initRoadmap(){
+  var rowsHtml = '';
+  var sideLeft = true;
+  var allNum = BOLIMLAR.length + LOCKED_BOLIMLAR.length;
+
+  BOLIMLAR.forEach(function(b){
+    rowsHtml += buildRow(b, false, sideLeft);
+    sideLeft = !sideLeft;
+  });
+  LOCKED_BOLIMLAR.forEach(function(b){
+    rowsHtml += buildRow(b, true, sideLeft);
+    sideLeft = !sideLeft;
+  });
+
+  document.getElementById('roadRows').innerHTML = rowsHtml;
+
+  // ── Progress hisoblash va uzuklarni animatsiya qilish ──
   var totalLearned = 0, totalWords = 0, anyStarted = false;
-  var RING_C = 2 * Math.PI * 22.5; // ≈ 141.37 — kichik uzuklar uchun
+  var RING_C = 2 * Math.PI * 25; // road-node uzugi radiusi=25
 
   BOLIMLAR.forEach(function(b){
     var learned = getLearnedCount(b.key);
@@ -293,7 +373,7 @@ function animateRing(circleEl, pct, circumference){
   });
 
   var overallPct = totalWords ? Math.round(totalLearned / totalWords * 100) : 0;
-  var SUMMARY_C = 2 * Math.PI * 37; // ≈ 232.5
+  var SUMMARY_C = 2 * Math.PI * 37;
 
   var summaryRing = document.getElementById('summaryRing');
   var summaryPct = document.getElementById('summaryPct');
@@ -303,10 +383,24 @@ function animateRing(circleEl, pct, circumference){
   if(summaryPct) summaryPct.textContent = overallPct + '%';
   if(summarySub){
     summarySub.innerHTML = anyStarted
-      ? '<b>' + totalLearned + '</b> / ' + totalWords + ' so\'z o\'rganildi · ' + BOLIMLAR.length + ' ta bo\'lim bo\'yicha'
+      ? '<b>' + totalLearned + '</b> / ' + totalWords + ' so\'z o\'rganildi · ' + BOLIMLAR.length + ' ta tayyor bo\'lim'
       : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
   }
-})();
+
+  // ── Yo'l chizig'ining oltin (bosib o'tilgan) qismini hisoblash ──
+  // Har bir "tayyor" bo'lim to'liq bosib o'tilgan deb hisoblanadi (chunki ochiq).
+  var roadmap = document.getElementById('roadmap');
+  var fillEl = document.getElementById('roadLineFill');
+  var totalHeight = roadmap.offsetHeight - 60; // yuqori/pastki 30px bo'shliqni olib tashlab
+  var doneRatio = BOLIMLAR.length / allNum;
+  if(fillEl) fillEl.style.height = Math.max(0, totalHeight * doneRatio) + 'px';
+}
+
+// ═══ ISHGA TUSHIRISH ═══
+// Avval ism-gate tekshiriladi; ism mavjud bo'lsa roadmap darhol quriladi
+if(initNameGate()){
+  initRoadmap();
+}
 </script>
 
 </body>

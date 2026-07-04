@@ -59,15 +59,6 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   border-radius:3px;
   z-index:0;
 }
-.road-line-fill{
-  position:absolute;left:50%;top:30px;width:3px;
-  transform:translateX(-50%);
-  background:linear-gradient(to bottom,#F0C56B,#D4A23A);
-  border-radius:3px;
-  z-index:0;
-  transition:height 1.2s cubic-bezier(.16,1,.3,1);
-}
-
 .road-row{
   position:relative;z-index:1;
   display:grid;grid-template-columns:1fr 58px 1fr;
@@ -134,8 +125,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 }
 .namegate-icon{font-size:44px;margin-bottom:14px;animation:fadeIn .5s ease both}
 .namegate-title{
-  font-family:'Amiri',serif;font-size:24px;font-weight:700;color:#F0C56B;
-  margin-bottom:10px;direction:rtl;
+  font-family:'Amiri',serif;font-size:19px;font-weight:700;color:#F0C56B;
+  margin-bottom:10px;direction:rtl;line-height:1.8;
 }
 .namegate-sub{color:#9BA3B4;font-size:14px;line-height:1.6;margin-bottom:26px}
 .namegate-sub b{color:#EDEFF5}
@@ -164,10 +155,10 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 <!-- ═══════════ ISM-GATE ═══════════ -->
 <div class="namegate fade-in" id="nameGate" style="display:none">
   <div class="namegate-icon">🧭</div>
-  <div class="namegate-title">بِسْمِ اللَّٰهِ نَبْدَأُ</div>
+  <div class="namegate-title">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
   <div class="namegate-sub">
-    <b>12 bosqichli arabcha sayohat</b> boshlanmoqda.<br/>
-    Yo'lni siz bilan boshlash uchun ismingizni yozing.
+    <b>Al-Manhajul Al-A'lamiy — A1 darajasi.</b><br/>
+    12 bo'limlik sayohatingiz boshlanmoqda. Yo'lga chiqish uchun ismingizni yozing.
   </div>
   <input type="text" class="namegate-input" id="nameInput" placeholder="Masalan: Aziz" maxlength="30"/>
   <button class="namegate-btn" id="nameGoBtn">Sayohatni boshlash 🚀</button>
@@ -177,7 +168,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   <div class="header">
     <div class="kicker">Al-Manhajul Al-A'lamiy</div>
     <div class="title">المنهج الألمعي</div>
-    <div class="subtitle" id="subtitleText">A1 daraja · 12 bosqichli sayohat</div>
+    <div class="subtitle" id="subtitleText">A1 darajasi · 12 bo'limlik sayohat</div>
   </div>
 
   <!-- ═══ UMUMIY NATIJA ═══ -->
@@ -206,7 +197,6 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   <!-- ═══════════ ROADMAP ═══════════ -->
   <div class="roadmap" id="roadmap">
     <div class="road-line-bg"></div>
-    <div class="road-line-fill" id="roadLineFill"></div>
 
     <div class="road-flag start">
       <div class="road-flag-icon">🚩</div>
@@ -284,7 +274,11 @@ var BOLIMLAR = [
 
 // Hali tayyor bo'lmagan bo'limlar — har biriga alohida chiroyli matn
 var LOCKED_BOLIMLAR = [
-  {num:11, phrase:"Yaqinda ochiladi"},
+  {num:1,  phrase:"Yaqinda ochiladi"},
+  {num:2,  phrase:"Navbatda turibdi"},
+  {num:3,  phrase:"Tayyorlanmoqda"},
+  {num:4,  phrase:"Reja ustida"},
+  {num:11, phrase:"Kuting, deyarli tayyor"},
   {num:12, phrase:"Sayohat nihoyasi \uD83C\uDFC1"}
 ];
 
@@ -344,12 +338,15 @@ function initRoadmap(){
   var sideLeft = true;
   var allNum = BOLIMLAR.length + LOCKED_BOLIMLAR.length;
 
-  BOLIMLAR.forEach(function(b){
-    rowsHtml += buildRow(b, false, sideLeft);
-    sideLeft = !sideLeft;
-  });
-  LOCKED_BOLIMLAR.forEach(function(b){
-    rowsHtml += buildRow(b, true, sideLeft);
+  // Barcha bo'limlarni raqam bo'yicha (1 -> 12) birlashtiramiz
+  var byNum = {};
+  BOLIMLAR.forEach(function(b){ byNum[b.num] = {data:b, locked:false}; });
+  LOCKED_BOLIMLAR.forEach(function(b){ byNum[b.num] = {data:b, locked:true}; });
+
+  var nums = Object.keys(byNum).map(Number).sort(function(a,b){ return a-b; });
+  nums.forEach(function(num){
+    var entry = byNum[num];
+    rowsHtml += buildRow(entry.data, entry.locked, sideLeft);
     sideLeft = !sideLeft;
   });
 
@@ -387,13 +384,6 @@ function initRoadmap(){
       : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
   }
 
-  // ── Yo'l chizig'ining oltin (bosib o'tilgan) qismini hisoblash ──
-  // Har bir "tayyor" bo'lim to'liq bosib o'tilgan deb hisoblanadi (chunki ochiq).
-  var roadmap = document.getElementById('roadmap');
-  var fillEl = document.getElementById('roadLineFill');
-  var totalHeight = roadmap.offsetHeight - 60; // yuqori/pastki 30px bo'shliqni olib tashlab
-  var doneRatio = BOLIMLAR.length / allNum;
-  if(fillEl) fillEl.style.height = Math.max(0, totalHeight * doneRatio) + 'px';
 }
 
 // ═══ ISHGA TUSHIRISH ═══

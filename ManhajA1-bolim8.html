@@ -275,10 +275,9 @@ body{padding-bottom:130px;}
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Test (SRS)</h2>
   <p style="color:var(--muted); font-size:14px;">Tizim siz ko'proq xato qilgan so'zlarni tez-tez, yaxshi bilganlaringizni kamroq qaytaradi.</p>
-  <div class="premium-card" style="margin-top:16px;">
+  <div class="premium-card" style="margin-top:16px; text-align:center;">
     <i class="ti ti-brain" style="font-size:32px;color:var(--gold);"></i>
-    <div style="margin-top:10px; font-size:14px;">Savollar soni: <b id="quiz-count-label">10</b></div>
-    <input type="range" min="5" max="30" value="10" step="5" id="quiz-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('quiz-count-label').textContent=this.value">
+    <div style="margin-top:10px; font-size:14px;">Test <b id="quiz-total-label">barcha</b> so'z bo'yicha o'tkaziladi</div>
   </div>
   <button class="premium-btn-primary" onclick="startQuiz()">Testni boshlash</button>
 </div>
@@ -526,6 +525,7 @@ function goScreen(name, push){
   if(name === 'home') renderHome();
   if(name === 'lugat') renderLugat();
   if(name === 'stats') renderStats();
+  if(name === 'quiz-setup'){ var qtl = document.getElementById('quiz-total-label'); if(qtl) qtl.textContent = ALL_WORDS.length + ' ta'; }
   window.scrollTo(0,0);
 }
 window.addEventListener('popstate', function(e){
@@ -667,7 +667,7 @@ function shuffle(arr){
   return a;
 }
 function startQuiz(){
-  const count = parseInt(document.getElementById('quiz-count').value,10);
+  const count = ALL_WORDS.length;
   const words = buildQuiz(count);
   // Yo'nalishlarni oldindan kafolatlangan tarzda aralashtiramiz (yarmi ar2uz, yarmi uz2ar)
   const dirs = [];

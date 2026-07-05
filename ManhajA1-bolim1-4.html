@@ -156,7 +156,7 @@
   <div class="menu-grid">
     <div class="menu-card" data-nav="lugat"><i class="ti ti-book-2"></i><div class="mc-title">Lug'at</div><div class="mc-sub" id="mc-lugat-sub"></div></div>
     <div class="menu-card" data-nav="flashkard"><i class="ti ti-cards"></i><div class="mc-title">Flashkard</div><div class="mc-sub">Tez takrorlash</div></div>
-    <div class="menu-card" data-nav="test"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">4 variant, SRS</div></div>
+    <div class="menu-card" data-nav="test"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Barcha so'z, 4 variant</div></div>
     <div class="menu-card" data-nav="gaptuzish"><i class="ti ti-arrows-shuffle"></i><div class="mc-title">Gap tuzish</div><div class="mc-sub">60 ta mashq</div></div>
     <div class="menu-card" data-nav="grammatika" style="grid-column:1/3;"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
   </div>
@@ -1195,15 +1195,28 @@ function renderLugatList(){
 // ═══ TEST (SRS QUIZ) ═══
 var quizState = {idx:0, total:15, correct:0, current:null};
 function startQuiz(){
-  quizState = {idx:0, total:15, correct:0, current:null};
+  var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
+  var queue = buildWeightedQueue(pool);
+  quizState = {idx:0, total:queue.length, correct:0, current:null, queue:queue};
   nextQuizQuestion();
+}
+// Har bir so'zni ANIQ BIR MARTA navbatga qo'yamiz (hammasi test qilinishi uchun) —
+// past "box" darajali (yaxshi bilinmagan) so'zlar tasodifiy tarzda oldinroq chiqish
+// ehtimoli yuqoriroq bo'ladi, lekin baribir HAMMASI bir marta so'raladi.
+function buildWeightedQueue(pool){
+  var weighted = pool.map(function(w){
+    var box = getBox(w.ar);
+    return {w:w, key: Math.random() * Math.max(1, 6-box)};
+  });
+  weighted.sort(function(a,b){ return b.key - a.key; });
+  return weighted.map(function(x){ return x.w; });
 }
 function nextQuizQuestion(){
   if(quizState.idx >= quizState.total){ finishSession('test', quizState.correct, quizState.total); return; }
+  var word = quizState.queue[quizState.idx];
   quizState.idx++;
   document.getElementById('quiz-progress').textContent = quizState.idx+' / '+quizState.total;
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
-  var word = pickWeighted(pool);
   quizState.current = word;
   var arToUz = Math.random() < 0.5;
   document.getElementById('quiz-question').innerHTML = arToUz

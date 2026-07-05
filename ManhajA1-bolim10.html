@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>10-bo'lim — Shifokorda | Al-Manhajul A1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#0B0E14; --text:#EDEFF5; --gold:#D4A23A; --gold2:#F0C56B;
+  --card:#12151D; --border:#2A2416; --muted:#9590AC;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overscroll-behavior-y:none;}
+body{padding-bottom:90px; min-height:100vh;}
+h1,h2,h3{font-weight:600; margin:0 0 8px;}
+.ar{font-family:'Amiri',serif; direction:rtl;}
+.screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto; position:relative;}
+.screen.active{display:block; animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.top-header{text-align:center; padding:18px 16px 10px;}
+.top-header .badge{display:inline-block; background:rgba(212,162,58,.12); border:1px solid rgba(212,162,58,.35); color:var(--gold2); font-size:12px; padding:4px 12px; border-radius:20px; margin-bottom:10px;}
+.top-header h1{font-size:20px; color:var(--gold2);}
+.top-header .ar-title{font-size:26px; color:var(--gold); margin-top:4px;}
+
+.menu-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px;}
+.menu-card{background:linear-gradient(160deg,#161310,var(--card)); border:1px solid var(--border); border-radius:16px; padding:20px 14px; text-align:center; cursor:pointer; transition:transform .15s, border-color .15s;}
+.menu-card:active{transform:scale(.97);}
+.menu-card i{font-size:30px; color:var(--gold); display:block; margin-bottom:10px;}
+.menu-card .t{font-size:14px; font-weight:600; color:var(--text);}
+.menu-card .s{font-size:11px; color:var(--muted); margin-top:4px;}
+
+.premium-card{
+  background:linear-gradient(160deg,#1a1710,var(--bg));
+  border:1px solid var(--gold);
+  border-radius:14px;
+  padding:18px 12px;
+  text-align:center;
+}
+.word-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
+@media (max-width:420px){.word-grid{grid-template-columns:repeat(2,1fr);}}
+.word-card{}
+.word-card .icon-circle{width:48px; height:48px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px var(--halo);}
+.word-card .icon-circle i{font-size:22px; color:#0B0E14;}
+.word-card .ar{font-size:30px; color:var(--gold2); margin-bottom:7px; line-height:1.5;}
+.word-card .ar-verb-pair{margin-bottom:7px;}
+.word-card .ar-verb-line{display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:3px;}
+.word-card .ar-verb-line .ar{font-size:20px; margin-bottom:0;}
+.word-card .ar-verb-label{font-size:9px; color:var(--muted); min-width:34px; text-align:left; font-family:'Inter',sans-serif; letter-spacing:.3px;}
+.word-card .uz{font-size:14px; color:var(--text); line-height:1.4;}
+.word-card .box-dots{margin-top:8px; display:flex; justify-content:center; gap:3px;}
+.word-card .box-dots span{width:5px; height:5px; border-radius:50%; background:var(--border);}
+.word-card .box-dots span.on{background:var(--gold);}
+
+.filter-row{display:flex; gap:8px; overflow-x:auto; padding:4px 0 14px; -ms-overflow-style:none; scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex:0 0 auto; padding:7px 14px; border-radius:20px; border:1px solid var(--border); font-size:12px; color:var(--muted); cursor:pointer; white-space:nowrap;}
+.filter-chip.active{border-color:var(--gold); color:var(--gold2); background:rgba(212,162,58,.1);}
+
+.premium-btn-primary{
+  display:block; width:100%; text-align:center; padding:14px; border-radius:12px; border:none;
+  background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; font-weight:600; font-size:15px;
+  cursor:pointer; margin-top:10px;
+}
+.premium-btn-secondary{
+  display:block; width:100%; text-align:center; padding:14px; border-radius:12px;
+  background:transparent; border:1px solid var(--border); color:var(--text); font-weight:500; font-size:14px;
+  cursor:pointer; margin-top:10px;
+}
+
+.progress-bar-outer{width:100%; height:8px; background:var(--card); border-radius:8px; overflow:hidden; margin:14px 0;}
+.progress-bar-inner{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold2)); border-radius:8px; transition:width .3s;}
+
+.quiz-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 18px; text-align:center; margin-top:10px;}
+.quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:1.6;}
+.opt-btn{display:block; width:100%; text-align:center; padding:15px 16px; margin-top:10px; border-radius:12px; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:16px; cursor:pointer;}
+.opt-btn-ar{font-family:'Amiri',serif; direction:rtl; font-size:24px;}
+.uz-question{font-family:'Inter',sans-serif; font-size:22px; font-weight:700; direction:ltr;}
+.opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8;}
+.opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188;}
+
+.gt-prompt{background:linear-gradient(160deg,#1a1710,var(--bg)); border-top:3px solid var(--gold); border-radius:14px; padding:20px 18px 18px; margin-bottom:14px; text-align:center;}
+.gt-prompt .lbl{font-size:10px; color:var(--muted); margin-bottom:10px; letter-spacing:1.5px; font-weight:600; text-transform:uppercase;}
+.gt-prompt .cyr{font-size:20px; font-weight:800; color:var(--gold2); line-height:1.45;}
+.gt-instr{text-align:center; font-size:12px; color:var(--muted); margin:2px 0 12px;}
+.gt-zone-label{font-size:10px; color:#5C6478; letter-spacing:1px; font-weight:600; text-transform:uppercase; margin-bottom:6px; text-align:center;}
+.gt-answer{min-height:92px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; direction:rtl; padding:14px; margin-bottom:14px; background:linear-gradient(160deg,#1a1710,var(--bg)); border-radius:14px; border:1.5px dashed rgba(212,162,58,0.35);}
+.gt-pool{min-height:74px; background:#0d0f16; border:1px solid rgba(255,255,255,0.04); border-radius:16px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; direction:rtl; padding:12px; margin-bottom:16px;}
+.gt-tok{font-family:'Amiri','Scheherazade New',Georgia,serif; font-weight:700; border:none; cursor:pointer; min-height:48px; display:inline-flex; align-items:center; justify-content:center; transition:transform .12s;}
+.gt-tok:active{transform:scale(.94);}
+.gt-tok.pool{color:#1A1404; background:linear-gradient(135deg,#D4A23A,#F0C56B); border-radius:14px 14px 14px 4px; box-shadow:0 3px 10px #00000055, 0 0 14px #D4A23A33;}
+.gt-tok.placed{color:#EDEFF5; background:#1B2030; border:1px solid #D4A23A77; border-radius:14px 14px 14px 4px; box-shadow:0 0 10px #D4A23A22;}
+.gt-empty{font-size:11px; color:#5C6478; direction:ltr;}
+.gt-result{border-radius:16px; padding:16px; margin-bottom:10px; text-align:center;}
+.gt-result.ok{background:linear-gradient(165deg,#0d2614,#0a1f10); border:1px solid #6FBF8B55;}
+.gt-result.no{background:linear-gradient(165deg,#2e0a0a,#220707); border:1px solid #E8765C55;}
+.gt-result .title{font-size:15px; font-weight:700; margin-bottom:6px;}
+.gt-result .ans-label{font-size:11px; color:var(--muted); margin-bottom:6px;}
+.gt-result .ans{font-family:'Amiri','Scheherazade New',Georgia,serif; font-size:24px; font-weight:700; color:var(--gold); direction:rtl; line-height:1.8;}
+
+.back-row{margin-bottom:6px;}
+.back-link{color:var(--muted); font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;}
+
+.stat-row{display:flex; gap:10px; margin-top:16px;}
+.stat-box{flex:1; background:var(--card); border-radius:12px; padding:14px; text-align:center;}
+.stat-box .num{font-size:22px; font-weight:600; color:var(--gold2);}
+.stat-box .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
+
+.level-tabs{display:flex; gap:8px; margin:14px 0;}
+.level-tab{flex:1; text-align:center; padding:10px; border-radius:10px; border:1px solid var(--border); font-size:13px; color:var(--muted); cursor:pointer;}
+.level-tab.active{border-color:var(--gold); color:var(--gold2); background:rgba(212,162,58,.1);}
+
+.center-note{text-align:center; color:var(--muted); font-size:13px; margin-top:20px;}
+
+.alifbo-toggle{
+  position:absolute; top:18px; right:16px; z-index:10;
+  display:flex; align-items:center; gap:5px;
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  padding:6px 12px; font-size:11px; color:var(--gold2); cursor:pointer;
+}
+.alifbo-toggle i{font-size:13px;}
+
+body{padding-bottom:130px;}
+.screen{padding-bottom:60px;}
+.gram-section:last-child{margin-bottom:80px;}
+
+/* ===== Grammatika ===== */
+.gram-section{margin-bottom:26px;}
+.gram-section h3{color:var(--gold2); font-size:15px; margin-bottom:6px;}
+.gram-note{color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:14px;}
+.gram-table{width:100%; border-collapse:collapse; margin-bottom:8px; font-size:14px;}
+.gram-table th, .gram-table td{border:1px solid var(--border); padding:10px 7px; text-align:center;}
+.gram-table th{background:rgba(212,162,58,.1); color:var(--gold2); font-weight:600; font-size:12px;}
+.gram-table td.ar-cell{font-family:'Amiri',serif; direction:rtl; font-size:24px; color:var(--gold2);}
+.gram-table td.uz-cell{color:var(--muted); font-size:13px;}
+.gram-example{background:var(--card); border-left:3px solid var(--gold); border-radius:8px; padding:12px 14px; margin-top:10px;}
+.gram-example .ar{font-size:24px; color:var(--gold2);}
+.gram-example .uz{font-size:13px; color:var(--muted); margin-top:5px;}
+.neg-box{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+.neg-item{flex:1; min-width:90px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;}
+.neg-item .particle{font-family:'Amiri',serif; font-size:24px; color:var(--gold); margin-bottom:4px;}
+.neg-item .label{font-size:10px; color:var(--muted); line-height:1.4;}
+.future-box{display:flex; gap:10px; margin-top:10px;}
+.future-item{flex:1; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center;}
+.future-item .particle{font-family:'Amiri',serif; font-size:26px; color:var(--gold); margin-bottom:6px;}
+.future-item .label{font-size:11px; color:var(--muted);}
+.flow-row{display:flex; align-items:center; justify-content:center; gap:6px; margin:12px 0; flex-wrap:wrap;}
+.flow-box{background:rgba(212,162,58,.1); border:1px solid rgba(212,162,58,.35); border-radius:8px; padding:8px 12px; font-size:12px; color:var(--gold2); text-align:center;}
+.flow-arrow{color:var(--muted); font-size:16px;}
+
+/* ===== Flashkard ===== */
+.fc-card{background:var(--card); border:1px solid var(--gold); border-radius:20px; padding:40px 20px; text-align:center; margin-top:16px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;}
+.fc-card .fc-icon{width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; box-shadow:0 0 0 6px var(--halo); animation:fcPop .4s ease;}
+.fc-card .fc-icon i{font-size:40px; color:#0B0E14;}
+@keyframes fcPop{from{transform:scale(0.6); opacity:0;} to{transform:scale(1); opacity:1;}}
+.fc-card .ar-big{font-size:38px; color:var(--gold2); line-height:1.6;}
+.fc-card .uz-reveal{font-size:18px; color:var(--text); margin-top:14px; display:none;}
+.fc-card.flipped .uz-reveal{display:block;}
+.fc-hint{text-align:center; color:var(--muted); font-size:12px; margin-top:10px;}
+.fc-btn-row{display:flex; gap:10px; margin-top:16px;}
+.fc-btn{flex:1; padding:16px; border-radius:12px; border:none; font-weight:600; font-size:15px; cursor:pointer;}
+.fc-btn-know{background:linear-gradient(135deg,#6FBF8B,#8FD9A8); color:#0B0E14;}
+.fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
+</style>
+</head>
+<body>
+
+<!-- ================= EKRAN: Bosh menyu ================= -->
+<div class="screen active" id="screen-home">
+  <div class="alifbo-toggle" onclick="toggleAlifbo()">
+    <span id="alifbo-label">Кирилл</span>
+    <i class="ti ti-repeat"></i>
+  </div>
+  <div class="top-header">
+    <div class="badge">10-bo'lim</div>
+    <div class="ar-title ar">شِفَاكَ اللَّهُ</div>
+    <h1>Shifokorda</h1>
+  </div>
+
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="home-progress-bar" style="width:0%"></div></div>
+  <div class="center-note" id="home-progress-text">0 / 29 so'z o'rganildi</div>
+
+  <div class="menu-grid">
+    <div class="menu-card" onclick="goScreen('lugat')">
+      <i class="ti ti-book-2"></i>
+      <div class="t">Lug'at</div>
+      <div class="s">54 ta so'z</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('flashcard-setup')">
+      <i class="ti ti-cards"></i>
+      <div class="t">Flashkard</div>
+      <div class="s">Flip + o'z-o'zini baholash</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('quiz-setup')">
+      <i class="ti ti-brain"></i>
+      <div class="t">Test</div>
+      <div class="s">SRS takrorlash</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('gap-setup')">
+      <i class="ti ti-puzzle"></i>
+      <div class="t">Gap tuzish</div>
+      <div class="s">60 ta mashq</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('grammar')">
+      <i class="ti ti-school"></i>
+      <div class="t">Grammatika</div>
+      <div class="s">4 ta mavzu: gap, inkor, moziy, kelasi zamon</div>
+    </div>
+    <div class="menu-card" onclick="goScreen('stats')">
+      <i class="ti ti-chart-bar"></i>
+      <div class="t">Natijalar</div>
+      <div class="s">Progress</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Lug'at ================= -->
+<div class="screen" id="screen-lugat">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Lug'at</h2>
+  <div class="filter-row" id="cat-filters"></div>
+  <div class="word-grid" id="word-grid"></div>
+</div>
+
+<!-- ================= EKRAN: Flashkard sozlash ================= -->
+<div class="screen" id="screen-flashcard-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Flashkard</h2>
+  <p style="color:var(--muted); font-size:14px;">Arabcha so'zni ko'rasiz, xayolingizda tarjimasini ayting, so'ng bosib "ochasiz". Keyin o'zingiz "Bildim" yoki "Bilmadim" deb belgilaysiz — bu SRS tizimiga to'g'ridan-to'g'ri ta'sir qiladi.</p>
+  <div class="premium-card" style="margin-top:16px;">
+    <i class="ti ti-cards" style="font-size:32px;color:var(--gold);"></i>
+    <div style="margin-top:10px; font-size:14px;">Kartochkalar soni: <b id="fc-count-label">15</b></div>
+    <input type="range" min="5" max="54" value="15" step="1" id="fc-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('fc-count-label').textContent=this.value">
+  </div>
+  <button class="premium-btn-primary" onclick="startFlashcard()">Boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Flashkard (mashq) ================= -->
+<div class="screen" id="screen-flashcard">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="fc-progress-bar" style="width:0%"></div></div>
+  <div class="fc-card" id="fc-card" onclick="flipCard()">
+    <div class="fc-icon" id="fc-icon"><i class="ti ti-book"></i></div>
+    <div class="ar-big ar" id="fc-word"></div>
+    <div class="ar-big ar" id="fc-word2" style="font-size:26px; color:var(--gold); margin-top:6px; display:none;"></div>
+    <div class="uz-reveal" id="fc-translation"></div>
+  </div>
+  <div class="fc-hint" id="fc-hint">Kartochkaga bosib javobni oching</div>
+  <div class="fc-btn-row" id="fc-btn-row">
+    <button class="fc-btn fc-btn-dontknow" onclick="answerFlashcard(false)">Bilmadim ✗</button>
+    <button class="fc-btn fc-btn-know" onclick="answerFlashcard(true)">Bildim ✓</button>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Flashkard natijasi ================= -->
+<div class="screen" id="screen-flashcard-result">
+  <div class="top-header">
+    <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
+    <h1 style="margin-top:10px;">Flashkard tugadi!</h1>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="fc-result-know">0</div><div class="lbl">Bildim</div></div>
+    <div class="stat-box"><div class="num" id="fc-result-dontknow">0</div><div class="lbl">Bilmadim</div></div>
+  </div>
+  <button class="premium-btn-primary" onclick="goScreen('flashcard-setup')">Yana flashkard</button>
+  <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
+</div>
+
+<!-- ================= EKRAN: Test sozlash ================= -->
+<div class="screen" id="screen-quiz-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Test (SRS)</h2>
+  <p style="color:var(--muted); font-size:14px;">Tizim siz ko'proq xato qilgan so'zlarni tez-tez, yaxshi bilganlaringizni kamroq qaytaradi.</p>
+  <div class="premium-card" style="margin-top:16px; text-align:center;">
+    <i class="ti ti-brain" style="font-size:32px;color:var(--gold);"></i>
+    <div style="margin-top:10px; font-size:14px;">Test <b id="quiz-total-label">barcha</b> so'z bo'yicha o'tkaziladi</div>
+  </div>
+  <button class="premium-btn-primary" onclick="startQuiz()">Testni boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Test (savol) ================= -->
+<div class="screen" id="screen-quiz">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="quiz-progress-bar" style="width:0%"></div></div>
+  <div class="quiz-card">
+    <div class="ar-big ar" id="quiz-word"></div>
+    <div id="quiz-options"></div>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Test natijasi ================= -->
+<div class="screen" id="screen-quiz-result">
+  <div class="top-header">
+    <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
+    <h1 style="margin-top:10px;">Test tugadi!</h1>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="result-correct">0</div><div class="lbl">To'g'ri</div></div>
+    <div class="stat-box"><div class="num" id="result-wrong">0</div><div class="lbl">Xato</div></div>
+    <div class="stat-box"><div class="num" id="result-percent">0%</div><div class="lbl">Natija</div></div>
+  </div>
+  <button class="premium-btn-primary" onclick="goScreen('quiz-setup')">Yana test</button>
+  <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
+</div>
+
+<!-- ================= EKRAN: Gap tuzish sozlash ================= -->
+<div class="screen" id="screen-gap-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Gap tuzish</h2>
+  <p style="color:var(--muted); font-size:14px;">Darajani tanlang va so'zlarni to'g'ri tartibda joylashtirib gap tuzing.</p>
+  <div class="level-tabs">
+    <div class="level-tab active" data-lvl="oson" onclick="selectGapLevel('oson',this)">Oson</div>
+    <div class="level-tab" data-lvl="ortacha" onclick="selectGapLevel('ortacha',this)">O'rtacha</div>
+    <div class="level-tab" data-lvl="profi" onclick="selectGapLevel('profi',this)">Profi</div>
+  </div>
+  <button class="premium-btn-primary" onclick="startGapTuzish()">Boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Gap tuzish (mashq) ================= -->
+<div class="screen" id="screen-gap">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="gap-progress-bar" style="width:0%"></div></div>
+  <div class="gt-prompt">
+    <div class="lbl">Quyidagi gapni arabchada tuzing</div>
+    <div class="cyr" id="gap-cyr"></div>
+  </div>
+  <div class="gt-instr">So'zlarga tegib, to'g'ri tartibda gap tuzing</div>
+  <div class="gt-zone-label">Javobingiz</div>
+  <div class="gt-answer" id="gt-answer"></div>
+  <div class="gt-pool" id="gt-pool"></div>
+  <div id="gt-result-area"></div>
+  <div id="gt-btn-row" style="display:flex; gap:10px;">
+    <button class="premium-btn-secondary" style="flex:1; margin-top:0;" onclick="undoGapToken()">↩️ Orqaga</button>
+    <button class="premium-btn-primary" style="flex:2; margin-top:0;" id="gt-check-btn" onclick="checkGapAnswer()">✓ Tekshirish</button>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Grammatika ================= -->
+<div class="screen" id="screen-grammar">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Grammatika</h2>
+
+  <div class="gram-section">
+    <h3>1. Jumla fe'liyya — fe'lli gap qurilishi</h3>
+    <p class="gram-note">Fe'lli gap uchta asosiy qismdan tuziladi:</p>
+    <div class="flow-row">
+      <div class="flow-box ar">فِعْل<br><span style="font-size:9px;">fe'l</span></div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-box ar">فاعِل<br><span style="font-size:9px;">ega</span></div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-box ar">تَتِمَّةُ الجُمْلَة<br><span style="font-size:9px;">to'ldiruvchi</span></div>
+    </div>
+    <p class="gram-note"><b>Tatimmatul jumla (to'ldiruvchi)</b> uch xil bo'lishi mumkin:</p>
+    <table class="gram-table">
+      <tr><th>Turi</th><th>Misol</th><th>Ma'nosi</th></tr>
+      <tr><td class="uz-cell">Mafъul bihi (mansub)</td><td class="ar-cell">اسْتَخْدَمَ الوَلَدُ فُرْشاةَ الأَسْنانِ</td><td class="uz-cell">Bola tish cho'tkasini ishlatdi</td></tr>
+      <tr><td class="uz-cell">Harfi jar + ism majrur</td><td class="ar-cell">حَجَزَتْ مَوْعِدًا عِنْدَ طَبيبِ الأَسْنانِ</td><td class="uz-cell">Tish shifokorida vaqt band qildi</td></tr>
+      <tr><td class="uz-cell">Zarf (vaqt/joy, mansub)</td><td class="ar-cell">سَيَذْهَبُ إِلَى المُسْتَشْفَى غَدًا</td><td class="uz-cell">Ertaga kasalxonaga boradi</td></tr>
+    </table>
+  </div>
+
+  <div class="gram-section">
+    <h3>2. Uslubun-nafy — inkor uslubi</h3>
+    <p class="gram-note">Ismli gapda faqat <b>لَيْسَ</b> ishlatiladi. Fe'lli gapda esa zamonga qarab <b>4 xil</b> inkor zarrachasi bor:</p>
+    <div class="neg-box">
+      <div class="neg-item"><div class="particle ar">ما</div><div class="label">o'tgan zamon</div></div>
+      <div class="neg-item"><div class="particle ar">لَمْ</div><div class="label">o'tgan zamon (mudori bilan)</div></div>
+      <div class="neg-item"><div class="particle ar">لا</div><div class="label">hozirgi zamon</div></div>
+      <div class="neg-item"><div class="particle ar">لَنْ</div><div class="label">kelasi zamon</div></div>
+    </div>
+    <p class="gram-note">Misol — <span class="ar" style="color:var(--gold2);">أَخَذَ الرَّجُلُ الدَّواءَ</span> (Erkak dorini oldi) gapini barcha inkor turlarida ko'ring:</p>
+    <div class="gram-example">
+      <div class="ar">ما أَخَذَ الرَّجُلُ الدَّواءَ</div>
+      <div class="uz">Erkak dorini olmadi. (ما + o'tgan zamon)</div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">لَمْ يَأْخُذِ الرَّجُلُ الدَّواءَ</div>
+      <div class="uz">Erkak dorini olmadi. (لَمْ + mudori, ma'no o'tgan zamon)</div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">لا يَأْخُذُ الرَّجُلُ الدَّواءَ</div>
+      <div class="uz">Erkak dorini olmaydi. (لا + mudori, hozirgi)</div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">لَنْ يَأْخُذَ الرَّجُلُ الدَّواءَ</div>
+      <div class="uz">Erkak dorini olmaydi. (لَنْ + mudori, kelasi zamon)</div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">لَيْسَ الطَّبيبُ مَشْغولًا</div>
+      <div class="uz">Shifokor band emas. (لَيْسَ — ismli gap uchun)</div>
+    </div>
+  </div>
+
+  <div class="gram-section">
+    <h3>3. Fe'l madi — moziy (o'tgan zamon) tuslanishi</h3>
+    <p class="gram-note">Moziy fe'l barcha olmoshlar bilan qanday tuslanishini <span class="ar" style="color:var(--gold2);">حَجَزَ</span> (band qildi) fe'li misolida ko'ring:</p>
+    <table class="gram-table">
+      <tr><th>Olmosh</th><th>Fe'l (moziy)</th><th>Ma'nosi</th></tr>
+      <tr><td class="ar-cell">أَنَا</td><td class="ar-cell">حَجَزْتُ</td><td class="uz-cell">men band qildim</td></tr>
+      <tr><td class="ar-cell">نَحْنُ</td><td class="ar-cell">حَجَزْنا</td><td class="uz-cell">biz band qildik</td></tr>
+      <tr><td class="ar-cell">أَنْتَ</td><td class="ar-cell">حَجَزْتَ</td><td class="uz-cell">sen band qilding (erkak)</td></tr>
+      <tr><td class="ar-cell">أَنْتِ</td><td class="ar-cell">حَجَزْتِ</td><td class="uz-cell">sen band qilding (ayol)</td></tr>
+      <tr><td class="ar-cell">أَنْتُما</td><td class="ar-cell">حَجَزْتُما</td><td class="uz-cell">sizlar (2 kishi) band qildingiz</td></tr>
+      <tr><td class="ar-cell">أَنْتُمْ</td><td class="ar-cell">حَجَزْتُمْ</td><td class="uz-cell">sizlar (ko'p, erkak) band qildingiz</td></tr>
+      <tr><td class="ar-cell">أَنْتُنَّ</td><td class="ar-cell">حَجَزْتُنَّ</td><td class="uz-cell">sizlar (ko'p, ayol) band qildingiz</td></tr>
+      <tr><td class="ar-cell">هُوَ</td><td class="ar-cell">حَجَزَ</td><td class="uz-cell">u band qildi (erkak)</td></tr>
+      <tr><td class="ar-cell">هِيَ</td><td class="ar-cell">حَجَزَتْ</td><td class="uz-cell">u band qildi (ayol)</td></tr>
+      <tr><td class="ar-cell">هُما (م)</td><td class="ar-cell">حَجَزا</td><td class="uz-cell">ular (2 erkak) band qildi</td></tr>
+      <tr><td class="ar-cell">هُما (ف)</td><td class="ar-cell">حَجَزَتا</td><td class="uz-cell">ular (2 ayol) band qildi</td></tr>
+      <tr><td class="ar-cell">هُمْ</td><td class="ar-cell">حَجَزوا</td><td class="uz-cell">ular (ko'p, erkak) band qildi</td></tr>
+      <tr><td class="ar-cell">هُنَّ</td><td class="ar-cell">حَجَزْنَ</td><td class="uz-cell">ular (ko'p, ayol) band qildi</td></tr>
+    </table>
+    <p class="gram-note"><b>Qoida:</b> Moziy fe'lning o'zagi (masalan حَجَزَ) o'zgarmaydi — faqat oxiriga olmoshga mos <b>qo'shimcha</b> qo'shiladi (تُ, نا, تَ, تِ, تُما, تُمْ, تُنَّ, ـتْ, ا, تا, وا, نَ).</p>
+    <div class="gram-example">
+      <div class="ar">حَجَزْتُ مَوْعِدًا عِنْدَ الطَّبيبِ أَمْسِ</div>
+      <div class="uz">Men kecha shifokorda vaqt band qildim.</div>
+    </div>
+  </div>
+
+  <div class="gram-section">
+    <h3>4. Kelasi zamon — سَـ va سَوْفَ</h3>
+    <p class="gram-note">Kelasi zamon mudori fe'l oldiga <b>سَـ</b> yoki <b>سَوْفَ</b> qo'shish orqali yasaladi.</p>
+    <div class="future-box">
+      <div class="future-item">
+        <div class="particle ar">سَـ</div>
+        <div class="label">Yaqin kelajak (fe'lga bevosita yopishadi)</div>
+      </div>
+      <div class="future-item">
+        <div class="particle ar">سَوْفَ</div>
+        <div class="label">Uzoqroq/ta'kidli kelajak (alohida so'z)</div>
+      </div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">سَأَحْجِزُ مَوْعِدًا عِنْدَ طَبيبِ الأَسْنانِ</div>
+      <div class="uz">Men tish shifokorida vaqt band qilaman.</div>
+    </div>
+    <div class="gram-example">
+      <div class="ar">سَوْفَ يَفْحَصُ الطَّبيبُ المَريضَ</div>
+      <div class="uz">Shifokor bemorni (albatta) tekshiradi.</div>
+    </div>
+    <p class="gram-note"><b>Diqqat:</b> سَـ fe'lga chiziqsiz, bevosita yopishtirib yoziladi (masalan سَأَحْجِزُ), سَوْفَ esa alohida so'z sifatida oldin yoziladi.</p>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Statistika ================= -->
+<div class="screen" id="screen-stats">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Natijalar</h2>
+  <div class="center-note" id="stats-student-name" style="color:var(--gold2); font-weight:700; margin-bottom:10px;"></div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="stat-learned">0</div><div class="lbl">O'rganilgan so'z</div></div>
+    <div class="stat-box"><div class="num" id="stat-total">54</div><div class="lbl">Jami so'z</div></div>
+  </div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="stats-progress-bar" style="width:0%"></div></div>
+  <div class="center-note" id="stats-progress-text">0%</div>
+</div>
+
+<a href="index.html" onclick="event.preventDefault();location.replace('index.html')" style="position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">‹ Menyu</a>
+
+<script>
+const LS_KEY = "arabic_uz_10bolim_v1";
+const ACH_KEY = "arabic_achievements_v1";
+const ALIFBO_KEY = "arabic_alifbo_pref";
+
+// ═══ UMUMIY ISM TIZIMI ═══
+const SHARED_NAME_KEY = "arabic_student_name";
+let currentName = localStorage.getItem(SHARED_NAME_KEY) || "";
+if(!currentName){ location.replace('index.html'); }
+
+// ---------------- Kirill -> Lotin ----------------
+const CYR_TO_LAT = {
+  'а':'a','б':'b','в':'v','г':'g','д':'d','ё':'yo','ж':'j','з':'z','и':'i','й':'y',
+  'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u',
+  'ф':'f','х':'x','ц':'ts','ч':'ch','ш':'sh','щ':'sh','ъ':"'",'ы':'i','ь':'',
+  'э':'e','ю':'yu','я':'ya','ў':"o'",'қ':'q','ғ':"g'",'ҳ':'h'
+};
+function toLatin(str){
+  if(!str) return str;
+  let result = '';
+  let atWordStart = true;
+  for(let i=0;i<str.length;i++){
+    const ch = str[i];
+    const lower = ch.toLowerCase();
+    if(lower === 'е'){
+      let piece = atWordStart ? 'ye' : 'e';
+      if(ch !== lower) piece = piece.charAt(0).toUpperCase()+piece.slice(1);
+      result += piece;
+      atWordStart = false;
+      continue;
+    }
+    if(CYR_TO_LAT.hasOwnProperty(lower)){
+      let piece = CYR_TO_LAT[lower];
+      if(ch !== lower && piece.length>0) piece = piece.charAt(0).toUpperCase()+piece.slice(1);
+      result += piece;
+      atWordStart = false;
+    } else {
+      result += ch;
+      atWordStart = /[\s\-.,!?()«»"'\/]/.test(ch);
+    }
+  }
+  return result;
+}
+let currentAlifbo = localStorage.getItem(ALIFBO_KEY) || 'kr';
+function dtxt(str){
+  return currentAlifbo === 'lt' ? toLatin(str) : str;
+}
+function toggleAlifbo(){
+  currentAlifbo = currentAlifbo === 'kr' ? 'lt' : 'kr';
+  localStorage.setItem(ALIFBO_KEY, currentAlifbo);
+  updateAlifboLabel();
+  renderWordGrid();
+}
+function updateAlifboLabel(){
+  const el = document.getElementById('alifbo-label');
+  if(el) el.textContent = currentAlifbo === 'kr' ? 'Кирилл' : 'Lotin';
+}
+
+const CAT_COLORS = {
+  "Буюмлар":"#D4A23A","Уй":"#7C8FE8","Феъллар":"#6FBF8B","Сифатлар":"#C97AAE",
+  "Равишлар":"#E8765C","Иборалар":"#5FBFBF","Оила":"#8DCB8D","Олмошлар":"#A878C9",
+  "Кўмакчилар":"#C9A877","Грамматика":"#C97878","Жойлар":"#6FA8D9","Рангlar":"#E0A879",
+  "Бошқалар":"#9590AC","Сонлар":"#74B4C4","Боғловчилар":"#C2B374","Озиқ-овқат":"#8FBB7C",
+  "Замирлар":"#7FAEEE","Отлар":"#6FA8D9"
+};
+
+const ALL_WORDS = [{"id": "b10-001", "ar": "حَجَزَ", "uz": "банд қилди, банд қилади, банд қилмоқ (брон қилмоқ)", "cat": "Феъллар", "icon": "calendar", "ar2": "يَحْجِزُ"}, {"id": "b10-002", "ar": "دَفَعَ", "uz": "тўлади, тўлайди, тўламоқ", "cat": "Феъллар", "icon": "receipt", "ar2": "يَدْفَعُ"}, {"id": "b10-003", "ar": "نَصَحَ", "uz": "маслаҳат берди, маслаҳат беради, маслаҳат бермоқ", "cat": "Феъллар", "icon": "message-circle", "ar2": "يَنْصَحُ"}, {"id": "b10-004", "ar": "اِبْتَعَدَ", "uz": "узоқлашди, узоқлашади, узоқлашмоқ (сақланмоқ)", "cat": "Феъллар", "icon": "alert-circle", "ar2": "يَبْتَعِدُ"}, {"id": "b10-005", "ar": "اِسْتَخْدَمَ", "uz": "фойдаланди, фойдаланади, фойдаланмоқ", "cat": "Феъллар", "icon": "check", "ar2": "يَسْتَخْدِمُ"}, {"id": "b10-006", "ar": "فَحَصَ", "uz": "текширди, текширади, текширмоқ (кўрикдан ўтказмоқ)", "cat": "Феъллар", "icon": "eye", "ar2": "يَفْحَصُ"}, {"id": "b10-007", "ar": "اسْتَلْقَى", "uz": "ётди, ётади, ётмоқ (чалқанча)", "cat": "Феъллар", "icon": "bed", "ar2": "يَسْتَلْقي"}, {"id": "b10-008", "ar": "مَشْغولٌ", "uz": "банд, машғул", "cat": "Сифатлар", "icon": "clock"}, {"id": "b10-009", "ar": "أَلَمٌ", "uz": "оғриқ", "cat": "Отлар", "icon": "bolt"}, {"id": "b10-010", "ar": "فُرْشاةٌ", "uz": "чўтка (тиш чўткаси)", "cat": "Отлар", "icon": "brush"}, {"id": "b10-011", "ar": "مَريضٌ", "uz": "бемор", "cat": "Отлар", "icon": "user"}, {"id": "b10-012", "ar": "مَعْجونٌ", "uz": "паста (тиш пастаси)", "cat": "Отлар", "icon": "droplet"}, {"id": "b10-013", "ar": "مُمَرِّضَةٌ", "uz": "ҳамшира", "cat": "Отлар", "icon": "user"}, {"id": "b10-014", "ar": "مُسْتَشْفَى", "uz": "касалхона", "cat": "Отлар", "icon": "building-hospital"}, {"id": "b10-015", "ar": "دَواءٌ", "uz": "дори", "cat": "Отлар", "icon": "pill"}, {"id": "b10-016", "ar": "عِيادَةٌ", "uz": "қабулхона, клиника", "cat": "Отлар", "icon": "building-hospital"}, {"id": "b10-017", "ar": "حُقْنَةٌ", "uz": "укол", "cat": "Отлар", "icon": "droplet"}, {"id": "b10-018", "ar": "مُلَوَّثٌ", "uz": "ифлос, чиркин", "cat": "Сифатлар", "icon": "alert-circle"}, {"id": "b10-019", "ar": "الرَّاحَةُ", "uz": "дам олиш", "cat": "Отлар", "icon": "moon"}, {"id": "b10-020", "ar": "زِيارَةٌ", "uz": "ташриф", "cat": "Отлар", "icon": "home"}, {"id": "b10-021", "ar": "العُنْوانُ", "uz": "манзил", "cat": "Отлар", "icon": "map-pin"}, {"id": "b10-022", "ar": "سَيَّارَةُ الإِسْعافِ", "uz": "тез ёрдам машинаси", "cat": "Иборалар", "icon": "ambulance"}, {"id": "b10-023", "ar": "حَرارَةٌ مُرْتَفِعَةٌ", "uz": "юқори ҳарорат (иситма)", "cat": "Иборалар", "icon": "flame"}, {"id": "b10-024", "ar": "تَسَوُّسُ الأَسْنانِ", "uz": "тиш чириши (кариес)", "cat": "Иборалар", "icon": "alert-circle"}, {"id": "b10-025", "ar": "لا بَأْسَ عَلَيْكَ", "uz": "ҳеч гап йўқ, тузалиб кетасиз", "cat": "Иборалар", "icon": "message-circle"}, {"id": "b10-026", "ar": "في أَقْرَبِ وَقْتٍ", "uz": "энг яқин вақтда", "cat": "Иборалар", "icon": "clock"}, {"id": "b10-027", "ar": "أَشْعُرُ بِـ", "uz": "...ни ҳис қиламан", "cat": "Иборалар", "icon": "heart"}, {"id": "b10-028", "ar": "وَصْفَةٌ طِبِّيَّةٌ", "uz": "шифокор рецепти", "cat": "Иборалар", "icon": "receipt"}, {"id": "b10-029", "ar": "حَشْوُ الأَسْنانِ", "uz": "тиш пломбаси", "cat": "Иборалар", "icon": "check"}, {"id": "b10-030", "ar": "طَبيبٌ", "uz": "шифокор", "cat": "Отлар", "icon": "user"}, {"id": "b10-031", "ar": "صَيْدَلِيَّةٌ", "uz": "дорихона", "cat": "Отлар", "icon": "building-store"}, {"id": "b10-032", "ar": "أَقْراصٌ", "uz": "таблеткалар", "cat": "Отлар", "icon": "pill"}, {"id": "b10-033", "ar": "أَسْنانٌ", "uz": "тишлар", "cat": "Отлар", "icon": "brush"}, {"id": "b10-034", "ar": "فَمٌ", "uz": "оғиз", "cat": "Отлар", "icon": "mood-smile"}, {"id": "b10-035", "ar": "ضِرْسٌ", "uz": "моляр тиш", "cat": "Отлар", "icon": "brush"}, {"id": "b10-036", "ar": "كَأْسٌ", "uz": "стакан", "cat": "Отлар", "icon": "glass-full"}, {"id": "b10-037", "ar": "حَقيبَةٌ", "uz": "сумка (шифокор сумкаси)", "cat": "Отлар", "icon": "briefcase"}, {"id": "b10-038", "ar": "صُداعٌ", "uz": "бош оғриғи", "cat": "Отлар", "icon": "bolt"}, {"id": "b10-039", "ar": "إِسْهالٌ", "uz": "ич кетиш", "cat": "Отлар", "icon": "alert-circle"}, {"id": "b10-040", "ar": "مَغَصٌ", "uz": "ич оғриғи (спазм)", "cat": "Отлар", "icon": "alert-circle"}, {"id": "b10-041", "ar": "مَرَضٌ", "uz": "касаллик", "cat": "Отлар", "icon": "alert-circle"}, {"id": "b10-042", "ar": "زُكامٌ", "uz": "шамоллаш", "cat": "Отлар", "icon": "droplet"}, {"id": "b10-043", "ar": "رَشْحٌ", "uz": "тумов", "cat": "Отлар", "icon": "droplet"}, {"id": "b10-044", "ar": "شِفاءٌ", "uz": "шифо", "cat": "Отлар", "icon": "heart"}, {"id": "b10-045", "ar": "قَيْءٌ", "uz": "қусиш", "cat": "Отлар", "icon": "alert-circle"}, {"id": "b10-046", "ar": "البَطْنُ", "uz": "қорин", "cat": "Отлар", "icon": "circle-dashed"}, {"id": "b10-047", "ar": "القَدَمُ", "uz": "оёқ", "cat": "Отлар", "icon": "circle-dashed"}, {"id": "b10-048", "ar": "الظَّهْرُ", "uz": "орқа, бел", "cat": "Отлар", "icon": "circle-dashed"}, {"id": "b10-049", "ar": "شَديدٌ", "uz": "кучли", "cat": "Сифатлар", "icon": "bolt"}, {"id": "b10-050", "ar": "خَفيفٌ", "uz": "енгил", "cat": "Сифатлар", "icon": "circle-dashed"}, {"id": "b10-051", "ar": "سَريعٌ", "uz": "тез", "cat": "Сифатлар", "icon": "bolt"}, {"id": "b10-052", "ar": "بَطيءٌ", "uz": "секин", "cat": "Сифатлар", "icon": "clock"}, {"id": "b10-053", "ar": "مارَسَ الرِّياضَةَ", "uz": "спорт билан шуғулланади, шуғулланмоқ", "cat": "Феъллар", "icon": "bolt", "ar2": "يُمارِسُ الرِّياضَةَ"}, {"id": "b10-054", "ar": "شاهَدَ التِّلْفازَ", "uz": "телевизор томоша қилади, томоша қилмоқ", "cat": "Феъллар", "icon": "eye", "ar2": "يُشاهِدُ التِّلْفازَ"}];
+const GAP_TUZISH_DATA = [{"id": 1, "level": "oson", "words": ["الطَّبيبُ", "مَشْغولٌ"], "answer": ["الطَّبيبُ", "مَشْغولٌ"], "cyr": "Шифокор банд."}, {"id": 2, "level": "oson", "words": ["أَنَا", "مَريضٌ"], "answer": ["أَنَا", "مَريضٌ"], "cyr": "Мен беморман."}, {"id": 3, "level": "oson", "words": ["لَسْتُ", "بِخَيْرٍ"], "answer": ["لَسْتُ", "بِخَيْرٍ"], "cyr": "Мен яхши эмасман."}, {"id": 4, "level": "oson", "words": ["كَيْفَ", "حالُكَ؟"], "answer": ["كَيْفَ", "حالُكَ؟"], "cyr": "Ҳолинг қалай?"}, {"id": 5, "level": "oson", "words": ["بِمَ", "تَشْعُرُ؟"], "answer": ["بِمَ", "تَشْعُرُ؟"], "cyr": "Ўзингни қандай ҳис қиляпсан?"}, {"id": 6, "level": "oson", "words": ["افْتَحْ", "فَمَكَ"], "answer": ["افْتَحْ", "فَمَكَ"], "cyr": "Оғзингни оч."}, {"id": 7, "level": "oson", "words": ["لا", "تَقْلَقي"], "answer": ["لا", "تَقْلَقي"], "cyr": "Хавотирланма."}, {"id": 8, "level": "oson", "words": ["لا", "بَأْسَ", "عَلَيْكَ"], "answer": ["لا", "بَأْسَ", "عَلَيْكَ"], "cyr": "Ҳеч гап йўқ."}, {"id": 9, "level": "oson", "words": ["أَشْعُرُ", "بِصُداعٍ"], "answer": ["أَشْعُرُ", "بِصُداعٍ"], "cyr": "Бош оғриғини ҳис қиляпман."}, {"id": 10, "level": "oson", "words": ["حَرارَتُهُ", "مُرْتَفِعَةٌ"], "answer": ["حَرارَتُهُ", "مُرْتَفِعَةٌ"], "cyr": "Унинг ҳарорати юқори."}, {"id": 11, "level": "oson", "words": ["ابْني", "مَريضٌ", "جِدًّا"], "answer": ["ابْني", "مَريضٌ", "جِدًّا"], "cyr": "Ўғлим жуда бемор."}, {"id": 12, "level": "oson", "words": ["اجْلِسْ", "عَلَى", "الكُرْسِيِّ"], "answer": ["اجْلِسْ", "عَلَى", "الكُرْسِيِّ"], "cyr": "Курсига ўтир."}, {"id": 13, "level": "oson", "words": ["كَمْ", "ثَمَنُ", "الفَحْصِ؟"], "answer": ["كَمْ", "ثَمَنُ", "الفَحْصِ؟"], "cyr": "Кўрик нархи қанча?"}, {"id": 14, "level": "oson", "words": ["هَلْ", "أَخَذْتَ", "دَواءً؟"], "answer": ["هَلْ", "أَخَذْتَ", "دَواءً؟"], "cyr": "Дори ичдингми?"}, {"id": 15, "level": "oson", "words": ["جَلَسَتْ", "فَوْقَ", "العُشْبِ"], "answer": ["جَلَسَتْ", "فَوْقَ", "العُشْبِ"], "cyr": "У (аёл) майса устига ўтирди."}, {"id": 16, "level": "profi", "words": ["لَيْسَتِ", "الحَلْوى", "مُفيدَةً", "دائِمًا"], "answer": ["لَيْسَتِ", "الحَلْوى", "مُفيدَةً", "دائِمًا"], "cyr": "Ширинлик ҳар доим фойдали эмас. (лайса билан)"}, {"id": 17, "level": "oson", "words": ["أَحْتاجُ", "إِلى", "راحَةٍ"], "answer": ["أَحْتاجُ", "إِلى", "راحَةٍ"], "cyr": "Менга дам олиш керак."}, {"id": 18, "level": "oson", "words": ["يَسْكُنُ", "مَحْمودٌ", "في", "القاهِرَةِ"], "answer": ["يَسْكُنُ", "مَحْمودٌ", "في", "القاهِرَةِ"], "cyr": "Маҳмуд Қоҳирада яшайди."}, {"id": 19, "level": "oson", "words": ["سَيَذْهَبُ", "إِلَى", "المُسْتَشْفَى", "غَدًا"], "answer": ["سَيَذْهَبُ", "إِلَى", "المُسْتَشْفَى", "غَدًا"], "cyr": "У эртага касалхонага боради."}, {"id": 20, "level": "oson", "words": ["سَيَزورُ", "الأَصْدِقاءُ", "حامِدًا", "اليَوْمَ"], "answer": ["سَيَزورُ", "الأَصْدِقاءُ", "حامِدًا", "اليَوْمَ"], "cyr": "Дўстлар бугун Ҳомидни зиёрат қилишади."}, {"id": 21, "level": "ortacha", "words": ["الطَّبيبُ", "يَفْحَصُ", "المَريضَ"], "answer": ["الطَّبيبُ", "يَفْحَصُ", "المَريضَ"], "cyr": "Шифокор беморни текширяпти."}, {"id": 22, "level": "ortacha", "words": ["المُمَرِّضَةُ", "تُساعِدُ", "المَريضَ"], "answer": ["المُمَرِّضَةُ", "تُساعِدُ", "المَريضَ"], "cyr": "Ҳамшира беморга ёрдам беряпти."}, {"id": 23, "level": "ortacha", "words": ["يَتَناوَلُ", "الطِّفْلُ", "الدَّواءَ"], "answer": ["يَتَناوَلُ", "الطِّفْلُ", "الدَّواءَ"], "cyr": "Бола дори ичяпти."}, {"id": 24, "level": "ortacha", "words": ["أَعْطِني", "العُنْوانَ", "مِنْ", "فَضْلِكَ"], "answer": ["أَعْطِني", "العُنْوانَ", "مِنْ", "فَضْلِكَ"], "cyr": "Илтимос, менга манзилни беринг."}, {"id": 25, "level": "ortacha", "words": ["أَزورُ", "المَريضَ", "في", "المُسْتَشْفَى"], "answer": ["أَزورُ", "المَريضَ", "في", "المُسْتَشْفَى"], "cyr": "Мен беморни касалхонада зиёрат қиламан."}, {"id": 26, "level": "ortacha", "words": ["اشْتَرَيْتُ", "الدَّواءَ", "مِنَ", "الصَّيْدَلِيَّةِ"], "answer": ["اشْتَرَيْتُ", "الدَّواءَ", "مِنَ", "الصَّيْدَلِيَّةِ"], "cyr": "Мен дорини дорихонадан сотиб олдим."}, {"id": 27, "level": "ortacha", "words": ["كَتَبَ", "الطَّبيبُ", "وَصْفَةَ", "العِلاجِ"], "answer": ["كَتَبَ", "الطَّبيبُ", "وَصْفَةَ", "العِلاجِ"], "cyr": "Шифокор даволаш рецептини ёзди."}, {"id": 28, "level": "ortacha", "words": ["لا", "أَسْتَطيعُ", "أَنْ", "أَمْشِيَ"], "answer": ["لا", "أَسْتَطيعُ", "أَنْ", "أَمْشِيَ"], "cyr": "Мен юра олмайман."}, {"id": 29, "level": "ortacha", "words": ["يَجِبُ", "أَنْ", "تَتَناوَلَ", "الدَّواءَ"], "answer": ["يَجِبُ", "أَنْ", "تَتَناوَلَ", "الدَّواءَ"], "cyr": "Дорини қабул қилишинг керак."}, {"id": 30, "level": "ortacha", "words": ["شُكْرًا", "لَكَ", "عَلى", "مُساعَدَتِكَ"], "answer": ["شُكْرًا", "لَكَ", "عَلى", "مُساعَدَتِكَ"], "cyr": "Ёрдамингиз учун раҳмат сизга."}, {"id": 31, "level": "ortacha", "words": ["شُكْرًا", "لَكَ", "عَلى", "كُلِّ", "شَيْءٍ"], "answer": ["شُكْرًا", "لَكَ", "عَلى", "كُلِّ", "شَيْءٍ"], "cyr": "Ҳамма нарса учун раҳмат сизга."}, {"id": 32, "level": "ortacha", "words": ["هُناكَ", "تَسَوُّسٌ", "في", "أَسْنانِكَ"], "answer": ["هُناكَ", "تَسَوُّسٌ", "في", "أَسْنانِكَ"], "cyr": "Тишларингда кариес бор."}, {"id": 33, "level": "ortacha", "words": ["الطَّبيبُ", "مَشْغولٌ", "في", "الثّامِنَةِ"], "answer": ["الطَّبيبُ", "مَشْغولٌ", "في", "الثّامِنَةِ"], "cyr": "Шифокор соат саккизда банд."}, {"id": 34, "level": "ortacha", "words": ["سَنَرْكَبُ", "الحافِلَةَ", "إِلَى", "السّوقِ"], "answer": ["سَنَرْكَبُ", "الحافِلَةَ", "إِلَى", "السّوقِ"], "cyr": "Биз бозорга автобусда борамиз."}, {"id": 35, "level": "ortacha", "words": ["أَكَلَ", "الوَلَدُ", "طَعامًا", "مُلَوَّثًا"], "answer": ["أَكَلَ", "الوَلَدُ", "طَعامًا", "مُلَوَّثًا"], "cyr": "Бола ифлос таом еди."}, {"id": 36, "level": "ortacha", "words": ["وَصَلَ", "المَريضُ", "إِلَى", "المُسْتَشْفَى"], "answer": ["وَصَلَ", "المَريضُ", "إِلَى", "المُسْتَشْفَى"], "cyr": "Бемор касалхонага етиб келди."}, {"id": 37, "level": "ortacha", "words": ["سَأَتَّصِلُ", "بِسَيّارَةِ", "الإِسْعافِ"], "answer": ["سَأَتَّصِلُ", "بِسَيّارَةِ", "الإِسْعافِ"], "cyr": "Мен тез ёрдам машинасига қўнғироқ қиламан."}, {"id": 38, "level": "ortacha", "words": ["يَسْتَيْقِظُ", "العُمّالُ", "صَباحًا"], "answer": ["يَسْتَيْقِظُ", "العُمّالُ", "صَباحًا"], "cyr": "Ишчилар эрталаб уйғонишади."}, {"id": 39, "level": "ortacha", "words": ["يَشْعُرُ", "سامِرٌ", "بِأَلَمٍ", "شَديدٍ"], "answer": ["يَشْعُرُ", "سامِرٌ", "بِأَلَمٍ", "شَديدٍ"], "cyr": "Самир кучли оғриқни ҳис қиляпти."}, {"id": 40, "level": "ortacha", "words": ["يَنامُ", "الطُّلّابُ", "بَعْدَ", "السّاعَةِ", "العاشِرَةِ"], "answer": ["يَنامُ", "الطُّلّابُ", "بَعْدَ", "السّاعَةِ", "العاشِرَةِ"], "cyr": "Талабалар соат ўндан кейин ухлайди."}, {"id": 41, "level": "profi", "words": ["أَخَذَ", "الرَّجُلُ", "الدَّواءَ"], "answer": ["أَخَذَ", "الرَّجُلُ", "الدَّواءَ"], "cyr": "Эркак дорини олди."}, {"id": 42, "level": "profi", "words": ["ما", "أَخَذَ", "الرَّجُلُ", "الدَّواءَ"], "answer": ["ما", "أَخَذَ", "الرَّجُلُ", "الدَّواءَ"], "cyr": "Эркак дорини олмади. (ма билан)"}, {"id": 43, "level": "profi", "words": ["لَمْ", "يَأْخُذِ", "الرَّجُلُ", "الدَّواءَ"], "answer": ["لَمْ", "يَأْخُذِ", "الرَّجُلُ", "الدَّواءَ"], "cyr": "Эркак дорини олмади. (лам билан)"}, {"id": 44, "level": "profi", "words": ["لا", "يَأْخُذُ", "الرَّجُلُ", "الدَّواءَ"], "answer": ["لا", "يَأْخُذُ", "الرَّجُلُ", "الدَّواءَ"], "cyr": "Эркак дорини олмайди."}, {"id": 45, "level": "profi", "words": ["لَنْ", "يَأْخُذَ", "الرَّجُلُ", "الدَّواءَ"], "answer": ["لَنْ", "يَأْخُذَ", "الرَّجُلُ", "الدَّواءَ"], "cyr": "Эркак дорини ҳеч қачон олмайди."}, {"id": 46, "level": "profi", "words": ["لَيْسَ", "الطَّبيبُ", "مَشْغولًا"], "answer": ["لَيْسَ", "الطَّبيبُ", "مَشْغولًا"], "cyr": "Шифокор банд эмас."}, {"id": 47, "level": "profi", "words": ["أَشْعُرُ", "بِأَلَمٍ", "شَديدٍ", "في", "بَطْني"], "answer": ["أَشْعُرُ", "بِأَلَمٍ", "شَديدٍ", "في", "بَطْني"], "cyr": "Мен қорнимда кучли оғриқ ҳис қиляпман."}, {"id": 48, "level": "profi", "words": ["يَجِبُ", "أَنْ", "نَذْهَبَ", "إِلَى", "المُسْتَشْفَى", "الآنَ"], "answer": ["يَجِبُ", "أَنْ", "نَذْهَبَ", "إِلَى", "المُسْتَشْفَى", "الآنَ"], "cyr": "Ҳозир касалхонага боришимиз керак."}, {"id": 49, "level": "profi", "words": ["نَحْتاجُ", "إِلى", "سَيّارَةِ", "إِسْعافٍ", "سَريعًا"], "answer": ["نَحْتاجُ", "إِلى", "سَيّارَةِ", "إِسْعافٍ", "سَريعًا"], "cyr": "Бизга тезкор тез ёрдам машинаси керак."}, {"id": 50, "level": "profi", "words": ["سَتَكونُ", "بِخَيْرٍ", "إِنْ", "شاءَ", "اللَّهُ"], "answer": ["سَتَكونُ", "بِخَيْرٍ", "إِنْ", "شاءَ", "اللَّهُ"], "cyr": "У яхши бўлади, Аллоҳ хоҳласа."}, {"id": 51, "level": "profi", "words": ["لا", "أَسْتَطيعُ", "أَنْ", "أَقْرَأَ", "هذِهِ", "الكَلِمَةَ"], "answer": ["لا", "أَسْتَطيعُ", "أَنْ", "أَقْرَأَ", "هذِهِ", "الكَلِمَةَ"], "cyr": "Мен бу сўзни ўқий олмайман."}, {"id": 52, "level": "profi", "words": ["ذَهَبَ", "حامِدٌ", "إِلَى", "المُسْتَشْفَى", "مَعَ", "صَديقِهِ"], "answer": ["ذَهَبَ", "حامِدٌ", "إِلَى", "المُسْتَشْفَى", "مَعَ", "صَديقِهِ"], "cyr": "Ҳомид дўсти билан касалхонага борди."}, {"id": 53, "level": "profi", "words": ["اسْتَخْدَمَ", "الوَلَدُ", "فُرْشاةَ", "الأَسْنانِ"], "answer": ["اسْتَخْدَمَ", "الوَلَدُ", "فُرْشاةَ", "الأَسْنانِ"], "cyr": "Бола тиш чўткасини ишлатди."}, {"id": 54, "level": "profi", "words": ["حَجَزَتِ", "الأُمُّ", "مَوْعِدًا", "عِنْدَ", "طَبيبِ", "الأَسْنانِ"], "answer": ["حَجَزَتِ", "الأُمُّ", "مَوْعِدًا", "عِنْدَ", "طَبيبِ", "الأَسْنانِ"], "cyr": "Она тиш шифокорида вақт банд қилди."}, {"id": 55, "level": "profi", "words": ["يَجِبُ", "أَنْ", "تَسْمَعَ", "كَلامَ", "الأَبَوَيْنِ"], "answer": ["يَجِبُ", "أَنْ", "تَسْمَعَ", "كَلامَ", "الأَبَوَيْنِ"], "cyr": "Ота-она гапини эшитишинг керак."}, {"id": 56, "level": "profi", "words": ["أَنْصَحُكَ", "بِاسْتِخْدامِ", "الفُرْشاةِ", "وَالمَعْجونِ"], "answer": ["أَنْصَحُكَ", "بِاسْتِخْدامِ", "الفُرْشاةِ", "وَالمَعْجونِ"], "cyr": "Сенга чўтка ва паста ишлатишни маслаҳат бераман."}, {"id": 57, "level": "profi", "words": ["سَأَحْشو", "لَكَ", "سِنَّكَ", "إِذا", "شَعَرْتَ", "بِأَلَمٍ"], "answer": ["سَأَحْشو", "لَكَ", "سِنَّكَ", "إِذا", "شَعَرْتَ", "بِأَلَمٍ"], "cyr": "Агар оғриқни ҳис қилсанг, тишингни пломба қиламан."}, {"id": 58, "level": "profi", "words": ["يَتَناوَلُ", "المَريضُ", "الدَّواءَ", "كُلَّ", "يَوْمٍ"], "answer": ["يَتَناوَلُ", "المَريضُ", "الدَّواءَ", "كُلَّ", "يَوْمٍ"], "cyr": "Бемор ҳар куни дори ичади."}, {"id": 59, "level": "profi", "words": ["أَرْجو", "لَكَ", "الشِّفاءَ", "العاجِلَ"], "answer": ["أَرْجو", "لَكَ", "الشِّفاءَ", "العاجِلَ"], "cyr": "Сенга тезроқ шифо тилайман."}, {"id": 60, "level": "profi", "words": ["لَمْ", "يَذْهَبْ", "حامِدٌ", "إِلَى", "الدَّرْسِ", "لِأَنَّهُ", "مَشْغولٌ"], "answer": ["لَمْ", "يَذْهَبْ", "حامِدٌ", "إِلَى", "الدَّرْسِ", "لِأَنَّهُ", "مَشْغولٌ"], "cyr": "Ҳомид дарсга бормади, чунки у банд."}];
+
+function hexToRgba(hex, a){
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return "rgba("+r+","+g+","+b+","+a+")";
+}
+
+function loadProgress(){
+  try{
+    const d = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    return { learned: d.learned || [], box: d.box || {} };
+  }catch(e){ return { learned: [], box: {} }; }
+}
+function saveProgress(state){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function addAchievementXP(xp){
+  try{
+    const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
+    d.xp = (Number(d.xp)||0) + xp;
+    localStorage.setItem(ACH_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+
+let screenStack = ['home'];
+function goScreen(name, push){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if(el) el.classList.add('active');
+  if(push !== false){
+    history.pushState({screen:name}, '', '#'+name);
+  }
+  if(name === 'home') renderHome();
+  if(name === 'lugat') renderLugat();
+  if(name === 'stats') renderStats();
+  if(name === 'quiz-setup'){ var qtl = document.getElementById('quiz-total-label'); if(qtl) qtl.textContent = ALL_WORDS.length + ' ta'; }
+  window.scrollTo(0,0);
+}
+window.addEventListener('popstate', function(e){
+  if(e.state && e.state.screen){
+    goScreen(e.state.screen, false);
+  } else {
+    goScreen('home', false);
+  }
+});
+history.replaceState({screen:'home'}, '', '#home');
+
+function renderHome(){
+  const state = loadProgress();
+  const pct = Math.round((state.learned.length / ALL_WORDS.length) * 100);
+  document.getElementById('home-progress-bar').style.width = pct+'%';
+  document.getElementById('home-progress-text').textContent = state.learned.length + ' / ' + ALL_WORDS.length + ' so\'z o\'rganildi';
+}
+
+let activeCatFilter = 'all';
+function renderCatFilters(){
+  const cats = ['all', ...new Set(ALL_WORDS.map(w=>w.cat))];
+  const wrap = document.getElementById('cat-filters');
+  wrap.innerHTML = cats.map(c=>{
+    const label = c==='all' ? 'Hammasi' : c;
+    return '<div class="filter-chip'+(activeCatFilter===c?' active':'')+'" onclick="setCatFilter(\''+c+'\')">'+label+'</div>';
+  }).join('');
+}
+function setCatFilter(c){
+  activeCatFilter = c;
+  renderCatFilters();
+  renderWordGrid();
+}
+function renderWordGrid(){
+  const state = loadProgress();
+  const grid = document.getElementById('word-grid');
+  const list = activeCatFilter==='all' ? ALL_WORDS : ALL_WORDS.filter(w=>w.cat===activeCatFilter);
+  grid.innerHTML = list.map(w=>{
+    const color = CAT_COLORS[w.cat] || '#D4A23A';
+    const box = state.box[w.ar] || 0;
+    const dots = [1,2,3,4,5].map(i=>'<span class="'+(i<=box?'on':'')+'"></span>').join('');
+    const arBlock = w.ar2
+      ? '<div class="ar-verb-pair">'+
+          '<div class="ar-verb-line"><span class="ar-verb-label">мозий</span><span class="ar">'+w.ar+'</span></div>'+
+          '<div class="ar-verb-line"><span class="ar-verb-label">музореъ</span><span class="ar">'+w.ar2+'</span></div>'+
+        '</div>'
+      : '<div class="ar">'+w.ar+'</div>';
+    return '<div class="word-card premium-card">'+
+      '<div class="icon-circle" style="background:linear-gradient(135deg,'+color+','+color+'AA); --halo:'+hexToRgba(color,.12)+'">'+
+      '<i class="ti ti-'+w.icon+'"></i></div>'+
+      arBlock+
+      '<div class="uz">'+dtxt(w.uz)+'</div>'+
+      '<div class="box-dots">'+dots+'</div>'+
+      '</div>';
+  }).join('');
+}
+// Eslatma: so'zga qo'lda tegib "o'rganilgan" deb belgilash imkoniyati olib tashlandi —
+// endi "o'rganilgan" statusi FAQAT Test'da to'g'ri javob berilganda beriladi
+// (haqiqiy bilim tekshiruvi bo'lishi uchun, talaba bosib "hiyla" qilmasligi kerak).
+function renderLugat(){
+  renderCatFilters();
+  renderWordGrid();
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------------- Flashkard rejimi ---------------- */
+let fcState = null;
+function startFlashcard(){
+  const count = parseInt(document.getElementById('fc-count').value,10);
+  const words = shuffle(ALL_WORDS).slice(0, count);
+  fcState = { words, idx:0, know:0, dontknow:0, flipped:false };
+  goScreen('flashcard');
+  renderFlashcard();
+}
+function renderFlashcard(){
+  const w = fcState.words[fcState.idx];
+  document.getElementById('fc-progress-bar').style.width = Math.round((fcState.idx/fcState.words.length)*100)+'%';
+  document.getElementById('fc-word').textContent = w.ar;
+  // rangli ikonka (kategoriya rangida)
+  const fcColor = CAT_COLORS[w.cat] || '#D4A23A';
+  const iconEl = document.getElementById('fc-icon');
+  iconEl.style.background = 'linear-gradient(135deg,'+fcColor+','+fcColor+'AA)';
+  iconEl.style.setProperty('--halo', hexToRgba(fcColor,.14));
+  iconEl.innerHTML = '<i class="ti ti-'+w.icon+'"></i>';
+  const w2el = document.getElementById('fc-word2');
+  if(w.ar2){ w2el.textContent = w.ar2; w2el.style.display = 'block'; }
+  else { w2el.style.display = 'none'; }
+  document.getElementById('fc-translation').textContent = dtxt(w.uz);
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-hint').style.display = 'block';
+  fcState.flipped = false;
+}
+function flipCard(){
+  if(fcState.flipped) return;
+  fcState.flipped = true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-hint').style.display = 'none';
+}
+function answerFlashcard(knew){
+  const w = fcState.words[fcState.idx];
+  const state = loadProgress();
+  const newBox = {...(state.box||{})};
+  const curBox = newBox[w.ar]||1;
+  newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1;
+  state.box = newBox;
+  if(knew){
+    fcState.know++;
+    addAchievementXP(2);
+  } else {
+    fcState.dontknow++;
+  }
+  saveProgress(state);
+  fcState.idx++;
+  if(fcState.idx < fcState.words.length){
+    renderFlashcard();
+  } else {
+    document.getElementById('fc-result-know').textContent = fcState.know;
+    document.getElementById('fc-result-dontknow').textContent = fcState.dontknow;
+    goScreen('flashcard-result');
+  }
+}
+
+/* ---------------- Test (SRS quiz) ---------------- */
+let quizState = null;
+function buildQuiz(count){
+  const state = loadProgress();
+  const box = state.box || {};
+  const weight = w => Math.max(1, 6-(box[w.ar]||1));
+  let weighted = [];
+  ALL_WORDS.forEach(w=>{ const wt=weight(w); for(let i=0;i<wt;i++) weighted.push(w); });
+  let sel = [];
+  const seenAr = new Set();
+  shuffle(weighted).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  if(sel.length<count){
+    shuffle(ALL_WORDS).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  }
+  return sel;
+}
+function startQuiz(){
+  const count = ALL_WORDS.length;
+  const words = buildQuiz(count);
+  // Yo'nalishlarni oldindan kafolatlangan tarzda aralashtiramiz (yarmi ar2uz, yarmi uz2ar)
+  const dirs = [];
+  for(let i=0;i<count;i++) dirs.push(i%2===0?'ar2uz':'uz2ar');
+  quizState = { words, idx:0, results:[], dirs: shuffle(dirs) };
+  goScreen('quiz');
+  renderQuizQuestion();
+}
+function renderQuizQuestion(){
+  const q = quizState.words[quizState.idx];
+  // Har savol uchun oldindan kafolatlangan aralash yo'nalishdan foydalanamiz
+  const dir = quizState.dirs[quizState.idx];
+  quizState.currentDir = dir;
+  const wordEl = document.getElementById('quiz-word');
+  if(dir === 'ar2uz'){
+    wordEl.textContent = q.ar;
+    wordEl.className = 'ar-big ar';
+  } else {
+    wordEl.textContent = dtxt(q.uz);
+    wordEl.className = 'ar-big uz-question';
+  }
+  document.getElementById('quiz-progress-bar').style.width = Math.round((quizState.idx/quizState.words.length)*100)+'%';
+  let distractors = shuffle(ALL_WORDS.filter(w=>w.ar!==q.ar)).slice(0,3);
+  let options = shuffle([q, ...distractors]);
+  const opWrap = document.getElementById('quiz-options');
+  opWrap.innerHTML = '';
+  options.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className = dir === 'ar2uz' ? 'opt-btn' : 'opt-btn opt-btn-ar';
+    btn.textContent = dir === 'ar2uz' ? dtxt(o.uz) : o.ar;
+    btn.dataset.ar = o.ar;
+    btn.onclick = ()=>answerQuiz(o, q, btn, opWrap);
+    opWrap.appendChild(btn);
+  });
+}
+function answerQuiz(chosen, correct, btnEl, wrap){
+  const isCorrect = chosen.ar === correct.ar;
+  Array.from(wrap.children).forEach(b=>b.onclick=null);
+  btnEl.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    Array.from(wrap.children).forEach(b=>{ if(b.dataset.ar===correct.ar) b.classList.add('correct'); });
+  }
+  quizState.results.push({word:correct, correct:isCorrect});
+  setTimeout(()=>{
+    quizState.idx++;
+    if(quizState.idx < quizState.words.length){
+      renderQuizQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 700);
+}
+function finishQuiz(){
+  const state = loadProgress();
+  const newBox = {...(state.box||{})};
+  let correctCount=0;
+  quizState.results.forEach(r=>{
+    const curBox = newBox[r.word.ar]||1;
+    newBox[r.word.ar] = r.correct ? Math.min(5,curBox+1) : 1;
+    if(r.correct){
+      correctCount++;
+      if(state.learned.indexOf(r.word.ar)===-1) state.learned.push(r.word.ar);
+    }
+  });
+  state.box = newBox;
+  saveProgress(state);
+  addAchievementXP(correctCount*3);
+  const total = quizState.results.length;
+  const wrongCount = total - correctCount;
+  document.getElementById('result-correct').textContent = correctCount;
+  document.getElementById('result-wrong').textContent = wrongCount;
+  document.getElementById('result-percent').textContent = Math.round((correctCount/total)*100)+'%';
+  goScreen('quiz-result');
+}
+
+/* ---------------- Gap tuzish ---------------- */
+let gapLevel = 'oson';
+let gapState = null;
+function selectGapLevel(lvl, el){
+  gapLevel = lvl;
+  document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function startGapTuzish(){
+  const pool = shuffle(GAP_TUZISH_DATA.filter(g=>g.level===gapLevel));
+  gapState = { items: pool, idx:0, correct:0 };
+  goScreen('gap');
+  renderGapQuestion();
+}
+function renderGapQuestion(){
+  const item = gapState.items[gapState.idx];
+  document.getElementById('gap-progress-bar').style.width = Math.round((gapState.idx/gapState.items.length)*100)+'%';
+  document.getElementById('gap-cyr').textContent = dtxt(item.cyr);
+  document.getElementById('gt-result-area').innerHTML = '';
+  document.getElementById('gt-btn-row').style.display = 'flex';
+  gapState.answered = false;
+  // uzunlikka qarab shrift
+  const n = item.words.length;
+  gapState.tileFont = n<=5 ? '27px' : n<=8 ? '23px' : '19px';
+  gapState.tilePad = n<=5 ? '13px 20px' : n<=8 ? '13px 15px' : '11px 12px';
+  window.__gapAnswer = [];
+  window.__gapPool = shuffle(item.words.map((w,i)=>({w,i})));
+  renderGapTokens();
+}
+function renderGapTokens(){
+  const item = gapState.items[gapState.idx];
+  const answerWrap = document.getElementById('gt-answer');
+  const poolWrap = document.getElementById('gt-pool');
+  const f = gapState.tileFont, p = gapState.tilePad;
+  // javob zonasi
+  if(window.__gapAnswer.length === 0){
+    answerWrap.innerHTML = '<div class="gt-empty">Plitkalarga tegining ↑</div>';
+  } else {
+    answerWrap.innerHTML = window.__gapAnswer.map(t=>
+      '<button class="gt-tok placed" style="font-size:'+f+';padding:'+p+'" onclick="unplaceToken('+t.i+')">'+t.w+'</button>'
+    ).join('');
+  }
+  // pool zonasi
+  if(window.__gapPool.length === 0){
+    poolWrap.innerHTML = '<div class="gt-empty">Hammasi joylashtirildi ✓</div>';
+  } else {
+    poolWrap.innerHTML = window.__gapPool.map(t=>
+      '<button class="gt-tok pool" style="font-size:'+f+';padding:'+p+'" onclick="placeToken('+t.i+')">'+t.w+'</button>'
+    ).join('');
+  }
+}
+function placeToken(i){
+  if(gapState.answered) return;
+  const idx = window.__gapPool.findIndex(t=>t.i===i);
+  if(idx<0) return;
+  const [tok] = window.__gapPool.splice(idx,1);
+  window.__gapAnswer.push(tok);
+  renderGapTokens();
+}
+function unplaceToken(i){
+  if(gapState.answered) return;
+  const idx = window.__gapAnswer.findIndex(t=>t.i===i);
+  if(idx<0) return;
+  const [tok] = window.__gapAnswer.splice(idx,1);
+  window.__gapPool.push(tok);
+  renderGapTokens();
+}
+function undoGapToken(){
+  if(gapState.answered) return;
+  if(window.__gapAnswer.length === 0) return;
+  const last = window.__gapAnswer.pop();
+  window.__gapPool.push(last);
+  renderGapTokens();
+}
+function checkGapAnswer(){
+  if(gapState.answered) return;
+  const item = gapState.items[gapState.idx];
+  if(window.__gapAnswer.length !== item.answer.length) return;
+  gapState.answered = true;
+  const userOrder = window.__gapAnswer.map(t=>t.w);
+  const isCorrect = JSON.stringify(userOrder) === JSON.stringify(item.answer);
+  // javob plitkalari rangini yangilash
+  const answerWrap = document.getElementById('gt-answer');
+  Array.from(answerWrap.children).forEach(el=>{
+    el.style.background = isCorrect ? '#0d2614' : '#2e0a0a';
+    el.style.borderColor = isCorrect ? '#6FBF8B' : '#E8765C';
+    el.style.color = isCorrect ? '#6FBF8B' : '#E8765C';
+  });
+  // natija qutisi
+  const ra = document.getElementById('gt-result-area');
+  if(isCorrect){
+    gapState.correct++;
+    addAchievementXP(3);
+    ra.innerHTML = '<div class="gt-result ok"><div class="title" style="color:#6FBF8B">✅ To’g’ri!</div></div>';
+  } else {
+    ra.innerHTML = '<div class="gt-result no">'+
+      '<div class="title" style="color:#E8765C">❌ Xato</div>'+
+      '<div class="ans-label">To’g’ri javob:</div>'+
+      '<div class="ans">'+item.answer.join(' ')+'</div>'+
+      '</div>';
+  }
+  // "Keyingi" tugmasi
+  document.getElementById('gt-btn-row').style.display = 'none';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'premium-btn-primary';
+  nextBtn.textContent = (gapState.idx < gapState.items.length-1) ? 'Keyingi →' : 'Yakunlash';
+  nextBtn.onclick = nextGapQuestion;
+  ra.appendChild(nextBtn);
+}
+function nextGapQuestion(){
+  gapState.idx++;
+  if(gapState.idx < gapState.items.length){
+    renderGapQuestion();
+  } else {
+    alert('Mashq tugadi! Togri: '+gapState.correct+' / '+gapState.items.length);
+    goScreen('home');
+  }
+}
+
+function renderStats(){
+  const state = loadProgress();
+  const nameEl = document.getElementById('stats-student-name');
+  if(nameEl) nameEl.textContent = 'Talaba: ' + currentName;
+  document.getElementById('stat-learned').textContent = state.learned.length;
+  document.getElementById('stat-total').textContent = ALL_WORDS.length;
+  const pct = Math.round((state.learned.length/ALL_WORDS.length)*100);
+  document.getElementById('stats-progress-bar').style.width = pct+'%';
+  document.getElementById('stats-progress-text').textContent = pct+'%';
+}
+
+updateAlifboLabel();
+renderHome();
+</script>
+</body>
+</html>

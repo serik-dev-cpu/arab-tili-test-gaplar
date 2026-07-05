@@ -4,6 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>5-бўлим · Алманҳажул Аъламий A1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#0F1419;color:#E8E6E1;font-family:system-ui,-apple-system,sans-serif}
@@ -661,7 +664,7 @@ function showAchievementToast(achievements){
 
       // Ўйинчи исми — катта ва ялтироқ
       toast.appendChild(h('div',{
-        fontFamily:'Georgia,serif', fontSize:'22px', fontWeight:'700',
+        fontFamily:"'Noto Naskh Arabic','Amiri',serif", fontSize:'22px', fontWeight:'700',
         color:'#E8C96A', textAlign:'center',
         textShadow:'0 0 20px #C9A84C88'
       }, currentName + '!'));
@@ -1568,7 +1571,7 @@ function renderQuizScreen(){
     card.appendChild(h('div',{textAlign:'center',fontSize:'9px',color:'#4A5B6A',letterSpacing:'2px',textTransform:'uppercase',marginBottom:'10px'},isAr?'Арабча → Ўзбекча':'Ўзбекча → Арабча'));
     card.appendChild(h('div',{textAlign:'center',minHeight:'60px',display:'flex',alignItems:'center',justifyContent:'center',
       fontSize:isAr?'52px':'19px',color:'#C9A84C',marginBottom:'10px',lineHeight:'1.4',
-      fontFamily:isAr?'Georgia,serif':'inherit',direction:isAr?'rtl':'ltr'},
+      fontFamily:isAr?"'Noto Naskh Arabic','Amiri',serif":'inherit',direction:isAr?'rtl':'ltr'},
       isAr?q.word.ar:T(q.word.uz)));
 
     // Timer bar
@@ -1613,7 +1616,7 @@ function renderQuizScreen(){
           border:'2px solid #2A3545',background:'#1C2533',
           color:'#E8E6E1',fontSize: isArInp?'17px':'32px',textAlign:'center',
           direction: isArInp?'ltr':'rtl',
-          fontFamily: isArInp?'inherit':'Georgia,serif',
+          fontFamily: isArInp?'inherit':"'Noto Naskh Arabic','Amiri',serif",
           display:'block',lineHeight:'1.5'
         }
       });
@@ -1626,7 +1629,7 @@ function renderQuizScreen(){
       const hintBox=div({
         textAlign:'center',minHeight:'22px',fontSize:'15px',
         color:'#C9A84C',letterSpacing:'3px',marginTop:'6px',
-        fontFamily:isArInp?'inherit':'Georgia,serif',
+        fontFamily:isArInp?'inherit':"'Noto Naskh Arabic','Amiri',serif",
         direction:isArInp?'ltr':'rtl'
       });
       inputWrap.appendChild(hintBox);
@@ -1691,7 +1694,7 @@ function renderQuizScreen(){
           style:{padding:'14px 16px',borderRadius:'13px',border:'2px solid #2A3545',
             background:'#1C2533',color:'#E8E6E1',
             fontSize:isChoice?'26px':'15px',
-            fontFamily:isChoice?'Georgia,serif':'inherit',direction:isChoice?'rtl':'ltr',
+            fontFamily:isChoice?"'Noto Naskh Arabic','Amiri',serif":'inherit',direction:isChoice?'rtl':'ltr',
             textAlign:'center',lineHeight:'1.4',width:'100%',
             transition:'background 0.18s ease, border-color 0.18s ease'},
           onClick:()=>handleAnswer(ch)
@@ -1740,7 +1743,7 @@ function renderQuizScreen(){
         } else {
           fb.style.background='#2e0a0a22'; fb.style.border='1px solid #C0392B33'; fb.style.color='#E87D54';
           const ans=isAr?T(correct.uz):correct.ar;
-          const ansStyle=isAr?'font-size:13px':'font-family:Georgia,serif;font-size:20px;direction:rtl';
+          const ansStyle=isAr?'font-size:13px':'font-family:Noto Naskh Arabic,Amiri,serif;font-size:20px;direction:rtl';
           fb.innerHTML='❌ Хато! Тўғри жавоб: <span style="color:#C9A84C;'+ansStyle+'">'+ans+'</span>';
         }
       }
@@ -1843,7 +1846,7 @@ function renderResults(){
     const mGrid=div({display:'flex',flexWrap:'wrap',gap:'6px'});
     mistakes.slice(0,9).forEach(r=>{
       const mc2=div({background:'#2e0a0a',border:'1px solid #C0392B33',borderRadius:'8px',padding:'4px 8px',textAlign:'center',minWidth:'60px'});
-      mc2.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'18px',color:'#C9A84C',direction:'rtl'},r.word.ar));
+      mc2.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'18px',color:'#C9A84C',direction:'rtl'},r.word.ar));
       mc2.appendChild(h('div',{fontSize:'8px',color:'#7A8B99',maxWidth:'70px',overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'},T(r.word.uz)));
       mGrid.appendChild(mc2);
     });
@@ -1938,7 +1941,7 @@ function showCertificate(){
   card.appendChild(h('div',{fontSize:'26px',letterSpacing:'5px',marginBottom:'8px'},'🌟✨🏆✨🌟'));
   card.appendChild(h('div',{fontSize:'9px',letterSpacing:'4px',color:'#C9A84C88',
     textTransform:'uppercase',marginBottom:'10px'},'СЕРТИФИКАТ · CERTIFICATE'));
-  card.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'40px',color:'#C9A84C',
+  card.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'40px',color:'#C9A84C',
     direction:'rtl',lineHeight:'1.3',marginBottom:'4px',
     textShadow:'0 0 30px #C9A84C66'},'اَلسَّكَنُ'));
   card.appendChild(h('div',{fontSize:'12px',color:'#7A8B99',marginBottom:'14px'},
@@ -1946,7 +1949,7 @@ function showCertificate(){
   card.appendChild(div({height:'1px',background:'linear-gradient(90deg,transparent,#C9A84C66,transparent)',marginBottom:'14px'}));
   card.appendChild(h('div',{fontSize:'9px',color:'#4A5B6A',textTransform:'uppercase',
     letterSpacing:'3px',marginBottom:'8px'},'ТАЛАБА · STUDENT'));
-  card.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'28px',fontWeight:'700',
+  card.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'28px',fontWeight:'700',
     color:'#E8C96A',marginBottom:'14px',textShadow:'0 0 30px #C9A84C66'},currentName));
 
   // Ютуқ матни
@@ -1954,7 +1957,7 @@ function showCertificate(){
     borderRadius:'12px',padding:'12px',marginBottom:'14px',
     lineHeight:'1.8',fontSize:'12px',color:'#B0B8C4'},
     'Алманҳажул Арабий 5-бўлимининг луғат қисмини — барча '+TOTAL+' та сўзни тўлиқ ўзлаштирди'));
-  card.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'13px',
+  card.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'13px',
     color:'#C9A84C88',direction:'rtl',marginBottom:'12px'},
     'وَقَدْ أَتَمَّ جَمِيعَ الْمُفْرَدَاتِ'));
 
@@ -1987,7 +1990,7 @@ function showCertificate(){
   dl.appendChild(h('div',{fontSize:'11px',color:'#7A8B99'},cd.date||new Date().toLocaleDateString('uz-UZ')));
   if(cd.time){dl.appendChild(h('div',{fontSize:'9px',color:'#4A5B6A'},cd.time));}
   dateRow.appendChild(dl);
-  dateRow.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'14px',
+  dateRow.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'14px',
     color:'#C9A84C44',direction:'rtl'},'الْمَنْهَجُ الْعَرَبِيُّ'));
   card.appendChild(dateRow);
 
@@ -2031,7 +2034,7 @@ function renderZamirlarScreen(){
   inner.appendChild(hdr);
 
   // Arabic header
-  inner.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'36px',color:'#5B8FD6',direction:'rtl',
+  inner.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'36px',color:'#5B8FD6',direction:'rtl',
     textAlign:'center',marginBottom:'4px',textShadow:'0 0 20px #5B8FD644'},'الضَّمَائِرُ'));
   inner.appendChild(h('div',{textAlign:'center',fontSize:'11px',color:'#4A5B6A',marginBottom:'14px'},'Арабча замирлар · '+ALL_ZAMIRLAR.length+' та'));
 
@@ -2073,7 +2076,7 @@ function renderZamirlarScreen(){
       borderRadius:'12px',padding:'12px 14px',marginBottom:'8px'});
     const crow=div({display:'flex',justifyContent:'space-between',alignItems:'flex-start'});
     const cl=div({flex:'1'});
-    cl.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'28px',color:'#5B8FD6',direction:'rtl',lineHeight:'1.3'},z.ar));
+    cl.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'28px',color:'#5B8FD6',direction:'rtl',lineHeight:'1.3'},z.ar));
     cl.appendChild(h('div',{fontSize:'13px',color:'#E8E6E1',marginTop:'2px'},T(z.uz)));
     const cr=div({textAlign:'right'});
     cr.appendChild(h('span',{fontSize:'9px',background:z.tur.includes('Мунфасил')?'#5B8FD622':'#C9A84C22',
@@ -2086,7 +2089,7 @@ function renderZamirlarScreen(){
     card.appendChild(crow);
     // Example
     const ex=div({marginTop:'8px',background:'#0F1419',borderRadius:'8px',padding:'6px 10px'});
-    ex.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'15px',color:'#C9A84C88',direction:'rtl',textAlign:'right'},z.misol));
+    ex.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'15px',color:'#C9A84C88',direction:'rtl',textAlign:'right'},z.misol));
     ex.appendChild(h('div',{fontSize:'10px',color:'#4A5B6A',marginTop:'2px'},z.misol_uz));
     card.appendChild(ex);
     inner.appendChild(card);
@@ -2244,10 +2247,10 @@ function renderZamirlarQuiz(){
       isAr?'Арабча замир → Ўзбекча':'Ўзбекча → Арабча замир'));
     card.appendChild(h('div',{textAlign:'center',minHeight:'52px',display:'flex',alignItems:'center',justifyContent:'center',
       fontSize:isAr?'40px':'15px',color:'#5B8FD6',lineHeight:'1.4',
-      fontFamily:isAr?'Georgia,serif':'inherit',direction:isAr?'rtl':'ltr',marginBottom:'8px'},
+      fontFamily:isAr?"'Noto Naskh Arabic','Amiri',serif":'inherit',direction:isAr?'rtl':'ltr',marginBottom:'8px'},
       isAr?q.z.ar:q.z.uz));
     // Example hint
-    card.appendChild(h('div',{textAlign:'center',fontSize:'12px',color:'#4A5B6A',fontFamily:'Georgia,serif',direction:'rtl'},q.z.misol));
+    card.appendChild(h('div',{textAlign:'center',fontSize:'12px',color:'#4A5B6A',fontFamily:"'Noto Naskh Arabic','Amiri',serif",direction:'rtl'},q.z.misol));
 
     const tb=div({height:'5px',background:'#0F1419',borderRadius:'3px',overflow:'hidden'});
     tb.appendChild(div({id:'ztimer-fill',height:'5px',background:'#5B8FD6',borderRadius:'3px',width:'100%',transition:'width 1s linear'}));
@@ -2265,7 +2268,7 @@ function renderZamirlarQuiz(){
       const cb=el('button',{
         style:{padding:'11px 14px',borderRadius:'11px',border:'1.5px solid #2A3545',
           background:'#1C2533',color:'#E8E6E1',fontSize:isChoice?'22px':'12px',
-          fontFamily:isChoice?'Georgia,serif':'inherit',direction:isChoice?'rtl':'ltr',
+          fontFamily:isChoice?"'Noto Naskh Arabic','Amiri',serif":'inherit',direction:isChoice?'rtl':'ltr',
           textAlign:'center',lineHeight:'1.4',width:'100%'},
         onClick:()=>handleZAnswer(ch)
       },[isChoice?ch.ar:T(ch.uz)]);
@@ -2297,7 +2300,7 @@ function renderZamirlarResults(){
   const sc=div({textAlign:'center',padding:'20px',marginBottom:'10px',
     background:`linear-gradient(135deg,${scoreC}15,#161D27)`,border:`1px solid ${scoreC}44`,borderRadius:'18px'});
   sc.appendChild(h('div',{fontSize:'36px',marginBottom:'6px'},pct>=80?'🏆':pct>=60?'💪':pct>=40?'📈':'🌱'));
-  sc.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'32px',color:'#5B8FD6',direction:'rtl'},'الضَّمَائِرُ'));
+  sc.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'32px',color:'#5B8FD6',direction:'rtl'},'الضَّمَائِرُ'));
   sc.appendChild(h('div',{fontSize:'32px',fontWeight:'700',color:scoreC,margin:'6px 0'},correct+'/'+qs.results.length));
   sc.appendChild(h('span',{background:scoreC+'22',border:`1px solid ${scoreC}44`,color:scoreC,borderRadius:'20px',padding:'3px 14px',fontWeight:'700',fontSize:'13px'},pct+'%'));
   inner.appendChild(sc);
@@ -2309,7 +2312,7 @@ function renderZamirlarResults(){
     const mg=div({display:'flex',flexWrap:'wrap',gap:'6px'});
     mistakes.slice(0,8).forEach(r=>{
       const mc2=div({background:'#2e0a0a',border:'1px solid #C0392B33',borderRadius:'8px',padding:'4px 8px',textAlign:'center',minWidth:'70px'});
-      mc2.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'18px',color:'#5B8FD6',direction:'rtl'},r.z.ar));
+      mc2.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'18px',color:'#5B8FD6',direction:'rtl'},r.z.ar));
       mc2.appendChild(h('div',{fontSize:'8px',color:'#7A8B99'},T(r.z.uz)));
       mg.appendChild(mc2);
     });
@@ -2402,7 +2405,7 @@ function renderLugatDaftar(){
       direction: isArabicInput(lugatSearch)?'rtl':'ltr',
       textAlign: isArabicInput(lugatSearch)?'right':'left',
       marginBottom:'8px',display:'block',
-      fontFamily:'Georgia,serif'}});
+      fontFamily:"'Noto Naskh Arabic','Amiri',serif"}});
 
   // Лотинча → Кирилча (қидириш учун)
   function latToCyr(s){
@@ -2455,7 +2458,7 @@ function renderLugatDaftar(){
         background:learned?'#0a1a0e': mistakeCount>2?'#1a0f0f':'#161D27',
         border:`1px solid ${learned?'#3CB37133': mistakeCount>2?'#C0392B33':'#2A3545'}`});
       const left=div({flex:'1'});
-      left.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'26px',color:learned?'#7CC87C':'#C9A84C',
+      left.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'26px',color:learned?'#7CC87C':'#C9A84C',
         direction:'rtl',lineHeight:'1.3'},w.ar));
       left.appendChild(h('div',{fontSize:'12px',color:'#7A8B99',marginTop:'2px'},T(w.uz)));
       card.appendChild(left);
@@ -2724,7 +2727,7 @@ function renderXatolarDaftar(){
     card.appendChild(rank);
 
     const mid=div({flex:'1'});
-    mid.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'22px',
+    mid.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'22px',
       color:'#E87D54',direction:'rtl',lineHeight:'1.3'},ar_word));
     mid.appendChild(h('div',{fontSize:'11px',color:'#7A8B99',marginTop:'2px'},
       word.uz||(word.misol_uz||'')));
@@ -2811,7 +2814,7 @@ function generatePDF(words, title, studentName){
     rows += `<tr><td colspan="2" style="background:${c}22;border-left:3px solid ${c};padding:6px 10px;font-weight:700;font-size:12px;color:${c};">${cat}</td></tr>`;
     Object.entries(wordMap).forEach(([ar,uz])=>{
       rows += `<tr>
-        <td style="font-family:Georgia,serif;font-size:20px;direction:rtl;text-align:right;padding:6px 10px;border-bottom:1px solid #eee;color:#1a1a2e;">${ar}</td>
+        <td style="font-family:'Noto Naskh Arabic','Amiri',serif;font-size:20px;direction:rtl;text-align:right;padding:6px 10px;border-bottom:1px solid #eee;color:#1a1a2e;">${ar}</td>
         <td style="font-size:12px;padding:6px 10px;border-bottom:1px solid #eee;color:#333;">${uz}</td>
       </tr>`;
     });
@@ -3150,7 +3153,7 @@ function renderHisobot(){
       mCard.appendChild(h('div',{fontSize:'13px',fontWeight:'700',color:'#E87D54',
         minWidth:'18px'},String(i+1)+'.'));
       const mMid=div({flex:'1'});
-      mMid.appendChild(h('div',{fontFamily:'Georgia,serif',fontSize:'20px',
+      mMid.appendChild(h('div',{fontFamily:"'Noto Naskh Arabic','Amiri',serif",fontSize:'20px',
         color:'#E87D54',direction:'rtl'},ar));
       mMid.appendChild(h('div',{fontSize:'10px',color:'#7A8B99'},word.uz));
       mCard.appendChild(mMid);

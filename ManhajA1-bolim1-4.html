@@ -136,58 +136,9 @@
 <body>
 
 <!-- ═══════════ BO'LIM TANLASH EKRANI ═══════════ -->
-<div class="screen active" id="screen-bolimtanlov" data-screen="bolimtanlov">
-  <div class="top-header">
-    <div class="top-title"><span class="gold-text">Al-Manhajul A'lamiy</span> <span class="sub">A1 — Bo'limni tanlang</span></div>
-  </div>
-  <div class="progress-wrap">
-    <div class="progress-row"><span>Umumiy XP</span><span id="global-xp">0</span></div>
-    <div class="stat-row">
-      <div class="stat-box"><div class="num" id="global-streak">🔥</div><div class="lbl">Davom eting!</div></div>
-    </div>
-  </div>
-  <div class="bolim-card" data-bolim="1">
-    <div class="bolim-num">1</div>
-    <div class="bolim-info">
-      <div class="bolim-title-uz">Salomlashish va tanishish</div>
-      <div class="bolim-title-ar">التَّحِيَّةُ وَالتَّعَارُفُ</div>
-      <div class="bolim-progress" id="bolim1-progress">0% bajarildi</div>
-    </div>
-    <i class="ti ti-chevron-left" style="color:var(--muted);font-size:20px;"></i>
-  </div>
-  <div class="bolim-card" data-bolim="2">
-    <div class="bolim-num">2</div>
-    <div class="bolim-info">
-      <div class="bolim-title-uz">Oila va oila a'zolari</div>
-      <div class="bolim-title-ar">الأُسْرَةُ وَالْعَائِلَةُ</div>
-      <div class="bolim-progress" id="bolim2-progress">0% bajarildi</div>
-    </div>
-    <i class="ti ti-chevron-left" style="color:var(--muted);font-size:20px;"></i>
-  </div>
-  <div class="bolim-card" data-bolim="3">
-    <div class="bolim-num">3</div>
-    <div class="bolim-info">
-      <div class="bolim-title-uz">Dars va ta'lim</div>
-      <div class="bolim-title-ar">الدِّرَاسَةُ وَالتَّعْلِيمُ</div>
-      <div class="bolim-progress" id="bolim3-progress">0% bajarildi</div>
-    </div>
-    <i class="ti ti-chevron-left" style="color:var(--muted);font-size:20px;"></i>
-  </div>
-  <div class="bolim-card" data-bolim="4">
-    <div class="bolim-num">4</div>
-    <div class="bolim-info">
-      <div class="bolim-title-uz">Kasblar va ishlar</div>
-      <div class="bolim-title-ar">الْمِهَنُ وَالْأَعْمَالُ</div>
-      <div class="bolim-progress" id="bolim4-progress">0% bajarildi</div>
-    </div>
-    <i class="ti ti-chevron-left" style="color:var(--muted);font-size:20px;"></i>
-  </div>
-</div>
-
 <!-- ═══════════ BO'LIM MENYUSI ═══════════ -->
 <div class="screen" id="screen-menu" data-screen="menu">
   <div class="top-header" style="flex-direction:column;align-items:center;position:relative;">
-    <button class="btn btn-outline btn-sm" id="back-to-bolimlar" style="position:absolute;top:0;left:0;">☰ Bo'limlar</button>
     <button class="toggle-alifbo" id="alifbo-btn-menu" style="position:absolute;top:0;right:0;">Кирилл</button>
     <div class="bolim-badge" id="menu-bolim-badge">Bo'lim</div>
     <div class="menu-hero-ar" id="menu-bolim-ar"></div>
@@ -1136,18 +1087,17 @@ function showScreen(name, push){
   renderScreen(name);
 }
 window.addEventListener('popstate', function(e){
-  var name = (e.state && e.state.screen) ? e.state.screen : 'bolimtanlov';
+  var name = (e.state && e.state.screen) ? e.state.screen : 'menu';
   if(e.state && e.state.bolim && e.state.bolim !== currentBolim){ selectBolim(e.state.bolim); }
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   var target = document.getElementById('screen-'+name);
   if(target) target.classList.add('active');
   renderScreen(name);
 });
-var lastScreen = 'bolimtanlov';
+var lastScreen = 'menu';
 function renderScreen(name){
   lastScreen = name;
-  if(name==='bolimtanlov') renderBolimTanlov();
-  else if(name==='menu') renderMenu();
+  if(name==='menu') renderMenu();
   else if(name==='lugat') renderLugat();
   else if(name==='test') startQuiz();
   else if(name==='gaptuzish') startGapTuzish();
@@ -1159,20 +1109,11 @@ function rerenderCurrentScreen(){
   else if(lastScreen==='grammatika') BOLIM_META[currentBolim].gram();
   else if(lastScreen==='flashkard') renderFlashcard();
   else if(lastScreen==='gaptuzish') renderGapCurrent();
-  else if(lastScreen==='bolimtanlov') renderBolimTanlov();
 }
 
-document.querySelectorAll('.bolim-card').forEach(function(el){
-  el.addEventListener('click', function(){
-    var n = Number(el.getAttribute('data-bolim'));
-    selectBolim(n);
-    showScreen('menu');
-  });
-});
 document.querySelectorAll('[data-nav]').forEach(function(el){
   el.addEventListener('click', function(){ showScreen(el.getAttribute('data-nav')); });
 });
-document.getElementById('back-to-bolimlar').addEventListener('click', function(){ showScreen('bolimtanlov'); });
 document.getElementById('natija-menu-btn').addEventListener('click', function(){ showScreen('menu'); });
 document.getElementById('floating-menu-btn').addEventListener('click', function(){ location.href='index.html'; });
 
@@ -1192,14 +1133,6 @@ document.getElementById('name-badge').addEventListener('click', function(){
   var el = document.getElementById(id);
   if(el) el.addEventListener('click', function(){ setAlifbo(getAlifbo()==='lt' ? 'kr' : 'lt'); });
 });
-
-// ═══ BO'LIM TANLASH EKRANI ═══
-function renderBolimTanlov(){
-  document.getElementById('global-xp').textContent = getAchievementXP();
-  [1,2,3].forEach(function(n){
-    document.getElementById('bolim'+n+'-progress').textContent = bolimProgressPct(n)+'% bajarildi';
-  });
-}
 
 // ═══ BO'LIM MENYUSI ═══
 function renderMenu(){
@@ -1520,8 +1453,9 @@ if(directBolim >= 1 && directBolim <= 4 && BOLIM_META[directBolim]){
   showScreen('menu', false);
   history.replaceState({screen:'menu', bolim:directBolim}, '', '#b'+directBolim+'-menu');
 } else {
-  history.replaceState({screen:'bolimtanlov', bolim:null}, '', '#bolimtanlov');
-  renderBolimTanlov();
+  // To'g'ri hash bo'lmasa (masalan bevosita ochilgan bo'lsa) — bosh sahifaga qaytaramiz,
+  // chunki bo'lim tanlash endi faqat index.html roadmap'i orqali amalga oshadi.
+  location.replace('index.html');
 }
 </script>
 </body>

@@ -282,6 +282,14 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
       <div class="reward-desc" id="rewardDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
     </div>
   </div>
+
+  <div class="reward-card locked" id="examCard" style="margin-top:12px">
+    <div class="reward-icon-wrap">🎓</div>
+    <div class="reward-info">
+      <div class="reward-title">Imtihonga tayyorgarlik</div>
+      <div class="reward-desc" id="examDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
@@ -482,6 +490,7 @@ function initRoadmap(){
   }
 
   updateRewardCard(allAbove80, below80Count);
+  updateExamCard(allAbove80, below80Count);
 }
 
 // ═══ SOVG'ALAR BO'LIMI ═══
@@ -501,6 +510,36 @@ function updateRewardCard(unlocked, below80Count){
     desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
     card.onclick = null;
   }
+}
+
+// ═══ IMTIHONGA TAYYORGARLIK BO'LIMI ═══
+// Hozircha faqat nomi va qulf mexanizmi tayyor — testning o'zi (50-100 ta
+// aralash savol) keyinroq alohida qo'shiladi. Shu sabab ochilganda ham
+// "tez orada" xabari chiqadi, haqiqiy test emas.
+function updateExamCard(unlocked, below80Count){
+  var card = document.getElementById('examCard');
+  var desc = document.getElementById('examDesc');
+  if(!card) return;
+
+  if(unlocked){
+    card.classList.remove('locked');
+    card.classList.add('unlocked');
+    desc.textContent = "Ochildi \u2014 tez orada ishga tushadi";
+    card.onclick = openExamModal;
+  } else {
+    card.classList.add('locked');
+    card.classList.remove('unlocked');
+    desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
+    card.onclick = null;
+  }
+}
+
+function openExamModal(){
+  var modal = document.getElementById('rewardModal');
+  var text = document.getElementById('rewardModalText');
+  var savedName = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
+  text.innerHTML = '<b>' + savedName + '</b>, siz imtihonga tayyorgarlik darajasiga yetdingiz! Barcha bo\'limlardan aralashtirilgan 50\u2013100 savolli yakuniy test tez orada shu yerga qo\'shiladi.';
+  modal.classList.add('show');
 }
 
 function openRewardModal(){

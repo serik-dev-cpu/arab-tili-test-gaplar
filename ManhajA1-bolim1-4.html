@@ -1058,6 +1058,12 @@ function setBox(word, val){
   var p = loadProgress();
   val = Math.max(1, Math.min(5, val));
   p.box[word] = val;
+  saveProgress(p);
+}
+// "O'rganilgan" statusi ENDI faqat Test'da TO'G'RI javob berilganda beriladi —
+// Flashkard yoki noto'g'ri javob bu statusni bermaydi (haqiqiy bilim tekshiruvi uchun).
+function markLearned(word){
+  var p = loadProgress();
   if(p.learned.indexOf(word) === -1) p.learned.push(word);
   saveProgress(p);
 }
@@ -1229,7 +1235,7 @@ function handleQuizAnswer(btn){
   if(!isCorrect) btn.classList.add('wrong');
   var word = quizState.current;
   var box = getBox(word.ar);
-  if(isCorrect){ quizState.correct++; setBox(word.ar, box+1); addAchievementXP(5); }
+  if(isCorrect){ quizState.correct++; setBox(word.ar, box+1); markLearned(word.ar); addAchievementXP(5); }
   else{ setBox(word.ar, 1); }
   setTimeout(function(){ nextQuizQuestion(); }, 1100);
 }

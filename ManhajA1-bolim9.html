@@ -43,7 +43,7 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 }
 .word-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;}
 @media (max-width:420px){.word-grid{grid-template-columns:repeat(2,1fr);}}
-.word-card{cursor:pointer;}
+.word-card{}
 .word-card .icon-circle{width:48px; height:48px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px var(--halo);}
 .word-card .icon-circle i{font-size:22px; color:#0B0E14;}
 .word-card .ar{font-size:30px; color:var(--gold2); margin-bottom:7px; line-height:1.5;}
@@ -554,7 +554,7 @@ function renderWordGrid(){
           '<div class="ar-verb-line"><span class="ar-verb-label">музореъ</span><span class="ar">'+w.ar2+'</span></div>'+
         '</div>'
       : '<div class="ar">'+w.ar+'</div>';
-    return '<div class="word-card premium-card" onclick="toggleLearned(\''+w.ar.replace(/'/g,"\\'")+'\')">'+
+    return '<div class="word-card premium-card">'+
       '<div class="icon-circle" style="background:linear-gradient(135deg,'+color+','+color+'AA); --halo:'+hexToRgba(color,.12)+'">'+
       '<i class="ti ti-'+w.icon+'"></i></div>'+
       arBlock+
@@ -563,14 +563,9 @@ function renderWordGrid(){
       '</div>';
   }).join('');
 }
-function toggleLearned(ar){
-  const state = loadProgress();
-  const idx = state.learned.indexOf(ar);
-  if(idx>=0){ state.learned.splice(idx,1); }
-  else{ state.learned.push(ar); addAchievementXP(2); }
-  saveProgress(state);
-  renderWordGrid();
-}
+// Eslatma: so'zga qo'lda tegib "o'rganilgan" deb belgilash imkoniyati olib tashlandi —
+// endi "o'rganilgan" statusi FAQAT Test'da to'g'ri javob berilganda beriladi
+// (haqiqiy bilim tekshiruvi bo'lishi uchun, talaba bosib "hiyla" qilmasligi kerak).
 function renderLugat(){
   renderCatFilters();
   renderWordGrid();
@@ -618,7 +613,6 @@ function answerFlashcard(knew){
   state.box = newBox;
   if(knew){
     fcState.know++;
-    if(state.learned.indexOf(w.ar)===-1) state.learned.push(w.ar);
     addAchievementXP(2);
   } else {
     fcState.dontknow++;

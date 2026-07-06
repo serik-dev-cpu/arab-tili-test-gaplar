@@ -275,19 +275,19 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 
   <div class="section-label"><span class="path-dot"></span>Maxsus</div>
 
-  <div class="reward-card locked" id="rewardCard">
-    <div class="reward-icon-wrap">🎁</div>
-    <div class="reward-info">
-      <div class="reward-title">Sovg'alar</div>
-      <div class="reward-desc" id="rewardDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
-    </div>
-  </div>
-
-  <div class="reward-card locked" id="examCard" style="margin-top:12px">
+  <div class="reward-card locked" id="examCard">
     <div class="reward-icon-wrap">🎓</div>
     <div class="reward-info">
       <div class="reward-title">Imtihonga tayyorgarlik</div>
       <div class="reward-desc" id="examDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+    </div>
+  </div>
+
+  <div class="reward-card locked" id="rewardCard" style="margin-top:12px">
+    <div class="reward-icon-wrap">🎁</div>
+    <div class="reward-info">
+      <div class="reward-title">Sovg'alar</div>
+      <div class="reward-desc" id="rewardDesc">Imtihonga tayyorgarlik testini yakunlang</div>
     </div>
   </div>
 </div>
@@ -489,17 +489,22 @@ function initRoadmap(){
       : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
   }
 
-  updateRewardCard(allAbove80, below80Count);
   updateExamCard(allAbove80, below80Count);
+  // Sovg'alar endi 10 bo'lim 80%'ga emas, balki Imtihonga tayyorgarlik
+  // testidan 80%+ natija olishga bog'liq. Imtihon hali qurilmagani uchun
+  // bu qiymat hozircha har doim 0 — imtihon tayyor bo'lgach, u yerdan
+  // shu kalitga yozib qo'yiladi va Sovg'alar avtomatik ochiladi.
+  var examScorePct = Number(localStorage.getItem('arabic_exam_score_pct') || 0);
+  updateRewardCard(examScorePct >= 80);
 }
 
-// ═══ SOVG'ALAR BO'LIMI ═══
-function updateRewardCard(unlocked, below80Count){
+// ═══ SOVG'ALAR BO'LIMI — Imtihon natijasi 80%+ bo'lganda ochiladi ═══
+function updateRewardCard(examPassed){
   var card = document.getElementById('rewardCard');
   var desc = document.getElementById('rewardDesc');
   if(!card) return;
 
-  if(unlocked){
+  if(examPassed){
     card.classList.remove('locked');
     card.classList.add('unlocked');
     desc.textContent = "Ochish uchun bosing \uD83C\uDF89";
@@ -507,7 +512,7 @@ function updateRewardCard(unlocked, below80Count){
   } else {
     card.classList.add('locked');
     card.classList.remove('unlocked');
-    desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
+    desc.textContent = "Imtihonga tayyorgarlik testini 80%+ natija bilan yakunlang";
     card.onclick = null;
   }
 }

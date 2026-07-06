@@ -28,6 +28,14 @@
   .top-title .sub{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;}
   .gold-text{background:linear-gradient(135deg,var(--gold1),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;}
   .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:700;font-size:15px;transition:transform .15s ease, opacity .15s ease;}
+  .time-choice-row{display:flex; gap:10px; margin-top:12px;}
+  .time-choice{flex:1; background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:14px 8px; text-align:center; cursor:pointer; transition:transform .12s ease, border-color .12s ease;}
+  .time-choice i{font-size:22px; color:var(--muted);}
+  .time-choice .t{font-size:13px; font-weight:700; margin-top:6px; color:var(--text);}
+  .time-choice .s{font-size:11px; color:var(--muted); margin-top:2px;}
+  .time-choice.active{border-color:var(--gold1); background:rgba(212,162,58,.1);}
+  .quiz-timer-wrap{display:flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:700; color:var(--gold2); margin:10px 0;}
+  .quiz-timer-wrap.warn{color:var(--red);}
   .btn:active{transform:scale(0.97);}
   .btn-gold{background:linear-gradient(135deg,var(--gold1),var(--gold2));color:#1a1408;}
   .btn-outline{background:rgba(212,162,58,0.08);border:1px solid var(--border);color:var(--gold2);}
@@ -156,7 +164,7 @@
   <div class="menu-grid">
     <div class="menu-card" data-nav="lugat"><i class="ti ti-book-2"></i><div class="mc-title">Lug'at</div><div class="mc-sub" id="mc-lugat-sub"></div></div>
     <div class="menu-card" data-nav="flashkard"><i class="ti ti-cards"></i><div class="mc-title">Flashkard</div><div class="mc-sub">Tez takrorlash</div></div>
-    <div class="menu-card" data-nav="test"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Barcha so'z, 4 variant</div></div>
+    <div class="menu-card" data-nav="test-setup"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Barcha so'z, 4 variant</div></div>
     <div class="menu-card" data-nav="gaptuzish"><i class="ti ti-arrows-shuffle"></i><div class="mc-title">Gap tuzish</div><div class="mc-sub">60 ta mashq</div></div>
     <div class="menu-card" data-nav="grammatika" style="grid-column:1/3;"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
   </div>
@@ -174,6 +182,32 @@
 </div>
 
 <!-- ═══════════ TEST EKRANI ═══════════ -->
+<div class="screen" id="screen-test-setup" data-screen="test-setup">
+  <div class="top-header">
+    <button class="btn btn-outline btn-sm" data-nav="menu">‹ Menyu</button>
+    <div class="top-title">Test</div>
+  </div>
+  <p style="color:var(--muted); font-size:14px; margin-top:6px;">Har bir savol uchun vaqt limitini tanlang:</p>
+  <div class="time-choice-row">
+    <div class="time-choice" data-t="10" onclick="selectQuizTime(10,this)">
+      <i class="ti ti-feather"></i>
+      <div class="t">Tez</div>
+      <div class="s">10 sek</div>
+    </div>
+    <div class="time-choice active" data-t="20" onclick="selectQuizTime(20,this)">
+      <i class="ti ti-bolt"></i>
+      <div class="t">Odatiy</div>
+      <div class="s">20 sek</div>
+    </div>
+    <div class="time-choice" data-t="30" onclick="selectQuizTime(30,this)">
+      <i class="ti ti-hourglass"></i>
+      <div class="t">Sekin</div>
+      <div class="s">30 sek</div>
+    </div>
+  </div>
+  <button class="btn btn-gold btn-block" id="quiz-start-btn" style="margin-top:20px;" onclick="showScreen('test')">🚀 Boshlash — 20 sek</button>
+</div>
+
 <div class="screen" id="screen-test" data-screen="test">
   <div class="top-header">
     <button class="btn btn-outline btn-sm" data-nav="menu">‹ Menyu</button>
@@ -181,6 +215,7 @@
     <div class="topbar-actions"><button class="toggle-alifbo" id="alifbo-btn-test">Кирилл</button></div>
   </div>
   <div class="quiz-progress" id="quiz-progress">1 / 15</div>
+  <div class="quiz-timer-wrap"><i class="ti ti-clock"></i> <span id="quiz-timer">20</span>s</div>
   <div class="quiz-card"><div class="qword" id="quiz-question">...</div></div>
   <div class="quiz-options" id="quiz-options"></div>
 </div>
@@ -1194,6 +1229,40 @@ function renderLugatList(){
 
 // ═══ TEST (SRS QUIZ) ═══
 var quizState = {idx:0, total:15, correct:0, current:null};
+var quizTimePerQ = 20;
+function selectQuizTime(t, el){
+  quizTimePerQ = t;
+  document.querySelectorAll('.time-choice').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('quiz-start-btn').textContent = '🚀 Boshlash — '+t+' sek';
+}
+function startQuizTimer(){
+  clearInterval(window.__quizTimerInt);
+  var timeLeft = quizTimePerQ;
+  var timerEl = document.getElementById('quiz-timer');
+  var wrapEl = document.querySelector('.quiz-timer-wrap');
+  if(!timerEl) return;
+  timerEl.textContent = timeLeft;
+  if(wrapEl) wrapEl.classList.remove('warn');
+  window.__quizTimerInt = setInterval(function(){
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if(timeLeft <= 5 && wrapEl) wrapEl.classList.add('warn');
+    if(timeLeft <= 0){
+      clearInterval(window.__quizTimerInt);
+      quizTimeUp();
+    }
+  }, 1000);
+}
+function quizTimeUp(){
+  var word = quizState.current;
+  document.querySelectorAll('.opt-btn').forEach(function(b){
+    b.classList.add('disabled');
+    if(b.getAttribute('data-correct')==='true') b.classList.add('correct');
+  });
+  setBox(word.ar, 1);
+  setTimeout(function(){ nextQuizQuestion(); }, 900);
+}
 function startQuiz(){
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
   var queue = buildWeightedQueue(pool);
@@ -1238,8 +1307,10 @@ function nextQuizQuestion(){
   document.querySelectorAll('.opt-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ handleQuizAnswer(btn); });
   });
+  startQuizTimer();
 }
 function handleQuizAnswer(btn){
+  clearInterval(window.__quizTimerInt);
   var isCorrect = btn.getAttribute('data-correct') === 'true';
   document.querySelectorAll('.opt-btn').forEach(function(b){
     b.classList.add('disabled');

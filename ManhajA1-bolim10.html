@@ -34,6 +34,17 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 .menu-card .t{font-size:14px; font-weight:600; color:var(--text);}
 .menu-card .s{font-size:11px; color:var(--muted); margin-top:4px;}
 
+.time-choice-row{display:flex; gap:10px; margin-top:12px;}
+.time-choice{flex:1; background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:14px 8px; text-align:center; cursor:pointer; transition:transform .12s ease, border-color .12s ease;}
+.time-choice i{font-size:22px; color:var(--muted);}
+.time-choice .t{font-size:13px; font-weight:700; margin-top:6px; color:var(--text);}
+.time-choice .s{font-size:11px; color:var(--muted); margin-top:2px;}
+.time-choice.active{border-color:var(--gold); background:rgba(212,162,58,.1);}
+.time-choice.active i{color:var(--gold);}
+.time-choice:active{transform:scale(.96);}
+.quiz-timer-wrap{display:flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:700; color:var(--gold2); margin:10px 0;}
+.quiz-timer-wrap.warn{color:#E8765C;}
+
 .premium-card{
   background:linear-gradient(160deg,#1a1710,var(--bg));
   border:1px solid var(--gold);
@@ -280,13 +291,32 @@ body{padding-bottom:130px;}
     <i class="ti ti-brain" style="font-size:32px;color:var(--gold);"></i>
     <div style="margin-top:10px; font-size:14px;">Test <b id="quiz-total-label">barcha</b> so'z bo'yicha o'tkaziladi</div>
   </div>
-  <button class="premium-btn-primary" onclick="startQuiz()">Testni boshlash</button>
+  <div style="margin-top:18px; font-size:13px; color:var(--muted); text-align:center;">⏱️ Vaqt limitini tanlang — har bir savol uchun necha soniya?</div>
+  <div class="time-choice-row">
+    <div class="time-choice" data-t="10" onclick="selectQuizTime(10,this)">
+      <i class="ti ti-feather"></i>
+      <div class="t">Tez</div>
+      <div class="s">10 sek</div>
+    </div>
+    <div class="time-choice active" data-t="20" onclick="selectQuizTime(20,this)">
+      <i class="ti ti-bolt"></i>
+      <div class="t">Odatiy</div>
+      <div class="s">20 sek</div>
+    </div>
+    <div class="time-choice" data-t="30" onclick="selectQuizTime(30,this)">
+      <i class="ti ti-hourglass"></i>
+      <div class="t">Sekin</div>
+      <div class="s">30 sek</div>
+    </div>
+  </div>
+  <button class="premium-btn-primary" id="quiz-start-btn" onclick="startQuiz()">🚀 Boshlash — 20 sek</button>
 </div>
 
 <!-- ================= EKRAN: Test (savol) ================= -->
 <div class="screen" id="screen-quiz">
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="quiz-progress-bar" style="width:0%"></div></div>
+  <div class="quiz-timer-wrap"><i class="ti ti-clock"></i> <span id="quiz-timer">20</span>s</div>
   <div class="quiz-card">
     <div class="ar-big ar" id="quiz-word"></div>
     <div id="quiz-options"></div>
@@ -555,6 +585,7 @@ function addAchievementXP(xp){
 
 let screenStack = ['home'];
 function goScreen(name, push){
+  if(name !== 'quiz') clearInterval(window.__quizTimerInt);
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById('screen-'+name);
   if(el) el.classList.add('active');
@@ -710,13 +741,54 @@ function buildQuiz(count){
   }
   return sel;
 }
+var quizTimePerQ = 20;
+function selectQuizTime(t, el){
+  quizTimePerQ = t;
+  document.querySelectorAll('.time-choice').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('quiz-start-btn').textContent = '🚀 Boshlash — '+t+' sek';
+}
+function startQuizTimer(){
+  clearInterval(window.__quizTimerInt);
+  var timeLeft = quizState.timePerQ;
+  var timerEl = document.getElementById('quiz-timer');
+  var wrapEl = document.querySelector('.quiz-timer-wrap');
+  timerEl.textContent = timeLeft;
+  if(wrapEl) wrapEl.classList.remove('warn');
+  window.__quizTimerInt = setInterval(function(){
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if(timeLeft <= 5 && wrapEl) wrapEl.classList.add('warn');
+    if(timeLeft <= 0){
+      clearInterval(window.__quizTimerInt);
+      quizTimeUp();
+    }
+  }, 1000);
+}
+function quizTimeUp(){
+  const q = quizState.words[quizState.idx];
+  const wrap = document.getElementById('quiz-options');
+  Array.from(wrap.children).forEach(b=>{
+    b.onclick = null;
+    if(b.dataset.ar === q.ar) b.classList.add('correct');
+  });
+  quizState.results.push({word:q, correct:false});
+  setTimeout(()=>{
+    quizState.idx++;
+    if(quizState.idx < quizState.words.length){
+      renderQuizQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 900);
+}
 function startQuiz(){
   const count = ALL_WORDS.length;
   const words = buildQuiz(count);
   // Yo'nalishlarni oldindan kafolatlangan tarzda aralashtiramiz (yarmi ar2uz, yarmi uz2ar)
   const dirs = [];
   for(let i=0;i<count;i++) dirs.push(i%2===0?'ar2uz':'uz2ar');
-  quizState = { words, idx:0, results:[], dirs: shuffle(dirs) };
+  quizState = { words, idx:0, results:[], dirs: shuffle(dirs), timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();
 }
@@ -746,8 +818,10 @@ function renderQuizQuestion(){
     btn.onclick = ()=>answerQuiz(o, q, btn, opWrap);
     opWrap.appendChild(btn);
   });
+  startQuizTimer();
 }
 function answerQuiz(chosen, correct, btnEl, wrap){
+  clearInterval(window.__quizTimerInt);
   const isCorrect = chosen.ar === correct.ar;
   Array.from(wrap.children).forEach(b=>b.onclick=null);
   btnEl.classList.add(isCorrect?'correct':'wrong');

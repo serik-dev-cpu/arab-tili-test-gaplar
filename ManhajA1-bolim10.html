@@ -813,7 +813,12 @@ function renderGapQuestion(){
   gapState.tileFont = n<=5 ? '27px' : n<=8 ? '23px' : '19px';
   gapState.tilePad = n<=5 ? '13px 20px' : n<=8 ? '13px 15px' : '11px 12px';
   window.__gapAnswer = [];
-  window.__gapPool = shuffle(item.words.map((w,i)=>({w,i})));
+  // Chalg'ituvchi (yolg'on) so'z qo'shamiz — javobda yo'q, bo'limning boshqa so'zlaridan
+  const distractorPool = ALL_WORDS.map(x=>x.ar).filter(a => !item.words.includes(a));
+  const distractorWord = distractorPool[Math.floor(Math.random()*distractorPool.length)];
+  const realTiles = item.words.map((w,i)=>({w,i}));
+  const allTiles = realTiles.concat(distractorWord ? [{w:distractorWord, i:'d'}] : []);
+  window.__gapPool = shuffle(allTiles);
   renderGapTokens();
 }
 function renderGapTokens(){

@@ -246,7 +246,7 @@ body{padding-bottom:130px;}
   <div class="premium-card" style="margin-top:16px;">
     <i class="ti ti-cards" style="font-size:32px;color:var(--gold);"></i>
     <div style="margin-top:10px; font-size:14px;">Kartochkalar soni: <b id="fc-count-label">15</b></div>
-    <input type="range" min="5" max="54" value="15" step="1" id="fc-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('fc-count-label').textContent=this.value">
+    <input type="range" min="5" max="66" value="15" step="1" id="fc-count" style="width:100%; margin-top:10px;" oninput="document.getElementById('fc-count-label').textContent=this.value">
   </div>
   <button class="premium-btn-primary" onclick="startFlashcard()">Boshlash</button>
 </div>
@@ -596,6 +596,16 @@ function goScreen(name, push){
   if(name === 'lugat') renderLugat();
   if(name === 'stats') renderStats();
   if(name === 'quiz-setup'){ var qtl = document.getElementById('quiz-total-label'); if(qtl) qtl.textContent = ALL_WORDS.length + ' ta'; }
+  if(name === 'flashcard-setup'){
+    var fcSlider = document.getElementById('fc-count');
+    if(fcSlider){
+      fcSlider.max = ALL_WORDS.length;
+      if(parseInt(fcSlider.value,10) > ALL_WORDS.length){
+        fcSlider.value = ALL_WORDS.length;
+        document.getElementById('fc-count-label').textContent = ALL_WORDS.length;
+      }
+    }
+  }
   window.scrollTo(0,0);
 }
 window.addEventListener('popstate', function(e){

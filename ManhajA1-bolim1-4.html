@@ -164,7 +164,7 @@
   <div class="menu-grid">
     <div class="menu-card" data-nav="lugat"><i class="ti ti-book-2"></i><div class="mc-title">Lug'at</div><div class="mc-sub" id="mc-lugat-sub"></div></div>
     <div class="menu-card" data-nav="flashkard"><i class="ti ti-cards"></i><div class="mc-title">Flashkard</div><div class="mc-sub">Tez takrorlash</div></div>
-    <div class="menu-card" data-nav="test-setup"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Barcha so'z, 4 variant</div></div>
+    <div class="menu-card" data-nav="test-setup"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Tezlikka qarab, 4 variant</div></div>
     <div class="menu-card" data-nav="gaptuzish"><i class="ti ti-arrows-shuffle"></i><div class="mc-title">Gap tuzish</div><div class="mc-sub">60 ta mashq</div></div>
     <div class="menu-card" data-nav="grammatika" style="grid-column:1/3;"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
   </div>
@@ -187,22 +187,22 @@
     <button class="btn btn-outline btn-sm" data-nav="menu">‹ Menyu</button>
     <div class="top-title">Test</div>
   </div>
-  <p style="color:var(--muted); font-size:14px; margin-top:6px;">Har bir savol uchun vaqt limitini tanlang:</p>
+  <p style="color:var(--muted); font-size:14px; margin-top:6px;">Tanlagan tezligingizga qarab savollar soni farq qiladi. Har bir savol uchun vaqt limitini tanlang:</p>
   <div class="time-choice-row">
     <div class="time-choice" data-t="10" onclick="selectQuizTime(10,this)">
       <i class="ti ti-feather"></i>
       <div class="t">Tez</div>
-      <div class="s">10 sek</div>
+      <div class="s" id="tc-s-10">10 sek</div>
     </div>
     <div class="time-choice active" data-t="20" onclick="selectQuizTime(20,this)">
       <i class="ti ti-bolt"></i>
       <div class="t">Odatiy</div>
-      <div class="s">20 sek</div>
+      <div class="s" id="tc-s-20">20 sek</div>
     </div>
     <div class="time-choice" data-t="30" onclick="selectQuizTime(30,this)">
       <i class="ti ti-hourglass"></i>
       <div class="t">Sekin</div>
-      <div class="s">30 sek</div>
+      <div class="s" id="tc-s-30">30 sek</div>
     </div>
   </div>
   <button class="btn btn-gold btn-block" id="quiz-start-btn" style="margin-top:20px;" onclick="showScreen('test')">🚀 Boshlash — 20 sek</button>
@@ -218,6 +218,7 @@
   <div class="quiz-timer-wrap"><i class="ti ti-clock"></i> <span id="quiz-timer">20</span>s</div>
   <div class="quiz-card"><div class="qword" id="quiz-question">...</div></div>
   <div class="quiz-options" id="quiz-options"></div>
+  <div id="quiz-result-area"></div>
 </div>
 
 <!-- ═══════════ GAP TUZISH EKRANI ═══════════ -->
@@ -1140,6 +1141,7 @@ function renderScreen(name){
   lastScreen = name;
   if(name==='menu') renderMenu();
   else if(name==='lugat') renderLugat();
+  else if(name==='test-setup') renderTestSetup();
   else if(name==='test') startQuiz();
   else if(name==='gaptuzish') startGapTuzish();
   else if(name==='flashkard') startFlashkard();
@@ -1230,8 +1232,24 @@ function renderLugatList(){
 // ═══ TEST (SRS QUIZ) ═══
 var quizState = {idx:0, total:15, correct:0, current:null};
 var quizTimePerQ = 20;
+var quizQuestionCount = 15;
+var QUIZ_COUNT_TEZ = 10, QUIZ_COUNT_ODATIY = 15, QUIZ_COUNT_SEKIN = 20;
+function computeQuizCounts(){
+  var total = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';}).length;
+  QUIZ_COUNT_TEZ = Math.ceil(total * 0.2);
+  QUIZ_COUNT_ODATIY = Math.round(total * 0.333);
+  QUIZ_COUNT_SEKIN = total - QUIZ_COUNT_TEZ - QUIZ_COUNT_ODATIY;
+}
+function renderTestSetup(){
+  computeQuizCounts();
+  quizQuestionCount = quizTimePerQ===10 ? QUIZ_COUNT_TEZ : (quizTimePerQ===30 ? QUIZ_COUNT_SEKIN : QUIZ_COUNT_ODATIY);
+  var s10 = document.getElementById('tc-s-10'); if(s10) s10.textContent = '10 sek · ' + QUIZ_COUNT_TEZ + ' ta';
+  var s20 = document.getElementById('tc-s-20'); if(s20) s20.textContent = '20 sek · ' + QUIZ_COUNT_ODATIY + ' ta';
+  var s30 = document.getElementById('tc-s-30'); if(s30) s30.textContent = '30 sek · ' + QUIZ_COUNT_SEKIN + ' ta';
+}
 function selectQuizTime(t, el){
   quizTimePerQ = t;
+  quizQuestionCount = t===10 ? QUIZ_COUNT_TEZ : (t===30 ? QUIZ_COUNT_SEKIN : QUIZ_COUNT_ODATIY);
   document.querySelectorAll('.time-choice').forEach(function(c){ c.classList.remove('active'); });
   el.classList.add('active');
   document.getElementById('quiz-start-btn').textContent = '🚀 Boshlash — '+t+' sek';
@@ -1261,11 +1279,13 @@ function quizTimeUp(){
     if(b.getAttribute('data-correct')==='true') b.classList.add('correct');
   });
   setBox(word.ar, 1);
-  setTimeout(function(){ nextQuizQuestion(); }, 900);
+  var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
+  var correctIsArabic = !quizState.currentArToUz;
+  showQuizAnswerAndWait(correctText, correctIsArabic, true);
 }
 function startQuiz(){
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
-  var queue = buildWeightedQueue(pool);
+  var queue = buildWeightedQueue(pool).slice(0, quizQuestionCount);
   quizState = {idx:0, total:queue.length, correct:0, current:null, queue:queue};
   nextQuizQuestion();
 }
@@ -1285,9 +1305,11 @@ function nextQuizQuestion(){
   var word = quizState.queue[quizState.idx];
   quizState.idx++;
   document.getElementById('quiz-progress').textContent = quizState.idx+' / '+quizState.total;
+  var raEl = document.getElementById('quiz-result-area'); if(raEl) raEl.innerHTML = '';
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
   quizState.current = word;
   var arToUz = Math.random() < 0.5;
+  quizState.currentArToUz = arToUz;
   document.getElementById('quiz-question').innerHTML = arToUz
     ? '<span class="qword">'+word.ar+'</span>'
     : '<span style="font-family:Inter,sans-serif;font-size:20px;font-weight:700;">'+dtxt(word.uz)+'</span>';
@@ -1319,9 +1341,30 @@ function handleQuizAnswer(btn){
   if(!isCorrect) btn.classList.add('wrong');
   var word = quizState.current;
   var box = getBox(word.ar);
-  if(isCorrect){ quizState.correct++; setBox(word.ar, box+1); markLearned(word.ar); addAchievementXP(5); }
-  else{ setBox(word.ar, 1); }
-  setTimeout(function(){ nextQuizQuestion(); }, 1100);
+  if(isCorrect){
+    quizState.correct++; setBox(word.ar, box+1); markLearned(word.ar); addAchievementXP(5);
+    setTimeout(function(){ nextQuizQuestion(); }, 600);
+  } else {
+    setBox(word.ar, 1);
+    var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
+    var correctIsArabic = !quizState.currentArToUz;
+    showQuizAnswerAndWait(correctText, correctIsArabic, false);
+  }
+}
+function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
+  var ra = document.getElementById('quiz-result-area');
+  var title = timeUp ? '⏰ Vaqt tugadi' : '❌ Xato';
+  ra.innerHTML = '<div class="gt-result bad show">'+
+    '<div style="font-weight:800;margin-bottom:6px;">'+title+'</div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">To\u2019g\u2019ri javob:</div>'+
+    '<div'+(correctIsArabic?' class="ar" style="font-size:22px;"':' style="font-size:16px;font-weight:700;"')+'>'+correctText+'</div>'+
+    '</div>';
+  var nextBtn = document.createElement('button');
+  nextBtn.className = 'btn btn-gold btn-block';
+  nextBtn.style.marginTop = '14px';
+  nextBtn.textContent = (quizState.idx < quizState.total) ? 'Keyingi →' : 'Yakunlash';
+  nextBtn.onclick = function(){ ra.innerHTML = ''; nextQuizQuestion(); };
+  ra.appendChild(nextBtn);
 }
 
 // ═══ GAP TUZISH ═══
@@ -1348,6 +1391,12 @@ function shuffleIdx(n){
   return arr;
 }
 var DISTRACTOR_WORDS = ['كِتَابٌ','بَيْتٌ','قَلَمٌ','مَكْتَبٌ','جَمِيلٌ','كَبِيرٌ','اليَوْمَ','هُنَاكَ','سَرِيعًا','دَائِمًا'];
+// Plitkada ko'rinadigan matndan oxirgi tinish belgisini olib tashlaymiz (؟،.! va h.k.),
+// lekin tekshirishda asl (belgili) so'z ishlatiladi — shu orqali "belgi bor = oxirgi so'z"
+// degan osonlikni yo'qotamiz.
+function stripPunctForTile(w){
+  return w.replace(/[؟،.!:;]+$/, '');
+}
 function renderGapCurrent(){
   var list = SENTENCES[gtState.level];
   document.getElementById('gt-progress').textContent = (gtState.idx+1)+' / '+list.length;
@@ -1362,7 +1411,7 @@ function renderGapCurrent(){
   var numExtra = Math.min(2, Math.floor(words.length/3)+1);
   for(var i=0;i<numExtra;i++) extra.push(shuffledDistractors[i]);
   var poolWords = words.concat(extra).sort(function(){return Math.random()-0.5;});
-  gtState.pool = poolWords.map(function(w, i){ return {word:w, uid:i, used:false}; });
+  gtState.pool = poolWords.map(function(w, i){ return {word:w, display:stripPunctForTile(w), uid:i, used:false}; });
   var fontSize = words.length<=5 ? '30px' : (words.length<=8 ? '25px' : '21px');
   document.getElementById('gt-answer-zone').style.fontSize = fontSize;
   document.getElementById('gt-pool').style.fontSize = fontSize;
@@ -1378,7 +1427,7 @@ function renderGapCurrent(){
 function renderGapPool(){
   var html = '';
   gtState.pool.forEach(function(item){
-    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'">'+item.word+'</div>';
+    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'">'+item.display+'</div>';
   });
   document.getElementById('gt-pool').innerHTML = html;
   document.querySelectorAll('#gt-pool .tile').forEach(function(t){
@@ -1399,7 +1448,7 @@ function renderGapAnswerZone(){
   zone.classList.remove('empty');
   var html = '';
   gtState.selected.forEach(function(item){
-    html += '<div class="tile placed" data-uid="'+item.uid+'">'+item.word+'</div>';
+    html += '<div class="tile placed" data-uid="'+item.uid+'">'+item.display+'</div>';
   });
   zone.innerHTML = html;
   zone.querySelectorAll('.tile').forEach(function(t){

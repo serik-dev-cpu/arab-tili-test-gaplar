@@ -7,24 +7,66 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;background:#0B0E14;color:#EDEFF5;font-family:'Inter',system-ui,-apple-system,sans-serif}
-body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60px}
+body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60px;position:relative;overflow-x:hidden}
+
+.bg-glow{position:fixed;top:0;left:0;right:0;height:520px;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 18% 10%, rgba(212,162,58,0.12) 0%, transparent 45%),
+    radial-gradient(circle at 88% 0%, rgba(212,162,58,0.08) 0%, transparent 40%);}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .35s ease both}
 
-.wrap{width:100%;max-width:480px}
+.wrap{width:100%;max-width:480px;position:relative;z-index:1}
 
-.header{text-align:center;margin-bottom:28px}
+.header{text-align:center;margin-bottom:18px}
 .kicker{color:#D4A23A;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
 .title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl;line-height:1.8}
-.subtitle{color:#8A93A6;font-size:14px;font-weight:500}
+.subtitle{color:#8A93A6;font-size:13px;font-weight:500}
 .change-name-link{
   margin-top:8px;display:inline-block;color:#D4A23A;font-size:12px;font-weight:600;
   cursor:pointer;text-decoration:underline;text-underline-offset:2px;
 }
+
+/* ═══ HERO — PREMIUM STAT BLOK ═══ */
+.hero-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;margin-bottom:14px;
+  background:linear-gradient(155deg,#161A24 0%,#0F1219 75%);
+  border:1px solid #232838;
+  border-radius:20px;
+  position:relative;overflow:hidden;
+}
+.hero-card::after{
+  content:'';position:absolute;top:-50%;right:-15%;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(212,162,58,0.16),transparent 70%);
+}
+.hero-avatar{
+  width:50px;height:50px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#D4A23A,#F0C56B);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:18px;color:#0B0E14;
+  box-shadow:0 4px 16px rgba(212,162,58,.25);
+  z-index:1;
+}
+.hero-info{flex:1;min-width:0;z-index:1}
+.hero-greet{font-size:15px;font-weight:700;color:#EDEFF5;margin-bottom:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-sub{font-size:12px;color:#8A93A6}
+.hero-stats{display:flex;gap:8px;flex-shrink:0;z-index:1}
+.stat-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(212,162,58,0.1);
+  border:1px solid rgba(212,162,58,0.28);
+  border-radius:20px;padding:6px 10px;
+  font-size:12.5px;font-weight:800;color:#F0C56B;
+  white-space:nowrap;
+}
+.stat-pill i{font-size:14px}
 
 /* ═══ UMUMIY NATIJA — HERO RING ═══ */
 .summary-card{
@@ -52,70 +94,45 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 .section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
 .section-label .path-dot{width:6px;height:6px;border-radius:50%;background:#D4A23A}
 
-/* ═══════════ YO'L (ROADMAP) ═══════════ */
-.roadmap{position:relative;padding:14px 0 6px}
+/* ═══════════ BO'LIMLAR — TARTIBLI GRID-KARTOCHKA ═══════════ */
+.roadmap{position:relative;padding:6px 0 6px}
 
-/* markazdagi vertikal yo'l chizig'i */
-.road-line-bg{
-  position:absolute;left:50%;top:30px;bottom:30px;width:3px;
-  transform:translateX(-50%);
-  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.10) 0 6px, transparent 6px 12px);
-  border-radius:3px;
-  z-index:0;
-}
-.road-row{
-  position:relative;z-index:1;
-  display:grid;grid-template-columns:1fr 58px 1fr;
-  align-items:center;
-  margin-bottom:18px;
+.bolim-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:10px;
 }
 
-/* markazdagi tugun (raqam doirasi) */
-.road-node-wrap{position:relative;width:58px;height:58px;display:flex;align-items:center;justify-content:center;grid-column:2}
-.road-node-svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.road-node-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:3.5}
-.road-node-fill{fill:none;stroke:#D4A23A;stroke-width:3.5;stroke-linecap:round;
-  stroke-dasharray:141.4;stroke-dashoffset:141.4;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1)}
-.road-node{
-  position:relative;z-index:1;width:42px;height:42px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:17px;font-weight:800;
-  background:linear-gradient(135deg,#D4A23A,#B8841F);
-  color:#0B0E14;
-  box-shadow:0 3px 10px rgba(212,162,58,.25);
-}
-.road-node.locked{background:rgba(255,255,255,0.05);color:#5A6275;box-shadow:none;font-size:16px}
-
-/* kartochka (matn qismi) — chapga yoki o'ngga qarab */
-.road-card{
-  padding:13px 16px;border-radius:14px;text-decoration:none;
+.g-card{
+  display:block;text-decoration:none;
+  padding:14px 8px 12px;border-radius:16px;text-align:center;
   background:linear-gradient(165deg,#161A24 0%,#12151E 100%);
   border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.25);
   transition:transform .15s cubic-bezier(.34,1.56,.64,1), border-color .15s ease;
 }
-.road-card:active{transform:scale(.96)}
-.road-row.side-left .road-card{grid-column:1;text-align:right;margin-right:2px}
-.road-row.side-right .road-card{grid-column:3;text-align:left;margin-left:2px}
-.road-card.is-active{border-color:rgba(212,162,58,0.3)}
-.road-card.is-locked{opacity:.5}
+.g-card:active{transform:scale(.96)}
+.g-card.is-active{border-color:rgba(212,162,58,0.35)}
+.g-card.is-done{border-color:rgba(212,162,58,0.18)}
+.g-card.is-locked{opacity:.5}
 
-.road-title-row{display:flex;align-items:center;gap:6px;margin-bottom:2px}
-.road-row.side-left .road-title-row{justify-content:flex-end}
-.road-title{font-size:15px;font-weight:700;color:#EDEFF5}
-.road-pct{font-size:10px;font-weight:800;color:#D4A23A;background:rgba(212,162,58,.12);padding:2px 6px;border-radius:7px;white-space:nowrap}
-.road-desc{font-size:12px;color:#8A93A6}
-.road-card.is-locked .road-title{color:#7A8296}
-.road-card.is-locked .road-desc{color:#5A6275;font-style:italic}
-
-/* yo'l boshi va oxiri belgilari */
-.road-flag{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  color:#5A6275;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  margin-bottom:6px;position:relative;z-index:1;
+.g-ring{
+  width:44px;height:44px;margin:0 auto 8px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;
 }
-.road-flag.start{color:#D4A23A}
-.road-flag-icon{font-size:18px}
+.g-ring.is-done{background:linear-gradient(135deg,#D4A23A,#F0C56B);color:#0B0E14}
+.g-ring.is-active{background:#0F1219;border:2px solid #D4A23A;color:#F0C56B}
+.g-ring.is-locked{background:rgba(255,255,255,0.05);color:#5A6275}
+.g-ring i{font-size:16px}
+
+.g-name{font-size:12.5px;font-weight:700;color:#EDEFF5}
+.g-card.is-locked .g-name{color:#7A8296}
+.g-pct{font-size:10.5px;color:#8A93A6;margin-top:2px}
+.g-card.is-active .g-pct{color:#D4A23A;font-weight:700}
+.g-card.is-locked .g-pct{color:#5A6275;font-style:italic}
+
+.g-bar{width:100%;height:4px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}
+.g-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#D4A23A,#F0C56B)}
 
 .footer-note{
   margin-top:20px;text-align:center;color:#5A6275;font-size:12px;line-height:1.6;
@@ -125,9 +142,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 /* ═══════════ ISM-GATE (sayohatni boshlash ekrani) ═══════════ */
 .namegate{
   width:100%;max-width:380px;text-align:center;
-  padding:8px 4px 0;
+  padding:8px 4px 0;position:relative;z-index:1;
 }
-.namegate-icon{font-size:44px;margin-bottom:14px;animation:fadeIn .5s ease both}
+.namegate-icon{font-size:40px;margin-bottom:14px;animation:fadeIn .5s ease both;color:#D4A23A}
 .namegate-title{
   font-family:'Noto Naskh Arabic','Amiri',serif;font-size:19px;font-weight:700;color:#F0C56B;
   margin-bottom:10px;direction:rtl;line-height:2.2;
@@ -153,7 +170,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 .namegate-input.shake{animation:shakeX .4s}
 @keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-/* ═══════════ SOVG'ALAR BO'LIMI ═══════════ */
+/* ═══════════ SOVG'ALAR / IMTIHON BO'LIMI ═══════════ */
 .reward-card{
   position:relative;overflow:hidden;
   display:flex;align-items:center;gap:16px;
@@ -167,18 +184,17 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 .reward-card.unlocked{border-color:rgba(212,162,58,0.5);box-shadow:0 4px 24px rgba(212,162,58,.15)}
 .reward-card.unlocked:active{transform:scale(.97)}
 .reward-icon-wrap{
-  flex-shrink:0;width:56px;height:56px;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;font-size:28px;
+  flex-shrink:0;width:52px;height:52px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;color:#0B0E14;
   background:linear-gradient(135deg,#D4A23A,#B8841F);
 }
-.reward-card.locked .reward-icon-wrap{background:rgba(255,255,255,0.05)}
+.reward-card.locked .reward-icon-wrap{background:rgba(255,255,255,0.05);color:#5A6275}
 .reward-card.unlocked .reward-icon-wrap{animation:giftBounce 1.6s ease-in-out infinite}
 @keyframes giftBounce{0%,100%{transform:rotate(0deg) scale(1)}25%{transform:rotate(-8deg) scale(1.05)}75%{transform:rotate(8deg) scale(1.05)}}
 .reward-title{font-size:16px;font-weight:800;color:#EDEFF5;margin-bottom:3px}
 .reward-desc{font-size:12.5px;color:#8A93A6;line-height:1.4}
 .reward-card.unlocked .reward-desc{color:#D4A23A;font-weight:600}
 
-/* Sovg'a ochilgandagi celebratsion ekran */
 .reward-modal{
   position:fixed;inset:0;z-index:100000;display:none;
   align-items:center;justify-content:center;
@@ -192,7 +208,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   border:1.5px solid rgba(212,162,58,0.4);border-radius:24px;
   padding:36px 24px 28px;overflow:hidden;
 }
-.reward-trophy{font-size:64px;margin-bottom:14px;animation:trophyPop .6s cubic-bezier(.34,1.56,.64,1) both}
+.reward-trophy{font-size:52px;margin-bottom:14px;color:#F0C56B;animation:trophyPop .6s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes trophyPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 .reward-modal-title{font-family:'Amiri',serif;font-size:22px;color:#F0C56B;font-weight:700;margin-bottom:10px}
 .reward-modal-text{color:#9BA3B4;font-size:14px;line-height:1.6;margin-bottom:24px}
@@ -208,24 +224,39 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <!-- ═══════════ ISM-GATE ═══════════ -->
 <div class="namegate fade-in" id="nameGate" style="display:none">
-  <div class="namegate-icon">🧭</div>
+  <div class="namegate-icon"><i class="ti ti-compass"></i></div>
   <div class="namegate-title">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
   <div class="namegate-sub">
     <b>Al-Manhajul Al-A'lamiy — A1 darajasi.</b><br/>
     12 bo'limlik sayohatingiz boshlanmoqda. Yo'lga chiqish uchun ismingizni yozing.
   </div>
   <input type="text" class="namegate-input" id="nameInput" placeholder="Masalan: Aziz" maxlength="30"/>
-  <button class="namegate-btn" id="nameGoBtn">Sayohatni boshlash 🚀</button>
+  <button class="namegate-btn" id="nameGoBtn">Sayohatni boshlash <i class="ti ti-rocket"></i></button>
 </div>
 
 <div class="wrap fade-in" id="mainApp" style="display:none">
   <div class="header">
     <div class="kicker">Al-Manhajul Al-A'lamiy</div>
     <div class="title">المنهج الألمعي</div>
-    <div class="subtitle" id="subtitleText">A1 darajasi · 12 bo'limlik sayohat</div>
-    <div class="change-name-link" id="changeNameLink">✏️ Ismni o'zgartirish</div>
+    <div class="subtitle">A1 darajasi · 12 bo'limlik sayohat</div>
+    <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
+  </div>
+
+  <!-- ═══ HERO — ISM, XP, STREAK ═══ -->
+  <div class="hero-card">
+    <div class="hero-avatar" id="heroAvatar">?</div>
+    <div class="hero-info">
+      <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
+      <div class="hero-sub">Bugun ham davom etamizmi?</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
+      <div class="stat-pill"><i class="ti ti-star-filled"></i><span id="heroXp">0</span></div>
+    </div>
   </div>
 
   <!-- ═══ UMUMIY NATIJA ═══ -->
@@ -251,21 +282,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 
   <div class="section-label"><span class="path-dot"></span>O'quv yo'li</div>
 
-  <!-- ═══════════ ROADMAP ═══════════ -->
+  <!-- ═══════════ BO'LIMLAR GRID ═══════════ -->
   <div class="roadmap" id="roadmap">
-    <div class="road-line-bg"></div>
-
-    <div class="road-flag start">
-      <div class="road-flag-icon">🚩</div>
-      Boshlanish
-    </div>
-
-    <div id="roadRows"></div>
-
-    <div class="road-flag" style="margin-top:2px">
-      <div class="road-flag-icon">🏁</div>
-      Manzil — A1 yakuni
-    </div>
+    <div class="bolim-grid" id="roadRows"></div>
   </div>
 
   <div class="footer-note">
@@ -276,7 +295,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   <div class="section-label"><span class="path-dot"></span>Maxsus</div>
 
   <div class="reward-card locked" id="examCard">
-    <div class="reward-icon-wrap">🎓</div>
+    <div class="reward-icon-wrap"><i class="ti ti-target-arrow"></i></div>
     <div class="reward-info">
       <div class="reward-title">Imtihonga tayyorgarlik</div>
       <div class="reward-desc" id="examDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
@@ -284,7 +303,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
   </div>
 
   <div class="reward-card locked" id="rewardCard" style="margin-top:12px">
-    <div class="reward-icon-wrap">🎁</div>
+    <div class="reward-icon-wrap"><i class="ti ti-gift"></i></div>
     <div class="reward-info">
       <div class="reward-title">Sovg'alar</div>
       <div class="reward-desc" id="rewardDesc">Imtihonga tayyorgarlik testini yakunlang</div>
@@ -295,10 +314,10 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
 <div class="reward-modal" id="rewardModal">
   <div class="reward-modal-inner" id="rewardModalInner">
-    <div class="reward-trophy">🏆</div>
+    <div class="reward-trophy"><i class="ti ti-trophy"></i></div>
     <div class="reward-modal-title">Tabriklaymiz!</div>
     <div class="reward-modal-text" id="rewardModalText"></div>
-    <button class="reward-close-btn" id="rewardCloseBtn">Rahmat! 🎉</button>
+    <button class="reward-close-btn" id="rewardCloseBtn">Rahmat! <i class="ti ti-confetti"></i></button>
   </div>
 </div>
 
@@ -307,6 +326,32 @@ body{display:flex;flex-direction:column;align-items:center;padding:48px 16px 60p
 
 // ═══ UMUMIY ISM TIZIMI — barcha bo'limlar shu kalitdan foydalanadi ═══
 var SHARED_NAME_KEY = 'arabic_student_name';
+var ACH_KEY = 'arabic_achievements_v1';
+
+// Har bo'lim mavzusiga mos ikonka (faqat vizual, ma'lumotga ta'sir qilmaydi)
+var BOLIM_ICONS = {
+  1:'message-2', 2:'users', 3:'school', 4:'briefcase', 5:'home',
+  6:'cloud', 7:'car', 8:'coffee', 9:'shopping-cart', 10:'stethoscope',
+  11:'ball-basketball', 12:'flag-3'
+};
+
+function initHeroStats(name){
+  var ach = {};
+  try{ ach = JSON.parse(localStorage.getItem(ACH_KEY) || '{}'); }catch(e){}
+  var xp = Number(ach.xp) || 0;
+  var streak = Number(ach.streak) || 0;
+
+  var initials = (name || '').trim().split(/\s+/).map(function(w){ return w.charAt(0); }).slice(0,2).join('').toUpperCase();
+  var avatarEl = document.getElementById('heroAvatar');
+  var greetEl = document.getElementById('heroGreet');
+  var xpEl = document.getElementById('heroXp');
+  var streakEl = document.getElementById('heroStreak');
+
+  if(avatarEl) avatarEl.textContent = initials || '?';
+  if(greetEl) greetEl.textContent = 'Xush kelibsiz, ' + name + '!';
+  if(xpEl) xpEl.textContent = xp;
+  if(streakEl) streakEl.textContent = streak;
+}
 
 function initNameGate(){
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
@@ -326,31 +371,22 @@ function initNameGate(){
     localStorage.setItem(SHARED_NAME_KEY, n);
     location.reload();
   }
-  // Tugma va Enter tugmasi har doim ishlashi kerak — ism keyinchalik
-  // "Ismni o'zgartirish" havolasi orqali qayta kiritilishi ham mumkin.
   goBtn.addEventListener('click', submitName);
   input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submitName(); });
 
   if(savedName){
-    // Ism allaqachon bor — to'g'ridan-to'g'ri roadmap'ni ko'rsatamiz
     gate.style.display = 'none';
     app.style.display = 'block';
-    var subtitle = document.getElementById('subtitleText');
-    if(subtitle) subtitle.textContent = "Xush kelibsiz, " + savedName + "! \uD83D\uDC4B";
+    initHeroStats(savedName);
     return true;
   }
 
-  // Ism yo'q — sayohatni boshlash ekranini ko'rsatamiz
   gate.style.display = 'block';
   app.style.display = 'none';
   input.focus();
   return false;
 }
 
-// Header'dagi "Ismni o'zgartirish" havolasi — Bismillah ekraniga qaytaradi,
-// joriy ismni oldindan to'ldiradi. Yangi ism kiritilgach BARCHA joyda
-// (index.html va barcha bo'limlarda) avtomatik yangilanadi, chunki
-// ular hammasi bitta umumiy localStorage kalitidan (arabic_student_name) o'qiydi.
 document.getElementById('changeNameLink').addEventListener('click', function(){
   var gate = document.getElementById('nameGate');
   var app = document.getElementById('mainApp');
@@ -362,8 +398,6 @@ document.getElementById('changeNameLink').addEventListener('click', function(){
   input.focus();
 });
 
-// Har bir tayyor bo'limning localStorage kaliti va jami so'zlar soni
-// (bu ikkalasi bo'lim ichidagi ALL_WORDS.length va LS_KEY bilan aynan mos kelishi kerak)
 var BOLIMLAR = [
   {num:1,  key:'arabic_uz_1bolim_v1',  total:55,  desc:"Salomlashish va tanishish", href:'ManhajA1-bolim1-4.html#1'},
   {num:2,  key:'arabic_uz_2bolim_v1',  total:51,  desc:"Oila va oila a'zolari", href:'ManhajA1-bolim1-4.html#2'},
@@ -378,9 +412,8 @@ var BOLIMLAR = [
   {num:11, key:'arabic_uz_11bolim_v1', total:134, desc:"Hobbylar va sport"}
 ];
 
-// Hali tayyor bo'lmagan bo'limlar — har biriga alohida chiroyli matn
 var LOCKED_BOLIMLAR = [
-  {num:12, phrase:"Sayohat nihoyasi \uD83C\uDFC1"}
+  {num:12, phrase:"Sayohat nihoyasi"}
 ];
 
 function getLearnedCount(key){
@@ -393,86 +426,69 @@ function getLearnedCount(key){
 function animateRing(circleEl, pct, circumference){
   var offset = circumference - (circumference * Math.min(100,Math.max(0,pct)) / 100);
   circleEl.style.strokeDasharray = circumference;
-  circleEl.getBoundingClientRect(); // reflow'ni majburlash — animatsiya doim ishga tushishi uchun
+  circleEl.getBoundingClientRect();
   circleEl.style.strokeDashoffset = offset;
 }
 
-// Bitta "yo'l qatori" (road-row) HTML'ini quradi — tayyor yoki qulflangan bo'lim uchun
-function buildRow(item, isLocked, sideLeft){
-  var side = sideLeft ? 'side-left' : 'side-right';
-  var cardInner =
-    '<div class="road-title-row">' +
-      '<div class="road-title">' + item.num + '-bo\'lim</div>' +
-      (isLocked ? '' : '<div class="road-pct" data-pct="'+item.num+'">0%</div>') +
-    '</div>' +
-    '<div class="road-desc">' + (isLocked ? item.phrase : item.desc) + '</div>';
+function buildCard(item, isLocked, pct){
+  var iconName = BOLIM_ICONS[item.num] || 'book';
+  var state = isLocked ? 'is-locked' : (pct >= 100 ? 'is-done' : 'is-active');
 
-  var cardTag = isLocked ? 'div' : 'a';
-  var cardHref = isLocked ? '' : ' href="' + (item.href || ('ManhajA1-bolim' + item.num + '.html')) + '"';
-  var cardClass = 'road-card ' + (isLocked ? 'is-locked' : 'is-active');
+  var ringInner = isLocked
+    ? '<i class="ti ti-lock"></i>'
+    : (pct >= 100 ? '<i class="ti ti-check"></i>' : item.num);
 
-  var nodeInner = isLocked
-    ? '\uD83D\uDD12'
-    : item.num;
+  var pctLine = isLocked
+    ? item.phrase
+    : (pct >= 100 ? "O'zlashtirildi" : pct + '%');
 
-  var nodeRing = isLocked ? '' :
-    '<svg class="road-node-svg" viewBox="0 0 58 58">' +
-      '<circle class="road-node-track" cx="29" cy="29" r="25"/>' +
-      '<circle class="road-node-fill" data-ring="' + item.num + '" cx="29" cy="29" r="25"/>' +
-    '</svg>';
+  var bar = (!isLocked && pct > 0 && pct < 100)
+    ? '<div class="g-bar"><div class="g-bar-fill" style="width:' + pct + '%"></div></div>'
+    : '';
 
-  return (
-    '<div class="road-row ' + side + '">' +
-      '<' + cardTag + cardHref + ' class="' + cardClass + '" data-bolim="' + item.num + '">' +
-        cardInner +
-      '</' + cardTag + '>' +
-      '<div class="road-node-wrap">' +
-        nodeRing +
-        '<div class="road-node' + (isLocked ? ' locked' : '') + '">' + nodeInner + '</div>' +
-      '</div>' +
-    '</div>'
-  );
+  var inner =
+    '<div class="g-ring ' + state + '">' + ringInner + '</div>' +
+    '<div class="g-name">' + item.num + '-bo\'lim</div>' +
+    '<div class="g-pct">' + pctLine + '</div>' +
+    bar;
+
+  var tag = isLocked ? 'div' : 'a';
+  var href = isLocked ? '' : ' href="' + (item.href || ('ManhajA1-bolim' + item.num + '.html')) + '"';
+
+  return '<' + tag + href + ' class="g-card ' + state + '" data-bolim="' + item.num + '">' + inner + '</' + tag + '>';
 }
 
 function initRoadmap(){
-  var rowsHtml = '';
-  var sideLeft = true;
-  var allNum = BOLIMLAR.length + LOCKED_BOLIMLAR.length;
-
-  // Barcha bo'limlarni raqam bo'yicha (1 -> 12) birlashtiramiz
   var byNum = {};
   BOLIMLAR.forEach(function(b){ byNum[b.num] = {data:b, locked:false}; });
   LOCKED_BOLIMLAR.forEach(function(b){ byNum[b.num] = {data:b, locked:true}; });
 
   var nums = Object.keys(byNum).map(Number).sort(function(a,b){ return a-b; });
+
+  var totalLearned = 0, totalWords = 0, anyStarted = false;
+  var allAbove80 = true, below80Count = 0;
+  var cardsHtml = '';
+
   nums.forEach(function(num){
     var entry = byNum[num];
-    rowsHtml += buildRow(entry.data, entry.locked, sideLeft);
-    sideLeft = !sideLeft;
-  });
+    var item = entry.data;
 
-  document.getElementById('roadRows').innerHTML = rowsHtml;
+    if(entry.locked){
+      cardsHtml += buildCard(item, true, 0);
+      return;
+    }
 
-  // ── Progress hisoblash va uzuklarni animatsiya qilish ──
-  var totalLearned = 0, totalWords = 0, anyStarted = false;
-  var RING_C = 2 * Math.PI * 25; // road-node uzugi radiusi=25
-
-  var allAbove80 = true;
-  var below80Count = 0;
-
-  BOLIMLAR.forEach(function(b){
-    var learned = getLearnedCount(b.key);
-    var pct = b.total ? Math.round(learned / b.total * 100) : 0;
+    var learned = getLearnedCount(item.key);
+    var pct = item.total ? Math.round(learned / item.total * 100) : 0;
     totalLearned += learned;
-    totalWords += b.total;
+    totalWords += item.total;
     if(learned > 0) anyStarted = true;
     if(pct < 80){ allAbove80 = false; below80Count++; }
 
-    var ring = document.querySelector('[data-ring="'+b.num+'"]');
-    var pctEl = document.querySelector('[data-pct="'+b.num+'"]');
-    if(ring) animateRing(ring, pct, RING_C);
-    if(pctEl) pctEl.textContent = pct + '%';
+    cardsHtml += buildCard(item, false, pct);
   });
+
+  document.getElementById('roadRows').innerHTML = cardsHtml;
 
   var overallPct = totalWords ? Math.round(totalLearned / totalWords * 100) : 0;
   var SUMMARY_C = 2 * Math.PI * 37;
@@ -490,15 +506,10 @@ function initRoadmap(){
   }
 
   updateExamCard(allAbove80, below80Count);
-  // Sovg'alar endi 10 bo'lim 80%'ga emas, balki Imtihonga tayyorgarlik
-  // testidan 80%+ natija olishga bog'liq. Imtihon hali qurilmagani uchun
-  // bu qiymat hozircha har doim 0 — imtihon tayyor bo'lgach, u yerdan
-  // shu kalitga yozib qo'yiladi va Sovg'alar avtomatik ochiladi.
   var examScorePct = Number(localStorage.getItem('arabic_exam_score_pct') || 0);
   updateRewardCard(examScorePct >= 80);
 }
 
-// ═══ SOVG'ALAR BO'LIMI — Imtihon natijasi 80%+ bo'lganda ochiladi ═══
 function updateRewardCard(examPassed){
   var card = document.getElementById('rewardCard');
   var desc = document.getElementById('rewardDesc');
@@ -507,7 +518,7 @@ function updateRewardCard(examPassed){
   if(examPassed){
     card.classList.remove('locked');
     card.classList.add('unlocked');
-    desc.textContent = "Ochish uchun bosing \uD83C\uDF89";
+    desc.textContent = "Ochish uchun bosing";
     card.onclick = openRewardModal;
   } else {
     card.classList.add('locked');
@@ -517,10 +528,6 @@ function updateRewardCard(examPassed){
   }
 }
 
-// ═══ IMTIHONGA TAYYORGARLIK BO'LIMI ═══
-// Hozircha faqat nomi va qulf mexanizmi tayyor — testning o'zi (50-100 ta
-// aralash savol) keyinroq alohida qo'shiladi. Shu sabab ochilganda ham
-// "tez orada" xabari chiqadi, haqiqiy test emas.
 function updateExamCard(unlocked, below80Count){
   var card = document.getElementById('examCard');
   var desc = document.getElementById('examDesc');
@@ -529,7 +536,7 @@ function updateExamCard(unlocked, below80Count){
   if(unlocked){
     card.classList.remove('locked');
     card.classList.add('unlocked');
-    desc.textContent = "Ochildi \u2014 tez orada ishga tushadi";
+    desc.textContent = "Ochildi — tez orada ishga tushadi";
     card.onclick = openExamModal;
   } else {
     card.classList.add('locked');
@@ -561,7 +568,6 @@ function closeRewardModal(){
 function spawnConfetti(){
   var inner = document.getElementById('rewardModalInner');
   var colors = ['#D4A23A','#F0C56B','#EDEFF5','#6FBF8B','#E0566B'];
-  // Eskilarini tozalash
   inner.querySelectorAll('.confetti').forEach(function(c){ c.remove(); });
   for(var i=0;i<24;i++){
     var piece = document.createElement('div');
@@ -578,8 +584,6 @@ document.getElementById('rewardModal').addEventListener('click', function(e){
   if(e.target.id === 'rewardModal') closeRewardModal();
 });
 
-// ═══ ISHGA TUSHIRISH ═══
-// Avval ism-gate tekshiriladi; ism mavjud bo'lsa roadmap darhol quriladi
 if(initNameGate()){
   initRoadmap();
 }

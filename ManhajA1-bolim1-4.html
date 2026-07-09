@@ -303,8 +303,8 @@
     <div class="result-xp" id="natija-xp">+0 XP</div>
     <div id="natija-detail" style="color:var(--muted);font-size:13px;"></div>
     <div class="result-stats">
-      <div class="stat-box"><div class="num" id="natija-correct">0</div><div class="lbl">To'g'ri</div></div>
-      <div class="stat-box"><div class="num" id="natija-total">0</div><div class="lbl">Jami</div></div>
+      <div class="stat-box"><div class="num" id="natija-correct">0</div><div class="lbl" id="natija-correct-lbl">To'g'ri</div></div>
+      <div class="stat-box"><div class="num" id="natija-total">0</div><div class="lbl" id="natija-total-lbl">Jami</div></div>
     </div>
   </div>
   <button class="btn btn-gold btn-block" id="natija-again-btn">Yana bir bor</button>
@@ -1501,38 +1501,45 @@ document.getElementById('gt-clear-btn').addEventListener('click', function(){
   renderGapPool();
   renderGapAnswerZone();
 });
+function advanceGapQuestion(){
+  var list = SENTENCES[gtState.level];
+  gtState.idx++;
+  if(gtState.idx >= list.length){ finishSession('gaptuzish', gtState.correctCount, list.length); return; }
+  renderGapCurrent();
+}
 document.getElementById('gt-check-btn').addEventListener('click', function(){
   if(gtState.answered) return;
   gtState.answered = true;
   var userAnswer = gtState.selected.map(function(s){return s.word;}).join(' ');
   var correct = userAnswer === gtState.currentSentence.ar;
   var resultEl = document.getElementById('gt-result');
+  document.getElementById('gt-check-btn').style.display = 'none';
+  document.getElementById('gt-clear-btn').style.display = 'none';
   if(correct){
     resultEl.className = 'gt-result ok show';
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(gtState.currentSentence.uz);
     addAchievementXP(8);
     gtState.correctCount++;
+    // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
+    document.getElementById('gt-next-btn').style.display = 'none';
+    setTimeout(advanceGapQuestion, 600);
   } else {
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div>'+dtxt(gtState.currentSentence.uz);
+    // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
+    document.getElementById('gt-next-btn').style.display = '';
   }
-  document.getElementById('gt-check-btn').style.display = 'none';
-  document.getElementById('gt-clear-btn').style.display = 'none';
-  document.getElementById('gt-next-btn').style.display = '';
 });
-document.getElementById('gt-next-btn').addEventListener('click', function(){
-  var list = SENTENCES[gtState.level];
-  gtState.idx++;
-  if(gtState.idx >= list.length){ finishSession('gaptuzish', gtState.correctCount, list.length); return; }
-  renderGapCurrent();
-});
+document.getElementById('gt-next-btn').addEventListener('click', advanceGapQuestion);
 
 // ═══ FLASHKARD ═══
-var fkState = {idx:0, order:[], flipped:false};
+var fkState = {idx:0, order:[], flipped:false, knowCount:0, dontKnowCount:0};
 function startFlashkard(){
   fkState.order = shuffleIdx(VOCAB.length);
   fkState.idx = 0;
   fkState.flipped = false;
+  fkState.knowCount = 0;
+  fkState.dontKnowCount = 0;
   renderFlashcard();
 }
 function renderFlashcard(){
@@ -1552,8 +1559,8 @@ document.getElementById('flash-card').addEventListener('click', function(){
 function fkAdvance(know){
   var word = VOCAB[fkState.order[fkState.idx]];
   var box = getBox(word.ar);
-  if(know){ setBox(word.ar, box+1); addAchievementXP(3); }
-  else { setBox(word.ar, 1); }
+  if(know){ setBox(word.ar, box+1); addAchievementXP(3); fkState.knowCount++; }
+  else { setBox(word.ar, 1); fkState.dontKnowCount++; }
   fkState.idx++;
   if(fkState.idx >= VOCAB.length){ finishSession('flashkard', null, VOCAB.length); return; }
   renderFlashcard();
@@ -1594,14 +1601,21 @@ function finishSession(type, correct, total){
   var xpNow = getAchievementXP();
   var earned = xpNow - sessionXpBefore;
   document.getElementById('natija-xp').textContent = '+'+Math.max(earned,0)+' XP';
-  if(correct !== null){
+  var lblCorrect = document.getElementById('natija-correct-lbl');
+  var lblTotal = document.getElementById('natija-total-lbl');
+  if(type === 'flashkard'){
+    // "Bilmadim" bosilgan sonlar endi to'g'ri hisoblanadi (avval doim to'liq bildi deb ko'rsatilardi)
+    document.getElementById('natija-correct').textContent = fkState.knowCount;
+    document.getElementById('natija-total').textContent = fkState.dontKnowCount;
+    lblCorrect.textContent = 'Bildim';
+    lblTotal.textContent = 'Bilmadim';
+    document.getElementById('natija-detail').textContent = 'Flashkard yakunlandi';
+  } else {
     document.getElementById('natija-correct').textContent = correct;
     document.getElementById('natija-total').textContent = total;
+    lblCorrect.textContent = 'To\u2019g\u2018ri';
+    lblTotal.textContent = 'Jami';
     document.getElementById('natija-detail').textContent = type==='test' ? 'Test yakunlandi' : 'Mashq yakunlandi';
-  } else {
-    document.getElementById('natija-correct').textContent = total;
-    document.getElementById('natija-total').textContent = total;
-    document.getElementById('natija-detail').textContent = 'Flashkard yakunlandi';
   }
   document.getElementById('natija-again-btn').onclick = function(){ showScreen(type); };
   showScreen('natija');

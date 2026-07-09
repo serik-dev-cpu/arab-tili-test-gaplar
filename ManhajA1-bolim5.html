@@ -195,6 +195,11 @@ body{padding-bottom:130px;}
 
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="home-progress-bar" style="width:0%"></div></div>
   <div class="center-note" id="home-progress-text">0 / 90 so'z o'rganildi</div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="home-xp">0</div><div class="lbl">Umumiy XP</div></div>
+    <div class="stat-box"><div class="num" id="home-learned">0/0</div><div class="lbl">O'rganilgan</div></div>
+    <div class="stat-box"><div class="num" id="home-mastered">0</div><div class="lbl">Mukammal (5-box)</div></div>
+  </div>
 
   <div class="menu-grid">
     <div class="menu-card" onclick="goScreen('lugat')">
@@ -596,6 +601,9 @@ function addAchievementXP(xp){
     localStorage.setItem(ACH_KEY, JSON.stringify(d));
   }catch(e){}
 }
+function getAchievementXP(){
+  try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Number(d.xp)||0; }catch(e){ return 0; }
+}
 
 let screenStack = ['home'];
 function goScreen(name, push){
@@ -643,6 +651,11 @@ function renderHome(){
   const pct = Math.round((state.learned.length / totalItems) * 100);
   document.getElementById('home-progress-bar').style.width = pct+'%';
   document.getElementById('home-progress-text').textContent = state.learned.length + ' / ' + totalItems + ' o\'zlashtirildi';
+  let mastered = 0;
+  ALL_WORDS.forEach(function(w){ if((state.box[w.ar]||0) >= 5) mastered++; });
+  document.getElementById('home-xp').textContent = getAchievementXP();
+  document.getElementById('home-learned').textContent = state.learned.length + '/' + totalItems;
+  document.getElementById('home-mastered').textContent = mastered;
 }
 
 let activeCatFilter = 'all';
@@ -965,7 +978,7 @@ function renderGapQuestion(){
   const distractorPool = ALL_WORDS.map(x=>x.ar).filter(a => !item.words.includes(a));
   const distractorWord = distractorPool[Math.floor(Math.random()*distractorPool.length)];
   const realTiles = item.words.map((w,i)=>({w,i}));
-  const allTiles = realTiles.concat(distractorWord ? [{w:distractorWord, i:'d'}] : []);
+  const allTiles = realTiles.concat(distractorWord ? [{w:distractorWord, i:-1}] : []);
   window.__gapPool = shuffle(allTiles);
   renderGapTokens();
 }
@@ -1030,11 +1043,14 @@ function checkGapAnswer(){
   });
   // natija qutisi
   const ra = document.getElementById('gt-result-area');
+  document.getElementById('gt-btn-row').style.display = 'none';
   if(isCorrect){
     gapState.correct++;
     addAchievementXP(3);
     var turkumHtml = item.turkum ? '<div class="turkum-tag">📚 Turkum: '+item.turkum+'</div>' : '';
     ra.innerHTML = '<div class="gt-result ok"><div class="title" style="color:#6FBF8B">✅ To\u2019g\u2019ri!</div>'+turkumHtml+'</div>';
+    // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
+    setTimeout(nextGapQuestion, 600);
   } else {
     var turkumHtmlWrong = item.turkum ? '<div class="turkum-tag">📚 Turkum: '+item.turkum+'</div>' : '';
     ra.innerHTML = '<div class="gt-result no">'+
@@ -1043,14 +1059,13 @@ function checkGapAnswer(){
       '<div class="ans">'+item.answer.join(' ')+'</div>'+
       turkumHtmlWrong+
       '</div>';
+    // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'premium-btn-primary';
+    nextBtn.textContent = (gapState.idx < gapState.items.length-1) ? 'Keyingi →' : 'Yakunlash';
+    nextBtn.onclick = nextGapQuestion;
+    ra.appendChild(nextBtn);
   }
-  // "Keyingi" tugmasi
-  document.getElementById('gt-btn-row').style.display = 'none';
-  const nextBtn = document.createElement('button');
-  nextBtn.className = 'premium-btn-primary';
-  nextBtn.textContent = (gapState.idx < gapState.items.length-1) ? 'Keyingi →' : 'Yakunlash';
-  nextBtn.onclick = nextGapQuestion;
-  ra.appendChild(nextBtn);
 }
 function nextGapQuestion(){
   gapState.idx++;

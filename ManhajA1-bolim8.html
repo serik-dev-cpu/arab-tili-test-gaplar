@@ -111,24 +111,22 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 .opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8;}
 .opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188;}
 
-.gt-prompt{background:linear-gradient(160deg,#1a1710,var(--bg)); border-top:3px solid var(--gold); border-radius:14px; padding:20px 18px 18px; margin-bottom:14px; text-align:center;}
-.gt-prompt .lbl{font-size:10px; color:var(--muted); margin-bottom:10px; letter-spacing:1.5px; font-weight:600; text-transform:uppercase;}
-.gt-prompt .cyr{font-size:20px; font-weight:800; color:var(--gold2); line-height:1.45;}
-.gt-instr{text-align:center; font-size:12px; color:var(--muted); margin:2px 0 12px;}
-.gt-zone-label{font-size:10px; color:#5C6478; letter-spacing:1px; font-weight:600; text-transform:uppercase; margin-bottom:6px; text-align:center;}
-.gt-answer{min-height:92px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; direction:rtl; padding:14px; margin-bottom:14px; background:linear-gradient(160deg,#1a1710,var(--bg)); border-radius:14px; border:1.5px dashed rgba(212,162,58,0.35);}
-.gt-pool{min-height:74px; background:#0d0f16; border:1px solid rgba(255,255,255,0.04); border-radius:16px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; direction:rtl; padding:12px; margin-bottom:16px;}
-.gt-tok{font-family:'Noto Naskh Arabic','Amiri',serif; font-weight:700; border:none; cursor:pointer; min-height:48px; display:inline-flex; align-items:center; justify-content:center; transition:transform .12s; line-height:2;}
-.gt-tok:active{transform:scale(.94);}
-.gt-tok.pool{color:#1A1404; background:linear-gradient(135deg,#D4A23A,#F0C56B); border-radius:14px 14px 14px 4px; box-shadow:0 3px 10px #00000055, 0 0 14px #D4A23A33;}
-.gt-tok.placed{color:#EDEFF5; background:#1B2030; border:1px solid #D4A23A77; border-radius:14px 14px 14px 4px; box-shadow:0 0 10px #D4A23A22;}
-.gt-empty{font-size:11px; color:#5C6478; direction:ltr;}
-.gt-result{border-radius:16px; padding:16px; margin-bottom:10px; text-align:center;}
-.gt-result.ok{background:linear-gradient(165deg,#0d2614,#0a1f10); border:1px solid #6FBF8B55;}
-.gt-result.no{background:linear-gradient(165deg,#2e0a0a,#220707); border:1px solid #E8765C55;}
-.gt-result .title{font-size:15px; font-weight:700; margin-bottom:6px;}
-.gt-result .ans-label{font-size:11px; color:var(--muted); margin-bottom:6px;}
-.gt-result .ans{font-family:'Noto Naskh Arabic','Amiri',serif; font-size:24px; font-weight:700; color:var(--gold); direction:rtl; line-height:2.4;}
+.quiz-progress{font-size:12px; color:var(--muted); margin-bottom:10px; text-align:center;}
+.gt-translation{background:rgba(212,162,58,0.08); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:14px; color:var(--gold2); text-align:center;}
+.gt-translation .lbl{font-size:11px; color:var(--muted); display:block; margin-bottom:4px;}
+.sentence-box{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 14px; min-height:76px; margin-bottom:16px; direction:rtl; display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start;}
+.sentence-box.empty::before{content:'So\'z hovuzidan tanlang \2193'; color:var(--muted); font-size:13px; font-family:'Inter',sans-serif; direction:ltr; margin:auto;}
+.word-pool{display:flex; flex-wrap:wrap; gap:8px; direction:rtl; margin-bottom:18px;}
+.tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:700; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1a1408; transition:transform .12s ease, opacity .12s ease; user-select:none; line-height:1.8;}
+.tile:active{transform:scale(0.94);}
+.tile.placed{background:#171C29; border:1px solid var(--border); color:var(--text);}
+.tile.gone{opacity:0; pointer-events:none;}
+.gt-result{border-radius:14px; padding:14px; margin-bottom:14px; font-size:14px; text-align:center; display:none;}
+.gt-result.show{display:block;}
+.gt-result.ok{background:rgba(63,191,127,0.15); border:1px solid #3FBF7F; color:#3FBF7F;}
+.gt-result.bad{background:rgba(224,86,107,0.15); border:1px solid #E0566B; color:#E0566B;}
+.gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:22px; color:var(--gold2); margin-top:8px; line-height:2.2;}
+.gt-actions{display:flex; gap:10px;}
 
 .floating-menu-btn{
   position:fixed; left:14px; bottom:16px; z-index:50;
@@ -146,9 +144,9 @@ h1,h2,h3{font-weight:600; margin:0 0 8px;}
 .stat-box .num{font-size:22px; font-weight:600; color:var(--gold2);}
 .stat-box .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
 
-.level-tabs{display:flex; gap:8px; margin:14px 0;}
-.level-tab{flex:1; text-align:center; padding:10px; border-radius:10px; border:1px solid var(--border); font-size:13px; color:var(--muted); cursor:pointer;}
-.level-tab.active{border-color:var(--gold); color:var(--gold2); background:rgba(212,162,58,.1);}
+.level-tabs{display:flex; gap:8px; margin-bottom:16px;}
+.level-tab{flex:1; text-align:center; padding:10px; border-radius:12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--muted); cursor:pointer; border:1px solid transparent;}
+.level-tab.active{background:rgba(212,162,58,0.15); color:var(--gold2); border-color:var(--border);}
 
 .center-note{text-align:center; color:var(--muted); font-size:13px; margin-top:20px;}
 
@@ -216,7 +214,7 @@ body{padding-bottom:130px;}
       <div class="t">Flashkard</div>
       <div class="s">Flip + o'z-o'zini baholash</div>
     </div>
-    <div class="menu-card" onclick="goScreen('gap-setup')">
+    <div class="menu-card" onclick="goScreen('gap')">
       <i class="ti ti-puzzle"></i>
       <div class="t">Gap tuzish</div>
       <div class="s">60 ta mashq</div>
@@ -344,35 +342,25 @@ body{padding-bottom:130px;}
 </div>
 
 <!-- ================= EKRAN: Gap tuzish sozlash ================= -->
-<div class="screen" id="screen-gap-setup">
+<!-- ================= EKRAN: Gap tuzish ================= -->
+<div class="screen" id="screen-gap">
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Gap tuzish</h2>
-  <p style="color:var(--muted); font-size:14px;">Darajani tanlang va so'zlarni to'g'ri tartibda joylashtirib gap tuzing.</p>
   <div class="level-tabs">
     <div class="level-tab active" data-lvl="oson" onclick="selectGapLevel('oson',this)">Oson</div>
     <div class="level-tab" data-lvl="ortacha" onclick="selectGapLevel('ortacha',this)">O'rtacha</div>
     <div class="level-tab" data-lvl="profi" onclick="selectGapLevel('profi',this)">Profi</div>
   </div>
-  <button class="premium-btn-primary" onclick="startGapTuzish()">Boshlash</button>
-</div>
-
-<!-- ================= EKRAN: Gap tuzish (mashq) ================= -->
-<div class="screen" id="screen-gap">
-  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
-  <div class="progress-bar-outer"><div class="progress-bar-inner" id="gap-progress-bar" style="width:0%"></div></div>
-  <div class="gt-prompt">
-    <div class="lbl">Quyidagi gapni arabchada tuzing</div>
-    <div class="cyr" id="gap-cyr"></div>
+  <div class="quiz-progress" id="gap-progress">1 / 20</div>
+  <div class="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gap-cyr">...</span></div>
+  <div class="sentence-box empty" id="gt-answer"></div>
+  <div class="gt-result" id="gt-result-area"></div>
+  <div class="word-pool" id="gt-pool"></div>
+  <div class="gt-actions" id="gt-btn-row">
+    <button class="premium-btn-secondary" style="flex:1; margin-top:0;" id="gt-clear-btn">Tozalash</button>
+    <button class="premium-btn-primary" style="flex:2; margin-top:0;" id="gt-check-btn">Tekshirish</button>
   </div>
-  <div class="gt-instr">So'zlarga tegib, to'g'ri tartibda gap tuzing</div>
-  <div class="gt-zone-label">Javobingiz</div>
-  <div class="gt-answer" id="gt-answer"></div>
-  <div class="gt-pool" id="gt-pool"></div>
-  <div id="gt-result-area"></div>
-  <div id="gt-btn-row" style="display:flex; gap:10px;">
-    <button class="premium-btn-secondary" style="flex:1; margin-top:0;" onclick="undoGapToken()">↩️ Orqaga</button>
-    <button class="premium-btn-primary" style="flex:2; margin-top:0;" id="gt-check-btn" onclick="checkGapAnswer()">✓ Tekshirish</button>
-  </div>
+  <button class="premium-btn-primary" id="gt-next-btn" style="width:100%; margin-top:10px; display:none;" onclick="advanceGapQuestion()">Keyingi →</button>
 </div>
 
 <!-- ================= EKRAN: Grammatika ================= -->
@@ -565,6 +553,7 @@ function goScreen(name, push){
   if(name === 'home') renderHome();
   if(name === 'lugat') renderLugat();
   if(name === 'stats') renderStats();
+  if(name === 'gap') startGapTuzish();
   if(name === 'quiz-setup'){
     var qtl = document.getElementById('quiz-total-label');
     if(qtl) qtl.textContent = quizQuestionCount + ' ta';
@@ -879,138 +868,151 @@ function finishQuiz(){
   goScreen('quiz-result');
 }
 
-// ---------------- Gap tuzish ----------------
-let gapLevel = 'oson';
-let gapState = null;
+/* ---------------- Gap tuzish ---------------- */
+var GT_DISTRACTOR_WORDS = ['كِتَابٌ','بَيْتٌ','قَلَمٌ','مَكْتَبٌ','جَمِيلٌ','كَبِيرٌ','اليَوْمَ','هُنَاكَ','سَرِيعًا','دَائِمًا'];
+var gapState = {level:'oson', idx:0, order:[], list:[], pool:[], selected:[], answered:false, correct:0};
+
+function gtShuffleIdx(n){
+  var arr = []; for(var i=0;i<n;i++) arr.push(i);
+  arr.sort(function(){return Math.random()-0.5;});
+  return arr;
+}
 function selectGapLevel(lvl, el){
-  gapLevel = lvl;
-  document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));
+  gapState.level = lvl;
+  gapState.idx = 0;
+  gapState.correct = 0;
+  document.querySelectorAll('.level-tab').forEach(function(t){t.classList.remove('active');});
   el.classList.add('active');
+  gapState.list = GAP_TUZISH_DATA.filter(function(g){return g.level===gapState.level;});
+  gapState.order = gtShuffleIdx(gapState.list.length);
+  renderGapCurrent();
 }
 function startGapTuzish(){
-  const pool = shuffle(GAP_TUZISH_DATA.filter(g=>g.level===gapLevel));
-  gapState = { items: pool, idx:0, correct:0 };
-  goScreen('gap');
-  renderGapQuestion();
-}
-function renderGapQuestion(){
-  const item = gapState.items[gapState.idx];
-  document.getElementById('gap-progress-bar').style.width = Math.round((gapState.idx/gapState.items.length)*100)+'%';
-  document.getElementById('gap-cyr').textContent = dtxt(item.cyr);
-  document.getElementById('gt-result-area').innerHTML = '';
-  document.getElementById('gt-btn-row').style.display = 'flex';
-  gapState.answered = false;
-  // uzunlikka qarab shrift
-  const n = item.words.length;
-  gapState.tileFont = n<=5 ? '27px' : n<=8 ? '23px' : '19px';
-  gapState.tilePad = n<=5 ? '13px 20px' : n<=8 ? '13px 15px' : '11px 12px';
-  window.__gapAnswer = [];
-  // Chalg'ituvchi (yolg'on) so'z qo'shamiz — javobda yo'q, bo'limning boshqa so'zlaridan
-  const distractorPool = ALL_WORDS.map(x=>x.ar).filter(a => !item.words.includes(a));
-  const distractorWord = distractorPool[Math.floor(Math.random()*distractorPool.length)];
-  const realTiles = item.words.map((w,i)=>({w,i}));
-  const allTiles = realTiles.concat(distractorWord ? [{w:distractorWord, i:-1}] : []);
-  window.__gapPool = shuffle(allTiles);
-  renderGapTokens();
-}
-function renderGapTokens(){
-  const item = gapState.items[gapState.idx];
-  const answerWrap = document.getElementById('gt-answer');
-  const poolWrap = document.getElementById('gt-pool');
-  const f = gapState.tileFont, p = gapState.tilePad;
-  // javob zonasi
-  if(window.__gapAnswer.length === 0){
-    answerWrap.innerHTML = '<div class="gt-empty">Plitkalarga tegining ↑</div>';
-  } else {
-    answerWrap.innerHTML = window.__gapAnswer.map(t=>
-      '<button class="gt-tok placed" style="font-size:'+f+';padding:'+p+'" onclick="unplaceToken('+t.i+')">'+t.w+'</button>'
-    ).join('');
-  }
-  // pool zonasi
-  if(window.__gapPool.length === 0){
-    poolWrap.innerHTML = '<div class="gt-empty">Hammasi joylashtirildi ✓</div>';
-  } else {
-    poolWrap.innerHTML = window.__gapPool.map(t=>
-      '<button class="gt-tok pool" style="font-size:'+f+';padding:'+p+'" onclick="placeToken('+t.i+')">'+t.w+'</button>'
-    ).join('');
-  }
-}
-function placeToken(i){
-  if(gapState.answered) return;
-  const idx = window.__gapPool.findIndex(t=>t.i===i);
-  if(idx<0) return;
-  const [tok] = window.__gapPool.splice(idx,1);
-  window.__gapAnswer.push(tok);
-  renderGapTokens();
-}
-function unplaceToken(i){
-  if(gapState.answered) return;
-  const idx = window.__gapAnswer.findIndex(t=>t.i===i);
-  if(idx<0) return;
-  const [tok] = window.__gapAnswer.splice(idx,1);
-  window.__gapPool.push(tok);
-  renderGapTokens();
-}
-function undoGapToken(){
-  if(gapState.answered) return;
-  if(window.__gapAnswer.length === 0) return;
-  const last = window.__gapAnswer.pop();
-  window.__gapPool.push(last);
-  renderGapTokens();
-}
-function checkGapAnswer(){
-  if(gapState.answered) return;
-  const item = gapState.items[gapState.idx];
-  if(window.__gapAnswer.length !== item.answer.length) return;
-  gapState.answered = true;
-  const userOrder = window.__gapAnswer.map(t=>t.w);
-  const isCorrect = JSON.stringify(userOrder) === JSON.stringify(item.answer);
-  // javob plitkalari rangini yangilash
-  const answerWrap = document.getElementById('gt-answer');
-  Array.from(answerWrap.children).forEach(el=>{
-    el.style.background = isCorrect ? '#0d2614' : '#2e0a0a';
-    el.style.borderColor = isCorrect ? '#6FBF8B' : '#E8765C';
-    el.style.color = isCorrect ? '#6FBF8B' : '#E8765C';
+  gapState.level = 'oson';
+  gapState.idx = 0;
+  gapState.correct = 0;
+  document.querySelectorAll('.level-tab').forEach(function(t){
+    t.classList.toggle('active', t.getAttribute('data-lvl')===gapState.level);
   });
-  // natija qutisi
-  const ra = document.getElementById('gt-result-area');
+  gapState.list = GAP_TUZISH_DATA.filter(function(g){return g.level===gapState.level;});
+  gapState.order = gtShuffleIdx(gapState.list.length);
+  renderGapCurrent();
+}
+function renderGapCurrent(){
+  var list = gapState.list;
+  document.getElementById('gap-progress').textContent = (gapState.idx+1)+' / '+list.length;
+  var item = list[gapState.order[gapState.idx]];
+  gapState.currentItem = item;
+  gapState.answered = false;
+  gapState.selected = [];
+  document.getElementById('gap-cyr').textContent = dtxt(item.cyr);
+
+  var shuffledDistractors = GT_DISTRACTOR_WORDS.slice().sort(function(){return Math.random()-0.5;});
+  var numExtra = Math.min(2, Math.floor(item.words.length/3)+1);
+  var extra = shuffledDistractors.slice(0, numExtra);
+  var poolWords = item.words.concat(extra).sort(function(){return Math.random()-0.5;});
+  gapState.pool = poolWords.map(function(w,i){ return {word:w, uid:i, used:false}; });
+
+  var fontSize = item.words.length<=5 ? '30px' : (item.words.length<=8 ? '25px' : '21px');
+  document.getElementById('gt-answer').style.fontSize = fontSize;
+  document.getElementById('gt-pool').style.fontSize = fontSize;
+  document.getElementById('gt-answer').classList.add('empty');
+  document.getElementById('gt-answer').innerHTML = '';
+  document.getElementById('gt-result-area').className = 'gt-result';
+  document.getElementById('gt-result-area').innerHTML = '';
+  document.getElementById('gt-next-btn').style.display = 'none';
+  document.getElementById('gt-btn-row').style.display = 'flex';
+  document.getElementById('gt-check-btn').style.display = '';
+  document.getElementById('gt-clear-btn').style.display = '';
+  renderGapPool();
+}
+function renderGapPool(){
+  var html = '';
+  gapState.pool.forEach(function(item){
+    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'">'+item.word+'</div>';
+  });
+  document.getElementById('gt-pool').innerHTML = html;
+  document.querySelectorAll('#gt-pool .tile').forEach(function(t){
+    t.addEventListener('click', function(){
+      if(gapState.answered) return;
+      var uid = Number(t.getAttribute('data-uid'));
+      var item = gapState.pool.find(function(p){return p.uid===uid;});
+      item.used = true;
+      gapState.selected.push(item);
+      renderGapPool();
+      renderGapAnswerZone();
+    });
+  });
+}
+function renderGapAnswerZone(){
+  var zone = document.getElementById('gt-answer');
+  if(gapState.selected.length===0){ zone.classList.add('empty'); zone.innerHTML=''; return; }
+  zone.classList.remove('empty');
+  var html = '';
+  gapState.selected.forEach(function(item){
+    html += '<div class="tile placed" data-uid="'+item.uid+'">'+item.word+'</div>';
+  });
+  zone.innerHTML = html;
+  zone.querySelectorAll('.tile').forEach(function(t){
+    t.addEventListener('click', function(){
+      if(gapState.answered) return;
+      var uid = Number(t.getAttribute('data-uid'));
+      gapState.selected = gapState.selected.filter(function(s){return s.uid!==uid;});
+      var item = gapState.pool.find(function(p){return p.uid===uid;});
+      item.used = false;
+      renderGapPool();
+      renderGapAnswerZone();
+    });
+  });
+}
+document.getElementById('gt-clear-btn').addEventListener('click', function(){
+  if(gapState.answered) return;
+  gapState.selected.forEach(function(s){ s.used = false; });
+  gapState.selected = [];
+  renderGapPool();
+  renderGapAnswerZone();
+});
+document.getElementById('gt-check-btn').addEventListener('click', function(){
+  if(gapState.answered) return;
+  var item = gapState.currentItem;
+  if(gapState.selected.length !== item.answer.length) return;
+  gapState.answered = true;
+  var userAnswer = gapState.selected.map(function(s){return s.word;}).join(' ');
+  var correctAnswer = item.answer.join(' ');
+  var isCorrect = userAnswer === correctAnswer;
+  var resultEl = document.getElementById('gt-result-area');
   document.getElementById('gt-btn-row').style.display = 'none';
   if(isCorrect){
+    resultEl.className = 'gt-result ok show';
+    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr);
+    addAchievementXP(8);
     gapState.correct++;
-    addAchievementXP(3);
-    ra.innerHTML = '<div class="gt-result ok"><div class="title" style="color:#6FBF8B">✅ To’g’ri!</div></div>';
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
-    setTimeout(nextGapQuestion, 600);
+    setTimeout(advanceGapQuestion, 600);
   } else {
-    ra.innerHTML = '<div class="gt-result no">'+
-      '<div class="title" style="color:#E8765C">❌ Xato</div>'+
-      '<div class="ans-label">To’g’ri javob:</div>'+
-      '<div class="ans">'+item.answer.join(' ')+'</div>'+
-      '</div>';
+    resultEl.className = 'gt-result bad show';
+    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr);
     // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'premium-btn-primary';
-    nextBtn.textContent = (gapState.idx < gapState.items.length-1) ? 'Keyingi →' : 'Yakunlash';
-    nextBtn.onclick = nextGapQuestion;
-    ra.appendChild(nextBtn);
+    document.getElementById('gt-next-btn').style.display = '';
   }
-}
-function nextGapQuestion(){
+});
+function advanceGapQuestion(){
   gapState.idx++;
-  if(gapState.idx < gapState.items.length){
-    renderGapQuestion();
+  if(gapState.idx < gapState.list.length){
+    renderGapCurrent();
   } else {
-    var gTotal = gapState.items.length;
+    var gTotal = gapState.list.length;
     var gWrong = gTotal - gapState.correct;
     document.getElementById('result-correct').textContent = gapState.correct;
     document.getElementById('result-wrong').textContent = gWrong;
     document.getElementById('result-percent').textContent = Math.round((gapState.correct/gTotal)*100)+'%';
     var qrTitle = document.getElementById('qr-title'); if(qrTitle) qrTitle.textContent = 'Mashq tugadi!';
     var qrBtn = document.getElementById('qr-retry-btn');
-    if(qrBtn){ qrBtn.textContent = 'Yana mashq'; qrBtn.onclick = function(){ goScreen('gap-setup'); }; }
+    if(qrBtn){ qrBtn.textContent = 'Yana mashq'; qrBtn.onclick = function(){ goScreen('gap'); }; }
     goScreen('quiz-result');
   }
 }
+
 
 function renderStats(){
   const state = loadProgress();

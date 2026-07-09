@@ -166,8 +166,25 @@
     <div class="menu-card" data-nav="flashkard"><i class="ti ti-cards"></i><div class="mc-title">Flashkard</div><div class="mc-sub">Tez takrorlash</div></div>
     <div class="menu-card" data-nav="test-setup"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Tezlikka qarab, 4 variant</div></div>
     <div class="menu-card" data-nav="gaptuzish"><i class="ti ti-arrows-shuffle"></i><div class="mc-title">Gap tuzish</div><div class="mc-sub">60 ta mashq</div></div>
-    <div class="menu-card" data-nav="grammatika" style="grid-column:1/3;"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
+    <div class="menu-card" data-nav="grammatika"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
+    <div class="menu-card" data-nav="stats"><i class="ti ti-chart-bar"></i><div class="mc-title">Natijalar</div><div class="mc-sub">Progress</div></div>
   </div>
+</div>
+
+<!-- ═══════════ NATIJALAR EKRANI ═══════════ -->
+<div class="screen" id="screen-stats" data-screen="stats">
+  <div class="top-header">
+    <button class="btn btn-outline btn-sm" data-nav="menu"><i class="ti ti-chevron-left"></i> Menyu</button>
+    <div class="top-title">Natijalar</div>
+  </div>
+  <div class="center-note" id="stats-student-name" style="color:var(--gold2); font-weight:700; margin:14px 0 10px;"></div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="stat-learned">0</div><div class="lbl">O'zlashtirilgan</div></div>
+    <div class="stat-box"><div class="num" id="stat-total">0</div><div class="lbl">Jami so'z</div></div>
+  </div>
+  <div class="progress-bar-bg" style="margin-top:14px;"><div class="progress-bar-fill" id="stats-progress-bar" style="width:0%"></div></div>
+  <div class="center-note" id="stats-progress-text" style="margin-top:8px;">0%</div>
+  <div class="center-note" style="color:var(--muted); font-size:12.5px; margin-top:18px;">Faqat Test orqali to'g'ri topilgan so'zlar shu yerda hisoblanadi.</div>
 </div>
 
 <!-- ═══════════ LUG'AT EKRANI ═══════════ -->
@@ -1146,6 +1163,7 @@ function renderScreen(name){
   else if(name==='gaptuzish') startGapTuzish();
   else if(name==='flashkard') startFlashkard();
   else if(name==='grammatika') BOLIM_META[currentBolim].gram();
+  else if(name==='stats') renderStats();
 }
 function rerenderCurrentScreen(){
   if(lastScreen==='lugat') renderLugatList();
@@ -1189,6 +1207,18 @@ function renderMenu(){
   document.getElementById('menu-xp').textContent = getAchievementXP();
   document.getElementById('menu-learned').textContent = learnedCount+'/'+VOCAB.length;
   document.getElementById('menu-mastered').textContent = mastered;
+}
+
+function renderStats(){
+  var p = loadProgress();
+  var learnedCount = p.learned.length;
+  var pct = Math.round((learnedCount/VOCAB.length)*100);
+  var nameEl = document.getElementById('stats-student-name');
+  if(nameEl) nameEl.textContent = 'Talaba: ' + currentName;
+  document.getElementById('stat-learned').textContent = learnedCount;
+  document.getElementById('stat-total').textContent = VOCAB.length;
+  document.getElementById('stats-progress-bar').style.width = pct+'%';
+  document.getElementById('stats-progress-text').textContent = pct+'%';
 }
 
 // ═══ LUG'AT ═══
@@ -1368,14 +1398,15 @@ function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
 }
 
 // ═══ GAP TUZISH ═══
-var gtState = {level:'oson', idx:0, order:[], selected:[], pool:[], answered:false};
+var gtState = {level:'oson', idx:0, order:[], selected:[], pool:[], answered:false, correctCount:0};
 function startGapTuzish(){
-  gtState.level = 'oson'; gtState.idx = 0; gtState.order = [];
+  gtState.level = 'oson'; gtState.idx = 0; gtState.order = []; gtState.correctCount = 0;
   document.querySelectorAll('.level-tab').forEach(function(t){
     t.classList.toggle('active', t.getAttribute('data-level')===gtState.level);
     t.onclick = function(){
       gtState.level = t.getAttribute('data-level');
       gtState.idx = 0;
+      gtState.correctCount = 0;
       gtState.order = shuffleIdx(SENTENCES[gtState.level].length);
       document.querySelectorAll('.level-tab').forEach(function(x){x.classList.remove('active');});
       t.classList.add('active');
@@ -1480,6 +1511,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.className = 'gt-result ok show';
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(gtState.currentSentence.uz);
     addAchievementXP(8);
+    gtState.correctCount++;
   } else {
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div>'+dtxt(gtState.currentSentence.uz);
@@ -1491,7 +1523,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
 document.getElementById('gt-next-btn').addEventListener('click', function(){
   var list = SENTENCES[gtState.level];
   gtState.idx++;
-  if(gtState.idx >= list.length){ showScreen('menu'); return; }
+  if(gtState.idx >= list.length){ finishSession('gaptuzish', gtState.correctCount, list.length); return; }
   renderGapCurrent();
 });
 

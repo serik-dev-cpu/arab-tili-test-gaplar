@@ -330,14 +330,14 @@ body{padding-bottom:130px;}
 <div class="screen" id="screen-quiz-result">
   <div class="top-header">
     <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
-    <h1 style="margin-top:10px;">Test tugadi!</h1>
+    <h1 style="margin-top:10px;" id="qr-title">Test tugadi!</h1>
   </div>
   <div class="stat-row">
     <div class="stat-box"><div class="num" id="result-correct">0</div><div class="lbl">To'g'ri</div></div>
     <div class="stat-box"><div class="num" id="result-wrong">0</div><div class="lbl">Xato</div></div>
     <div class="stat-box"><div class="num" id="result-percent">0%</div><div class="lbl">Natija</div></div>
   </div>
-  <button class="premium-btn-primary" onclick="goScreen('quiz-setup')">Yana test</button>
+  <button class="premium-btn-primary" id="qr-retry-btn" onclick="goScreen('quiz-setup')">Yana test</button>
   <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
 </div>
 
@@ -929,6 +929,9 @@ function finishQuiz(){
   document.getElementById('result-correct').textContent = correctCount;
   document.getElementById('result-wrong').textContent = wrongCount;
   document.getElementById('result-percent').textContent = Math.round((correctCount/total)*100)+'%';
+  var qrTitleT = document.getElementById('qr-title'); if(qrTitleT) qrTitleT.textContent = 'Test tugadi!';
+  var qrBtnT = document.getElementById('qr-retry-btn');
+  if(qrBtnT){ qrBtnT.textContent = 'Yana test'; qrBtnT.onclick = function(){ goScreen('quiz-setup'); }; }
   goScreen('quiz-result');
 }
 
@@ -1054,8 +1057,15 @@ function nextGapQuestion(){
   if(gapState.idx < gapState.items.length){
     renderGapQuestion();
   } else {
-    alert('Mashq tugadi! Togri: '+gapState.correct+' / '+gapState.items.length);
-    goScreen('home');
+    var gTotal = gapState.items.length;
+    var gWrong = gTotal - gapState.correct;
+    document.getElementById('result-correct').textContent = gapState.correct;
+    document.getElementById('result-wrong').textContent = gWrong;
+    document.getElementById('result-percent').textContent = Math.round((gapState.correct/gTotal)*100)+'%';
+    var qrTitle = document.getElementById('qr-title'); if(qrTitle) qrTitle.textContent = 'Mashq tugadi!';
+    var qrBtn = document.getElementById('qr-retry-btn');
+    if(qrBtn){ qrBtn.textContent = 'Yana mashq'; qrBtn.onclick = function(){ goScreen('gap-setup'); }; }
+    goScreen('quiz-result');
   }
 }
 

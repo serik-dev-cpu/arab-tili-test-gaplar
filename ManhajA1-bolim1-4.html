@@ -19,6 +19,9 @@
   .screen{display:none; padding:18px 16px 24px; max-width:560px; margin:0 auto; animation:fadeIn .25s ease;}
   .screen.active{display:block;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  /* ===== Telefonda bilinadigan bosish effekti (barmoq tez tegib ketsa ham ko'rinadi) ===== */
+  .tapped{animation:tapPulse .22s cubic-bezier(0.4,0,0.2,1);}
+  @keyframes tapPulse{0%{transform:scale(1);}45%{transform:scale(0.93);}100%{transform:scale(1);}}
   h1,h2,h3{margin:0 0 8px;}
   .top-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:8px;}
   .bolim-badge{display:inline-block;background:rgba(212,162,58,0.1);border:1px solid var(--border);color:var(--gold2);font-size:12px;font-weight:700;padding:6px 18px;border-radius:20px;margin-bottom:16px;}
@@ -1380,7 +1383,7 @@ function handleQuizAnswer(btn){
   var box = getBox(word.ar);
   if(isCorrect){
     quizState.correct++; setBox(word.ar, box+1); markLearned(word.ar); addAchievementXP(5);
-    setTimeout(function(){ nextQuizQuestion(); }, 600);
+    setTimeout(function(){ nextQuizQuestion(); }, 1000);
   } else {
     setBox(word.ar, 1);
     var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
@@ -1529,7 +1532,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     gtState.correctCount++;
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
     document.getElementById('gt-next-btn').style.display = 'none';
-    setTimeout(advanceGapQuestion, 600);
+    setTimeout(advanceGapQuestion, 1000);
   } else {
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div>'+dtxt(gtState.currentSentence.uz);
@@ -1649,6 +1652,19 @@ if(directBolim >= 1 && directBolim <= 4 && BOLIM_META[directBolim]){
   // chunki bo'lim tanlash endi faqat index.html roadmap'i orqali amalga oshadi.
   location.replace('index.html');
 }
+
+/* ===== Global "tap" effekti (mobil qurilmalar uchun) ===== */
+(function(){
+  var TAP_SEL = '.btn,.menu-card,.tile,.opt-btn,.cat-tab,.level-tab,.word-card,.btn-know,.btn-dontknow';
+  document.addEventListener('pointerdown', function(e){
+    var el = e.target.closest(TAP_SEL);
+    if(!el) return;
+    el.classList.remove('tapped');
+    void el.offsetWidth;
+    el.classList.add('tapped');
+    setTimeout(function(){ el.classList.remove('tapped'); }, 240);
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>

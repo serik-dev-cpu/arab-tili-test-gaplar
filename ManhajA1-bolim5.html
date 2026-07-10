@@ -1094,16 +1094,8 @@ document.getElementById('gt-clear-btn').addEventListener('click', function(){
 document.getElementById('gt-check-btn').addEventListener('click', function(){
   if(gapState.answered) return;
   var item = gapState.currentItem;
-  // So'zlar soni yetarli emas bo'lsa - foydalanuvchini ogohlantiramiz (avval jim to'xtar edi)
-  if(gapState.selected.length !== item.answer.length){
-    var ra0 = document.getElementById('gt-result-area');
-    ra0.className = 'gt-result bad show';
-    ra0.innerHTML = 'Barcha so‘zlarni joylashtiring (' + gapState.selected.length + '/' + item.answer.length + ')';
-    setTimeout(function(){
-      if(!gapState.answered){ ra0.className = 'gt-result'; ra0.innerHTML = ''; }
-    }, 1400);
-    return;
-  }
+  // Kamida bitta so'z tanlangan bo'lishi kerak (bo'sh javobni tekshirmaymiz)
+  if(gapState.selected.length === 0) return;
   gapState.answered = true;
   var userAnswer = gapState.selected.map(function(s){return s.word;}).join(' ');
   var correctAnswer = item.answer.join(' ');

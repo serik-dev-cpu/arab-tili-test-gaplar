@@ -29,6 +29,10 @@ p{line-height:1.6;}
 
 /* ===== Umumiy mikro-animatsiyalar ===== */
 @keyframes popIn{0%{transform:scale(0.8); opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1); opacity:1;}}
+
+/* ===== Telefonda bilinadigan bosish effekti (barmoq tez tegib ketsa ham ko'rinadi) ===== */
+.tapped{animation:tapPulse .22s var(--ease);}
+@keyframes tapPulse{0%{transform:scale(1);}45%{transform:scale(0.93);}100%{transform:scale(1);}}
 .screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto; position:relative;}
 .screen.active{display:block; animation:fadeIn .25s ease;}
 @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
@@ -1007,7 +1011,16 @@ document.getElementById('gt-clear-btn').addEventListener('click', function(){
 document.getElementById('gt-check-btn').addEventListener('click', function(){
   if(gapState.answered) return;
   var item = gapState.currentItem;
-  if(gapState.selected.length !== item.answer.length) return;
+  // So'zlar soni yetarli emas bo'lsa - foydalanuvchini ogohlantiramiz (avval jim to'xtar edi)
+  if(gapState.selected.length !== item.answer.length){
+    var ra0 = document.getElementById('gt-result-area');
+    ra0.className = 'gt-result bad show';
+    ra0.innerHTML = 'Barcha so‘zlarni joylashtiring (' + gapState.selected.length + '/' + item.answer.length + ')';
+    setTimeout(function(){
+      if(!gapState.answered){ ra0.className = 'gt-result'; ra0.innerHTML = ''; }
+    }, 1400);
+    return;
+  }
   gapState.answered = true;
   var userAnswer = gapState.selected.map(function(s){return s.word;}).join(' ');
   var correctAnswer = item.answer.join(' ');
@@ -1020,7 +1033,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     addAchievementXP(8);
     gapState.correct++;
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
-    setTimeout(advanceGapQuestion, 600);
+    setTimeout(advanceGapQuestion, 1000);
   } else {
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr);
@@ -1059,6 +1072,20 @@ function renderStats(){
 
 updateAlifboLabel();
 renderHome();
+
+/* ===== Global "tap" effekti (mobil qurilmalar uchun) ===== */
+(function(){
+  var TAP_SEL = '.premium-btn-primary,.premium-btn-secondary,.menu-card,.tile,.opt-btn,.fc-btn,.filter-chip,.level-tab,.word-card';
+  document.addEventListener('pointerdown', function(e){
+    var el = e.target.closest(TAP_SEL);
+    if(!el) return;
+    el.classList.remove('tapped');
+    // reflow - animatsiyani qayta ishga tushirish uchun
+    void el.offsetWidth;
+    el.classList.add('tapped');
+    setTimeout(function(){ el.classList.remove('tapped'); }, 240);
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>

@@ -50,6 +50,22 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .quick-link-btn:active{transform:scale(.96);}
 .quick-link-btn i{font-size:22px;}
 .tab-info-note{font-size:12px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
+/* ═══════════════ UNVON DARAJASI (Duolingo uslubida) ═══════════════ */
+.rank-progress-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); border:1px solid var(--gold-line, rgba(212,162,58,0.2)); border-radius:20px; padding:18px 16px; margin-bottom:8px;}
+.rank-progress-current{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+.rank-progress-icon{font-size:34px; line-height:1;}
+.rank-progress-label{font-size:17px; font-weight:800; color:#EDEFF5;}
+.rank-progress-sub{font-size:11.5px; color:#8A93A6;}
+.rank-progress-bar-outer{height:10px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;}
+.rank-progress-bar-inner{height:100%; width:0%; background:linear-gradient(90deg, var(--gold, #D4A23A), var(--gold2, #F0C56B)); border-radius:6px; transition:width .6s ease;}
+.rank-progress-note{font-size:11.5px; color:#8A93A6; text-align:center; margin-top:8px; margin-bottom:14px;}
+.rank-ladder{display:flex; justify-content:space-between; gap:4px;}
+.rank-ladder-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px; border-radius:12px; opacity:0.35;}
+.rank-ladder-item.achieved{opacity:1;}
+.rank-ladder-item.current{opacity:1; background:rgba(212,162,58,0.14); border:1px solid rgba(212,162,58,0.35);}
+.rank-ladder-icon{font-size:20px;}
+.rank-ladder-name{font-size:8.5px; font-weight:700; color:#8A93A6; text-align:center;}
+.rank-ladder-item.achieved .rank-ladder-name, .rank-ladder-item.current .rank-ladder-name{color:#F0C56B;}
 .kicker{color:#D4A23A;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
 .title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl;line-height:1.8}
 .subtitle{color:#8A93A6;font-size:13px;font-weight:500}
@@ -251,7 +267,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   font-size:15px;font-weight:800;
 }
 /* Modal ichidagi G'olib kartasi */
-.rm-winner-card{background:linear-gradient(160deg, #1e2230 0%, #14161d 55%, #1a1710 100%); border:2px solid var(--gold, #D4A23A); border-radius:20px; padding:24px 18px 20px; margin-bottom:14px; box-shadow:0 8px 30px rgba(212,162,58,0.25);}
+.rm-winner-card{background:linear-gradient(160deg, #1e2230 0%, #14161d 55%, #1a1710 100%); border:2px solid var(--gold, #D4A23A); border-radius:20px; padding:24px 18px 20px; margin-bottom:14px; box-shadow:0 8px 30px rgba(212,162,58,0.25); position:relative;}
+.rm-winner-card.dimmed{filter:grayscale(0.85) brightness(0.65); border-color:rgba(255,255,255,0.15); box-shadow:none;}
+.rm-lock-overlay{position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; font-size:16px; color:#EDEFF5; z-index:2;}
 .rm-crown{font-size:42px; line-height:1; margin-bottom:4px; filter:drop-shadow(0 4px 10px rgba(212,162,58,0.5));}
 .rm-wc-title{font-size:19px; font-weight:900; letter-spacing:2.5px; color:#F0C56B; text-shadow:0 2px 12px rgba(240,197,107,0.4);}
 .rm-wc-sub{font-size:11px; color:#B8BECC; margin-top:3px; letter-spacing:0.5px;}
@@ -263,7 +281,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .rm-wc-pct-row span{color:#F0C56B; font-weight:800; font-size:16px;}
 .rm-wc-foot{font-size:11.5px; color:#B8BECC; margin-top:10px; font-style:italic;}
 .rm-hint{font-size:11.5px; color:#F0C56B; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px;}
-.confetti{position:absolute;top:-10px;width:8px;height:14px;opacity:.9;animation:confettiFall linear forwards}
+.confetti{position:fixed;top:-10px;width:8px;height:14px;opacity:.9;animation:confettiFall linear forwards; z-index:9999; pointer-events:none;}
 @keyframes confettiFall{to{transform:translateY(420px) rotate(540deg);opacity:0}}
 /* ═══════════════ Premium Aura + Avatar ramkalari ═══════════════ */
 .hero-avatar.has-aura{animation:auraGlow 2.2s ease-in-out infinite;}
@@ -530,6 +548,20 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
   <!-- ═══════════ TAB: SOVG'A ═══════════ -->
   <div class="tab-content" id="tab-sovga">
+    <div class="section-label"><span class="path-dot"></span>🎖️ Unvonlar</div>
+    <div class="rank-progress-card">
+      <div class="rank-progress-current">
+        <div class="rank-progress-icon" id="rankProgIcon">🌟</div>
+        <div>
+          <div class="rank-progress-label" id="rankProgLabel">Navqiron</div>
+          <div class="rank-progress-sub" id="rankProgSub">Joriy unvoningiz</div>
+        </div>
+      </div>
+      <div class="rank-progress-bar-outer"><div class="rank-progress-bar-inner" id="rankProgBarInner"></div></div>
+      <div class="rank-progress-note" id="rankProgNote">Keyingi unvongacha: 0 / 500 XP</div>
+      <div class="rank-ladder" id="rankLadder"></div>
+    </div>
+
     <div class="section-label"><span class="path-dot"></span>🎁 Sovg'alar</div>
     <div class="reward-card locked" id="lugatCard">
       <div class="reward-icon-wrap"><i class="ti ti-book-2"></i></div>
@@ -552,13 +584,19 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="tab-content" id="tab-golib">
     <div class="section-label"><span class="path-dot"></span>🏆 G'olib kartasi</div>
     <div id="golibTabLocked" style="display:none;">
-      <div class="reward-card locked">
-        <div class="reward-icon-wrap"><i class="ti ti-lock"></i></div>
-        <div class="reward-info">
-          <div class="reward-title">Hali ochilmagan</div>
-          <div class="reward-desc">Yakuniy imtihonni 80%+ natija bilan topshirganingizda, sizning shaxsiy G'olib kartangiz shu yerda paydo bo'ladi.</div>
-        </div>
+      <div class="rm-winner-card dimmed">
+        <div class="rm-lock-overlay"><i class="ti ti-lock"></i></div>
+        <div class="rm-crown">🏆</div>
+        <div class="rm-wc-title">G'OLIB KARTASI</div>
+        <div class="rm-wc-sub">Al-Manhaj al-A'lamiy · A1 daraja</div>
+        <div class="rm-wc-divider"></div>
+        <div class="rm-wc-name-label">Ushbu karta egasi</div>
+        <div class="rm-wc-name" id="golibTabNameLocked">???</div>
+        <div class="rm-wc-rank" style="filter:grayscale(1); opacity:0.5;">🏆 ??? — A1</div>
+        <div class="rm-wc-pct-row">Eng yaxshi natijangiz: <span id="golibTabBestPct">Hali urinilmagan</span></div>
+        <div class="rm-wc-foot" id="golibTabStatusFoot">Ochish uchun 80%+ kerak</div>
       </div>
+      <div class="tab-info-note" id="golibLockedNote">Imtihonni hali topshirmagansiz. "Imtihon" tabiga o'ting va boshlang!</div>
     </div>
     <div id="golibTabUnlocked" style="display:none;">
       <div class="rm-winner-card">
@@ -606,24 +644,6 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 </div>
 
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
-<div class="reward-modal" id="rewardModal">
-  <div class="reward-modal-inner" id="rewardModalInner">
-    <div class="rm-winner-card">
-      <div class="rm-crown">🏆</div>
-      <div class="rm-wc-title">G'OLIB KARTASI</div>
-      <div class="rm-wc-sub">Al-Manhaj al-A'lamiy · A1 daraja</div>
-      <div class="rm-wc-divider"></div>
-      <div class="rm-wc-name-label">Ushbu karta egasi</div>
-      <div class="rm-wc-name" id="rmWcName">Talaba</div>
-      <div class="rm-wc-rank">🏆 Al-Manhaj Fotihi — A1</div>
-      <div class="rm-wc-pct-row">Natija: <span id="rmWcPct">0%</span></div>
-      <div class="rm-wc-foot">A1 darajasini muvaffaqiyatli yakunladi</div>
-    </div>
-    <div class="rm-hint"><i class="ti ti-camera"></i> Skrinshot qilib ulashing!</div>
-    <button class="reward-close-btn" id="rewardCloseBtn">Yopish <i class="ti ti-confetti"></i></button>
-  </div>
-</div>
-
 <script src="core.js"></script>
 <script>
 'use strict';
@@ -705,6 +725,65 @@ function switchTab(name){
   if(btn) btn.classList.add('active');
   document.getElementById('tabBar').scrollIntoView({behavior:'smooth', block:'start'});
   if(name === 'golib') renderGolibTab();
+  if(name === 'sovga') renderRankProgress();
+}
+// ═══ Unvon zinapoyasi (Duolingo uslubidagi progress) ═══
+var RANK_LADDER = [
+  {min:0,    label:'Navqiron',   icon:'🌟'},
+  {min:501,  label:'Intiluvchi', icon:'⚔️'},
+  {min:1501, label:'Bilimdon',   icon:'📜'},
+  {min:3501, label:'Lochin',     icon:'🦅'},
+  {min:6001, label:'Sulton',     icon:'👑'}
+];
+function renderRankProgress(){
+  var xp = getAchievementXP();
+  var isFotihi = false;
+  try{ isFotihi = !!JSON.parse(localStorage.getItem(ACH_KEY)||'{}').manhaj_fotihi_a1; }catch(e){}
+
+  var curIdx = 0;
+  for(var i=0;i<RANK_LADDER.length;i++){ if(xp >= RANK_LADDER[i].min) curIdx = i; }
+  var cur = RANK_LADDER[curIdx];
+  var next = RANK_LADDER[curIdx+1];
+
+  var iconEl = document.getElementById('rankProgIcon');
+  var labelEl = document.getElementById('rankProgLabel');
+  var subEl = document.getElementById('rankProgSub');
+  var barEl = document.getElementById('rankProgBarInner');
+  var noteEl = document.getElementById('rankProgNote');
+
+  if(isFotihi){
+    if(iconEl) iconEl.textContent = '🏆';
+    if(labelEl) labelEl.textContent = 'Al-Manhaj Fotihi';
+    if(subEl) subEl.textContent = 'Eng yuqori maxsus unvon';
+    if(barEl) barEl.style.width = '100%';
+    if(noteEl) noteEl.textContent = "Tabriklaymiz — bu eng yuqori unvon!";
+  } else {
+    if(iconEl) iconEl.textContent = cur.icon;
+    if(labelEl) labelEl.textContent = cur.label;
+    if(subEl) subEl.textContent = 'Joriy unvoningiz';
+    if(next){
+      var span = next.min - cur.min;
+      var progressed = xp - cur.min;
+      var pct = Math.max(0, Math.min(100, Math.round((progressed/span)*100)));
+      if(barEl) barEl.style.width = pct + '%';
+      if(noteEl) noteEl.textContent = "Keyingi unvongacha (" + next.label + "): " + xp + " / " + next.min + " XP";
+    } else {
+      if(barEl) barEl.style.width = '100%';
+      if(noteEl) noteEl.textContent = "Eng yuqori oddiy unvonga yetdingiz!";
+    }
+  }
+
+  var ladderEl = document.getElementById('rankLadder');
+  if(ladderEl){
+    var html = '';
+    for(var j=0;j<RANK_LADDER.length;j++){
+      var r = RANK_LADDER[j];
+      var cls = j < curIdx ? 'achieved' : (j === curIdx ? 'current' : '');
+      var icon = (j < curIdx) ? '✅' : r.icon;
+      html += '<div class="rank-ladder-item ' + cls + '"><div class="rank-ladder-icon">' + icon + '</div><div class="rank-ladder-name">' + r.label + '</div></div>';
+    }
+    ladderEl.innerHTML = html;
+  }
 }
 function renderGolibTab(){
   var examData = {};
@@ -713,15 +792,32 @@ function renderGolibTab(){
   var lockedEl = document.getElementById('golibTabLocked');
   var unlockedEl = document.getElementById('golibTabUnlocked');
   if(!lockedEl || !unlockedEl) return;
+  var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
   if(passed){
     lockedEl.style.display = 'none';
     unlockedEl.style.display = 'block';
-    var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
     document.getElementById('golibTabName').textContent = name;
     document.getElementById('golibTabPct').textContent = (examData.bestPct || 0) + '%';
   } else {
     lockedEl.style.display = 'block';
     unlockedEl.style.display = 'none';
+    // Duolingo uslubi - qulflangan holatda ham haqiqiy vaziyatni ko'rsatamiz
+    var nameEl = document.getElementById('golibTabNameLocked');
+    if(nameEl) nameEl.textContent = name;
+    var bestPctEl = document.getElementById('golibTabBestPct');
+    var footEl = document.getElementById('golibTabStatusFoot');
+    var noteEl = document.getElementById('golibLockedNote');
+    var attempts = examData.attempts || [];
+    if(attempts.length > 0){
+      var bestPct = examData.bestPct || 0;
+      if(bestPctEl) bestPctEl.textContent = bestPct + '% (kerak: 80%)';
+      if(footEl) footEl.textContent = (80 - bestPct) + '% qoldi — yana urinib ko\'ring!';
+      if(noteEl) noteEl.textContent = "Siz allaqachon " + attempts.length + " marta urindingiz. Eng yaxshi natijangiz — " + bestPct + "%. Yana urining!";
+    } else {
+      if(bestPctEl) bestPctEl.textContent = "Hali urinilmagan";
+      if(footEl) footEl.textContent = "Ochish uchun 80%+ kerak";
+      if(noteEl) noteEl.textContent = "Imtihonni hali topshirmagansiz. \"Imtihon\" tabiga o'ting va boshlang!";
+    }
   }
 }
 function refreshHeroAndShop(){
@@ -1062,6 +1158,7 @@ function initNameGate(){
     initHeroStats(savedName);
     renderShop();
     updateSpendHistoryCard();
+    renderRankProgress();
     return true;
   }
 
@@ -1236,14 +1333,18 @@ function updateRewardCard(examPassed){
   if(examPassed){
     card.classList.remove('locked');
     card.classList.add('unlocked');
-    desc.textContent = "Ochish uchun bosing";
-    card.onclick = openRewardModal;
+    desc.textContent = "Tayyor! Ko'rish uchun bosing →";
+    card.onclick = goToGolibCard;
   } else {
     card.classList.add('locked');
     card.classList.remove('unlocked');
     desc.textContent = "Imtihonga tayyorgarlik testini 80%+ natija bilan yakunlang";
     card.onclick = null;
   }
+}
+function goToGolibCard(){
+  spawnConfetti();
+  switchTab('golib');
 }
 
 function updateExamCard(unlocked, below80Count){
@@ -1285,26 +1386,9 @@ function openExamModal(){
   location.href = 'ManhajA1-Yakuniy-Imtihon.html';
 }
 
-function openRewardModal(){
-  var savedName = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
-  var examData = {};
-  try{ examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}'); }catch(e){}
-  var pct = examData.bestPct || 0;
-
-  document.getElementById('rmWcName').textContent = savedName;
-  document.getElementById('rmWcPct').textContent = pct + '%';
-
-  var modal = document.getElementById('rewardModal');
-  modal.classList.add('show');
-  spawnConfetti();
-}
-function closeRewardModal(){
-  document.getElementById('rewardModal').classList.remove('show');
-}
 function spawnConfetti(){
-  var inner = document.getElementById('rewardModalInner');
   var colors = ['#D4A23A','#F0C56B','#EDEFF5','#6FBF8B','#E0566B'];
-  inner.querySelectorAll('.confetti').forEach(function(c){ c.remove(); });
+  document.querySelectorAll('.confetti').forEach(function(c){ c.remove(); });
   for(var i=0;i<24;i++){
     var piece = document.createElement('div');
     piece.className = 'confetti';
@@ -1312,13 +1396,10 @@ function spawnConfetti(){
     piece.style.background = colors[i % colors.length];
     piece.style.animationDuration = (1.2 + Math.random()*1.2) + 's';
     piece.style.animationDelay = (Math.random()*0.4) + 's';
-    inner.appendChild(piece);
+    document.body.appendChild(piece);
+    (function(el){ setTimeout(function(){ el.remove(); }, 3000); })(piece);
   }
 }
-document.getElementById('rewardCloseBtn').addEventListener('click', closeRewardModal);
-document.getElementById('rewardModal').addEventListener('click', function(e){
-  if(e.target.id === 'rewardModal') closeRewardModal();
-});
 
 if(initNameGate()){
   initRoadmap();

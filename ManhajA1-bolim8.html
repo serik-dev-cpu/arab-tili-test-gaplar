@@ -286,7 +286,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   0%{transform:translateY(0) rotate(0deg); opacity:1;}
   100%{transform:translateY(110vh) rotate(540deg); opacity:0;}
 }
-.victory-trophy-pop{position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:70px; color:var(--gold2); z-index:9001; pointer-events:none; text-shadow:0 0 30px rgba(240,197,107,0.6); opacity:0;}
+.victory-trophy-pop{position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:70px; color:var(--gold2); z-index:9001; pointer-events:none; text-shadow:0 0 30px rgba(240,197,107,0.6); opacity:0; transition:opacity .5s ease;}
 .victory-trophy-pop.show{animation:trophyPop .6s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 @keyframes trophyPop{
   0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg); opacity:0;}
@@ -704,7 +704,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 </div>
 
 <div class="floating-menu-btn" onclick="location.href='index.html'">
-  <i class="ti ti-chevron-left"></i> Menyu
+  🏠 Bosh sahifa
 </div>
 
 <script src="core.js"></script>
@@ -1286,7 +1286,7 @@ function renderGapCurrent(){
 function renderGapPool(){
   var html = '';
   gapState.pool.forEach(function(item){
-    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'"><span class="gt-tile-audio" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+item.word.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i></span>'+item.word+'</div>';
+    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'">'+item.word+'</div>';
   });
   document.getElementById('gt-pool').innerHTML = html;
   document.querySelectorAll('#gt-pool .tile').forEach(function(t){
@@ -1677,7 +1677,11 @@ function runVictoryCelebration(cfg){
   if(cfg.soft){ playSoftFinish(); } else { playFinish(); }
   vcCreateConfetti(document.getElementById('victory-fx'));
   var trophy = document.getElementById('victory-trophy-pop');
-  if(trophy){ trophy.classList.remove('show'); void trophy.offsetWidth; trophy.classList.add('show'); }
+  if(trophy){
+    trophy.classList.remove('show'); void trophy.offsetWidth; trophy.classList.add('show');
+    clearTimeout(window.__trophyHideTimer);
+    window.__trophyHideTimer = setTimeout(function(){ trophy.classList.remove('show'); }, 1300);
+  }
 
   // QADAM 2 (500ms): XP hisoblagich 0'dan yakuniy qiymatgacha "yuguradi"
   timers.push(setTimeout(function(){
@@ -1799,6 +1803,30 @@ function buildShareCanvas(){
   ctx.fillStyle = '#F0C56B';
   ctx.font = '600 28px Arial, sans-serif';
   ctx.fillText(rank.label, W/2, 420);
+
+  // A1 daraja belgisi - unvon yonida alohida, doimiy ko'rinadigan nishon
+  var rankLabelWidth = ctx.measureText(rank.label).width;
+  var badgeText = 'A1';
+  ctx.font = '800 18px Arial, sans-serif';
+  var badgeTextWidth = ctx.measureText(badgeText).width;
+  var badgePadX = 12, badgeH = 28;
+  var badgeW = badgeTextWidth + badgePadX*2;
+  var badgeX = W/2 + rankLabelWidth/2 + 12;
+  var badgeY = 420 - 21;
+  var badgeGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX+badgeW, badgeY+badgeH);
+  badgeGrad.addColorStop(0, '#D4A23A');
+  badgeGrad.addColorStop(1, '#F0C56B');
+  ctx.fillStyle = badgeGrad;
+  ctx.beginPath();
+  if(ctx.roundRect){ ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 8); }
+  else { ctx.rect(badgeX, badgeY, badgeW, badgeH); }
+  ctx.fill();
+  ctx.fillStyle = '#0B0E14';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(badgeText, badgeX + badgeW/2, badgeY + badgeH/2 + 1);
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'center';
 
   var xp = getAchievementXP();
   ctx.fillStyle = '#F0C56B';

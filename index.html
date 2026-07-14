@@ -382,11 +382,13 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 
   <div class="section-label"><span class="path-dot"></span>Qo'shimcha</div>
-  <a href="ManhajA1-Lugat-Umumiy.html" class="reward-card unlocked" style="text-decoration:none; display:block;">
+  <div class="reward-card locked" id="lugatCard">
     <div class="reward-icon-wrap"><i class="ti ti-book-2"></i></div>
-    <div class="reward-title">📚 Umumiy Lug'at</div>
-    <div class="reward-desc">Barcha 12 bo'limning so'zlarini bitta joyda ko'ring va qidiring</div>
-  </a>
+    <div class="reward-info">
+      <div class="reward-title">📚 Umumiy Lug'at</div>
+      <div class="reward-desc" id="lugatDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+    </div>
+  </div>
 
   <div class="section-label"><span class="path-dot"></span>🛍️ XP Bozori</div>
 
@@ -1098,6 +1100,7 @@ function initRoadmap(){
   }
 
   updateExamCard(allAbove80, below80Count);
+  updateLugatCard(allAbove80, below80Count);
   var examPassed = false;
   try{
     var examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}');
@@ -1134,6 +1137,23 @@ function updateExamCard(unlocked, below80Count){
     card.classList.add('unlocked');
     desc.textContent = "Ochildi — tez orada ishga tushadi";
     card.onclick = openExamModal;
+  } else {
+    card.classList.add('locked');
+    card.classList.remove('unlocked');
+    desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
+    card.onclick = null;
+  }
+}
+function updateLugatCard(unlocked, below80Count){
+  var card = document.getElementById('lugatCard');
+  var desc = document.getElementById('lugatDesc');
+  if(!card) return;
+
+  if(unlocked){
+    card.classList.remove('locked');
+    card.classList.add('unlocked');
+    desc.textContent = "Barcha 12 bo'limning so'zlarini bitta joyda ko'ring va qidiring";
+    card.onclick = function(){ location.href = 'ManhajA1-Lugat-Umumiy.html'; };
   } else {
     card.classList.add('locked');
     card.classList.remove('unlocked');

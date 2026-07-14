@@ -145,7 +145,7 @@ p{line-height:1.6;}
 .sentence-box{background:linear-gradient(160deg, rgba(38,42,54,0.4), rgba(26,29,38,0.65)); border:1px solid var(--gold-line); border-radius:16px; padding:18px 14px; min-height:76px; margin-bottom:16px; direction:rtl; display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start; box-shadow:var(--shadow-soft);}
 .sentence-box.empty::before{content:'So\'z hovuzidan tanlang \2193'; color:var(--muted); font-size:13px; font-family:'Inter',sans-serif; direction:ltr; margin:auto;}
 .word-pool{display:flex; flex-wrap:wrap; gap:8px; direction:rtl; margin-bottom:18px;}
-.tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:700; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1a1408; box-shadow:0 3px 10px rgba(0,0,0,0.3), 0 0 14px rgba(212,162,58,0.15); transition:all .2s var(--ease); user-select:none; line-height:1.8;}
+.tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:700; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1a1408; box-shadow:0 3px 10px rgba(0,0,0,0.3), 0 0 14px rgba(212,162,58,0.15); transition:all .2s var(--ease); user-select:none; line-height:1.8; position:relative;}
 .tile:active{transform:scale(0.94);}
 /* Plitka javob zonasiga tushganda yumshoq "sakrash" animatsiyasi */
 .tile.placed{background:var(--card-2); border:1px solid var(--gold-line); color:var(--text); box-shadow:0 2px 8px rgba(0,0,0,0.25); animation:popIn .25s var(--ease);}
@@ -155,6 +155,10 @@ p{line-height:1.6;}
 .gt-result.ok{background:rgba(63,191,127,0.15); border:1px solid #3FBF7F; color:#3FBF7F;}
 .gt-result.bad{background:rgba(224,86,107,0.15); border:1px solid #E0566B; color:#E0566B;}
 .gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:22px; color:var(--gold2); margin-top:8px; line-height:2.2;}
+.gt-listen-row{margin-top:10px;}
+.gt-listen-btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); color:var(--gold2); font-size:12.5px; font-weight:700; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease);}
+.gt-listen-btn:active{transform:scale(.95);}
+.gt-listen-btn.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
 .gt-actions{display:flex; gap:10px;}
 
 .back-row{margin-bottom:6px;}
@@ -210,8 +214,112 @@ body{padding-bottom:130px;}
 .flow-box{background:rgba(212,162,58,.1); border:1px solid rgba(212,162,58,.35); border-radius:8px; padding:8px 12px; font-size:12px; color:var(--gold2); text-align:center;}
 .flow-arrow{color:var(--muted); font-size:16px;}
 
+/* ═══════════════ Match Madness (so'z moslashtirish o'yini) ═══════════════ */
+.mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
+.mm-timer{font-size:15px; font-weight:700; color:var(--gold2); display:flex; align-items:center; gap:6px;}
+.mm-timer.warn{color:#E8765C;}
+.mm-combo{font-size:14px; font-weight:800; color:var(--gold); opacity:0; transition:opacity .2s var(--ease), transform .2s var(--ease);}
+.mm-combo.show{opacity:1;}
+.mm-combo.pulse{animation:mmComboPulse .35s var(--ease);}
+@keyframes mmComboPulse{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+.mm-progress{font-size:12px; color:var(--muted); text-align:center; margin-bottom:12px;}
+/* O'yin maydoni: 2 ustun (chap = arabcha, o'ng = tarjima), har ustunda 5 plitka */
+.mm-board{display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:stretch;}
+.mm-col{display:flex; flex-direction:column; gap:10px;}
+.mm-tile{
+  position:relative; min-height:64px; display:flex; align-items:center; justify-content:center;
+  padding:10px 8px; border-radius:14px; cursor:pointer; text-align:center;
+  background:linear-gradient(160deg, rgba(38,42,54,0.6), rgba(26,29,38,0.8));
+  border:1.5px solid var(--gold-line); box-shadow:var(--shadow-soft);
+  transition:transform .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease), box-shadow .15s var(--ease);
+  overflow:hidden; word-break:break-word; overflow-wrap:break-word; line-height:1.5;
+}
+.mm-tile:active{transform:scale(0.96);}
+/* Arabcha plitka - arabcha shrift, o'ng tomon */
+.mm-tile.ar-tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; line-height:1.9; color:var(--gold2);}
+/* Tarjima plitka - Inter shrift */
+.mm-tile.uz-tile{font-family:'Inter',sans-serif; color:var(--text); font-weight:500;}
+/* Tanlangan holat (birinchi bosilgan) */
+.mm-tile.selected{border-color:var(--gold); background:rgba(212,162,58,0.18); box-shadow:0 0 14px rgba(212,162,58,0.25);}
+/* To'g'ri juftlik - yashil, keyin erib ketadi */
+.mm-tile.correct{border-color:#6FBF8B; background:rgba(111,191,139,0.2); color:#8FD9A8; box-shadow:0 0 14px rgba(111,191,139,0.25);}
+.mm-tile.fade-out{opacity:0; transform:scale(0.7); pointer-events:none;}
+/* Xato juftlik - qizarib silkinadi */
+.mm-tile.wrong{border-color:#E8765C; background:rgba(232,118,92,0.2); color:#F0A188; animation:mmShake .4s var(--ease);}
+@keyframes mmShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+/* Bo'sh (juftlangan) plitka o'rni - ko'rinmas, lekin joyni saqlaydi */
+.mm-tile.empty{visibility:hidden;}
+
+/* ═══════════════ Epik Profil + Unvonlar ═══════════════ */
+.epic-profile{display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(38,42,54,0.6), rgba(26,29,38,0.85)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--gold-line); border-radius:20px; padding:16px 18px; margin-bottom:16px; box-shadow:var(--shadow-soft);}
+.epic-avatar{width:56px; height:56px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg, var(--gold), var(--gold2)); box-shadow:0 0 0 4px rgba(212,162,58,0.15);}
+/* Premium Aura effekti - ismning atrofidagi porlash */
+.epic-avatar.has-aura{animation:auraGlow 2.2s ease-in-out infinite;}
+@keyframes auraGlow{0%,100%{box-shadow:0 0 0 4px rgba(212,162,58,0.15), 0 0 14px rgba(240,197,107,0.35);}50%{box-shadow:0 0 0 6px rgba(212,162,58,0.25), 0 0 26px rgba(240,197,107,0.65);}}
+.epic-profile.aura-active{animation:profileAuraGlow 2.2s ease-in-out infinite; border-color:rgba(240,197,107,0.55);}
+@keyframes profileAuraGlow{0%,100%{box-shadow:var(--shadow-soft), 0 0 12px rgba(240,197,107,0.25);}50%{box-shadow:var(--shadow-soft), 0 0 28px rgba(240,197,107,0.55);}}
+.epic-name.aura-active{text-shadow:0 0 12px rgba(240,197,107,0.7); animation:nameAuraGlow 2.2s ease-in-out infinite;}
+@keyframes nameAuraGlow{0%,100%{text-shadow:0 0 8px rgba(240,197,107,0.5);}50%{text-shadow:0 0 16px rgba(240,197,107,0.85);}}
+.epic-avatar.frame-bronze{box-shadow:0 0 0 3px #CD8B5E, 0 0 14px rgba(205,139,94,0.35);}
+.epic-avatar.frame-silver{box-shadow:0 0 0 3px #C0C6D0, 0 0 14px rgba(192,198,208,0.35);}
+.epic-avatar.frame-gold{box-shadow:0 0 0 3px #FFD86B, 0 0 18px rgba(255,216,107,0.5); animation:frameGoldPulse 2s ease-in-out infinite;}
+@keyframes frameGoldPulse{0%,100%{box-shadow:0 0 0 3px #FFD86B, 0 0 12px rgba(255,216,107,0.35);}50%{box-shadow:0 0 0 4px #FFD86B, 0 0 22px rgba(255,216,107,0.65);}}
+.epic-avatar.has-aura.frame-bronze,.epic-avatar.has-aura.frame-silver,.epic-avatar.has-aura.frame-gold{animation:none;}
+html.theme-emerald{ --gold:#2FBF71; --gold2:#6FE3A0; }
+html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
+
+.epic-info{flex:1; min-width:0;}
+.epic-name{font-size:20px; font-weight:800; letter-spacing:-0.02em; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.epic-title{display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:700; margin-top:5px; padding:3px 10px; border-radius:12px;}
+/* Unvon ranglari (daraja bo'yicha) */
+.rank-bronze{color:#CD8B5E; background:rgba(205,139,94,0.15); border:1px solid rgba(205,139,94,0.35);}
+.rank-silver{color:#C0C6D0; background:rgba(192,198,208,0.15); border:1px solid rgba(192,198,208,0.35);}
+.rank-gold{color:#F0C56B; background:rgba(240,197,107,0.15); border:1px solid rgba(240,197,107,0.4);}
+.rank-neon{color:#5BD5F0; background:rgba(91,213,240,0.15); border:1px solid rgba(91,213,240,0.4); box-shadow:0 0 10px rgba(91,213,240,0.2);}
+.rank-sultan{color:#FFD86B; background:linear-gradient(135deg, rgba(212,162,58,0.25), rgba(255,216,107,0.15)); border:1px solid rgba(255,216,107,0.5); animation:sultanGlow 2s ease-in-out infinite;}
+@keyframes sultanGlow{0%,100%{box-shadow:0 0 8px rgba(255,216,107,0.3);}50%{box-shadow:0 0 18px rgba(255,216,107,0.6);}}
+
+/* ═══════════════ Muqaddas Tantana (Victory Celebration) ═══════════════ */
+.victory-fx{position:fixed; inset:0; pointer-events:none; z-index:9000; overflow:hidden;}
+.confetti-piece{position:absolute; top:-20px; width:8px; height:14px; opacity:0; border-radius:2px; animation:confettiFall ease-in forwards;}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg); opacity:1;}
+  100%{transform:translateY(110vh) rotate(540deg); opacity:0;}
+}
+.victory-trophy-pop{position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:70px; color:var(--gold2); z-index:9001; pointer-events:none; text-shadow:0 0 30px rgba(240,197,107,0.6); opacity:0;}
+.victory-trophy-pop.show{animation:trophyPop .6s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+@keyframes trophyPop{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg); opacity:0;}
+  55%{transform:translate(-50%,-50%) scale(1.25) rotate(8deg); opacity:1;}
+  75%{transform:translate(-50%,-50%) scale(0.95) rotate(-3deg); opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(1) rotate(0deg); opacity:1;}
+}
+.victory-xp-counter{font-size:38px; font-weight:800; color:var(--gold2); text-align:center; margin:12px 0 2px; min-height:46px;}
+.victory-course-wrap{margin:14px 0 6px;}
+.victory-course-label{font-size:12px; color:var(--muted); text-align:center; margin-top:6px;}
+.victory-actions{display:none;}
+.victory-actions.show{display:block; animation:popIn .3s var(--ease);}
+.victory-tap-hint{text-align:center; font-size:11px; color:var(--muted); margin-top:10px; opacity:0.65;}
+/* Unvon oshdi - modal oyna */
+.rankup-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.75); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9500; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s ease;}
+.rankup-modal-bg.show{opacity:1; pointer-events:auto;}
+.rankup-card{background:linear-gradient(160deg, rgba(38,42,54,0.92), rgba(20,22,29,0.96)); border:2px solid var(--gold2); border-radius:24px; padding:36px 28px; text-align:center; max-width:320px; box-shadow:0 0 50px rgba(240,197,107,0.4), var(--shadow-deep); transform:scale(0.7); transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);}
+.rankup-modal-bg.show .rankup-card{transform:scale(1);}
+.rankup-label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px;}
+.rankup-title{font-size:22px; font-weight:800; margin-bottom:18px; color:var(--text);}
+.rankup-new-rank{font-size:20px; font-weight:800; margin:0 0 20px; padding:10px 20px; border-radius:14px; display:inline-block;}
+.rankup-new-rank.rank-sultan{animation:sultanGlow 1.5s ease-in-out infinite;}
+.epic-xp-mini{font-size:11px; color:var(--muted); margin-top:4px;}
+
 /* ===== Flashkard ===== */
-.fc-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--gold-line); border-radius:22px; padding:40px 20px; text-align:center; margin-top:16px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-deep); transition:transform .15s var(--ease);}
+.fc-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--gold-line); border-radius:22px; padding:40px 20px; text-align:center; margin-top:16px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-deep); transition:transform .15s var(--ease); position:relative;}
+.audio-btn{position:absolute; top:12px; left:14px; width:34px; height:34px; border-radius:50%; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease); z-index:2; color:var(--gold2); font-size:16px;}
+.audio-btn:active{transform:scale(.9);}
+.audio-btn.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
+@keyframes audioPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,162,58,.4);}50%{box-shadow:0 0 0 6px rgba(212,162,58,0);}}
+.mm-tile .audio-mini{position:absolute; top:5px; left:5px; width:24px; height:24px; border-radius:50%; background:rgba(212,162,58,.28); border:1px solid rgba(212,162,58,.4); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--gold2); z-index:3;}
+.mm-tile .audio-mini.playing{background:var(--gold); color:#0B0E14;}
+.gt-tile-audio{position:absolute; top:-6px; left:-6px; width:16px; height:16px; border-radius:50%; background:var(--gold); color:#0B0E14; font-size:9px; display:flex; align-items:center; justify-content:center;}
 .fc-card:active{transform:scale(.99);}
 .fc-card .fc-icon{width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:20px; box-shadow:0 0 0 6px var(--halo); animation:fcPop .4s ease;}
 .fc-card .fc-icon i{font-size:40px; color:#0B0E14;}
@@ -239,6 +347,15 @@ body{padding-bottom:130px;}
     <div class="badge">5-bo'lim</div>
     <div class="ar-title ar">السَّكَنُ</div>
     <h1>Turar joy</h1>
+  </div>
+
+  <div class="epic-profile" id="epic-profile-home">
+    <div class="epic-avatar" id="epic-avatar-home">?</div>
+    <div class="epic-info">
+      <div class="epic-name" id="epic-name-home">...</div>
+      <span class="epic-title" id="epic-title-home">🌟 Navqiron</span>
+      <div class="epic-xp-mini" id="epic-xp-home">0 XP</div>
+    </div>
   </div>
 
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="home-progress-bar" style="width:0%"></div></div>
@@ -281,6 +398,11 @@ body{padding-bottom:130px;}
       <div class="s">Progress</div>
     </div>
   </div>
+  <div class="menu-card" onclick="goScreen('match-setup')" style="margin-top:14px; background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.10)); border-color:rgba(212,162,58,0.4);">
+    <i class="ti ti-bolt" style="color:var(--gold2);"></i>
+    <div class="t">Match Madness ⚡</div>
+    <div class="s">Tezkor so'z moslashtirish o'yini</div>
+  </div>
 </div>
 
 <!-- ================= EKRAN: Lug'at ================= -->
@@ -311,6 +433,7 @@ body{padding-bottom:130px;}
   <div class="fc-card" id="fc-card" onclick="flipCard()">
     <div class="fc-icon" id="fc-icon"><i class="ti ti-book"></i></div>
     <div class="ar-big ar" id="fc-word"></div>
+    <span class="audio-btn" id="fc-audio-btn" onclick="event.stopPropagation(); handleAudioClick('flashcard', fcState.words[fcState.idx].ar, this);"><i class="ti ti-volume"></i></span>
     <div class="ar-big ar" id="fc-word2" style="font-size:26px; color:var(--gold); margin-top:6px; display:none;"></div>
     <div class="uz-reveal" id="fc-translation"></div>
   </div>
@@ -385,13 +508,71 @@ body{padding-bottom:130px;}
     <i class="ti ti-confetti" style="font-size:40px; color:var(--gold);"></i>
     <h1 style="margin-top:10px;" id="qr-title">Test tugadi!</h1>
   </div>
+  <div class="victory-xp-counter" id="qr-xp">+0 XP</div>
   <div class="stat-row">
     <div class="stat-box"><div class="num" id="result-correct">0</div><div class="lbl">To'g'ri</div></div>
     <div class="stat-box"><div class="num" id="result-wrong">0</div><div class="lbl">Xato</div></div>
     <div class="stat-box"><div class="num" id="result-percent">0%</div><div class="lbl">Natija</div></div>
   </div>
-  <button class="premium-btn-primary" id="qr-retry-btn" onclick="goScreen('quiz-setup')">Yana test</button>
-  <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
+  <div class="victory-course-wrap">
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="vc-course-fill-qr" style="width:0%; transition:width 1s ease;"></div></div>
+    <div class="victory-course-label" id="vc-course-label-qr">Bo'lim progressi: 0%</div>
+  </div>
+  <div class="victory-actions" id="vc-actions-qr">
+    <button class="premium-btn-primary" id="qr-retry-btn" onclick="goScreen('quiz-setup')">Yana test</button>
+    <button class="premium-btn-secondary" onclick="shareResult()">🚀 Natijani ulashish</button>
+    <button class="premium-btn-secondary" onclick="goScreen('home')">Bosh menyu</button>
+  </div>
+  <div class="victory-tap-hint" id="vc-hint-qr">Tezlashtirish uchun ekranga tegining</div>
+</div>
+
+<!-- ================= EKRAN: Match Madness (setup) ================= -->
+<div class="screen" id="screen-match-setup">
+  <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
+  <h2>Match Madness ⚡</h2>
+  <p style="color:var(--muted); font-size:14px; line-height:1.6;">So'zlarni tez juftlashtiring! Chap tomonda arabcha so'zlar, o'ng tomonda tarjimalari. Har raundda 4 juft, ketma-ket 4-5 raund. Vaqt tugaguncha imkon qadar ko'p juft toping. Ketma-ket to'g'ri javob = combo bonus!</p>
+  <div class="stat-row" style="margin-bottom:16px;">
+    <div class="stat-box"><div class="num" id="mm-best">0</div><div class="lbl">Eng yaxshi natija</div></div>
+    <div class="stat-box"><div class="num">40<span style="font-size:13px;">s</span></div><div class="lbl">Vaqt</div></div>
+  </div>
+  <button class="premium-btn-primary" onclick="startMatchMadness()">Boshlash</button>
+</div>
+
+<!-- ================= EKRAN: Match Madness (o'yin) ================= -->
+<div class="screen" id="screen-match">
+  <div class="mm-header">
+    <span class="back-link" onclick="quitMatchMadness()"><i class="ti ti-chevron-left"></i> Chiqish</span>
+    <span class="mm-combo" id="mm-combo"></span>
+    <span class="mm-timer" id="mm-timer"><i class="ti ti-clock"></i> <span id="mm-timer-val">40</span>s</span>
+  </div>
+  <div class="mm-progress" id="mm-progress">0 / 0 juft</div>
+  <div class="mm-board">
+    <div class="mm-col" id="mm-col-ar"></div>
+    <div class="mm-col" id="mm-col-uz"></div>
+  </div>
+</div>
+
+<!-- ================= EKRAN: Match Madness (natija) ================= -->
+<div class="screen" id="screen-match-result">
+  <div class="result-hero" style="text-align:center; padding:20px 0;">
+    <i class="ti ti-bolt" style="font-size:56px; color:var(--gold2);"></i>
+    <div class="result-name" id="mm-result-title" style="font-size:22px; font-weight:800; margin-top:12px;">O'yin tugadi!</div>
+    <div class="victory-xp-counter" id="mm-result-xp">+0 XP</div>
+    <div class="result-stats" style="display:flex; gap:12px; margin-top:16px;">
+      <div class="stat-box"><div class="num" id="mm-result-pairs">0</div><div class="lbl">Jami juftlar</div></div>
+      <div class="stat-box"><div class="num" id="mm-result-combo">0</div><div class="lbl">Eng uzun combo</div></div>
+    </div>
+    <div class="victory-course-wrap">
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="vc-course-fill-mm" style="width:0%; transition:width 1s ease;"></div></div>
+      <div class="victory-course-label" id="vc-course-label-mm">Bo'lim progressi: 0%</div>
+    </div>
+  </div>
+  <div class="victory-actions" id="vc-actions-mm">
+    <button class="premium-btn-primary" onclick="startMatchMadness()" style="margin-top:16px;">Yana o'ynash</button>
+    <button class="premium-btn-secondary" onclick="shareResult()" style="margin-top:10px;">🚀 Natijani ulashish</button>
+    <button class="premium-btn-secondary" onclick="goScreen('home')" style="margin-top:10px;">Bosh menyu</button>
+  </div>
+  <div class="victory-tap-hint" id="vc-hint-mm">Tezlashtirish uchun ekranga tegining</div>
 </div>
 
 <!-- ================= EKRAN: Gap tuzish sozlash ================= -->
@@ -537,7 +718,14 @@ body{padding-bottom:130px;}
 <div class="screen" id="screen-stats">
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Natijalar</h2>
-  <div class="center-note" id="stats-student-name" style="color:var(--gold2); font-weight:700; margin-bottom:10px;"></div>
+  <div class="epic-profile" id="epic-profile-stats">
+    <div class="epic-avatar" id="epic-avatar-stats">?</div>
+    <div class="epic-info">
+      <div class="epic-name" id="epic-name-stats">...</div>
+      <span class="epic-title" id="epic-title-stats">🌟 Navqiron</span>
+      <div class="epic-xp-mini" id="epic-xp-stats">0 XP</div>
+    </div>
+  </div>
   <div class="stat-row">
     <div class="stat-box"><div class="num" id="stat-learned">0</div><div class="lbl">O'zlashtirilgan</div></div>
     <div class="stat-box"><div class="num" id="stat-total">90</div><div class="lbl">Jami (so'z+qoida)</div></div>
@@ -546,16 +734,29 @@ body{padding-bottom:130px;}
   <div class="center-note" id="stats-progress-text">0%</div>
 </div>
 
+<div class="victory-fx" id="victory-fx"></div>
+<div class="victory-trophy-pop" id="victory-trophy-pop"><i class="ti ti-trophy"></i></div>
+<div class="rankup-modal-bg" id="rankup-modal">
+  <div class="rankup-card">
+    <div class="rankup-label">Tabriklaymiz!</div>
+    <div class="rankup-title">Yangi unvon ochildi</div>
+    <div class="rankup-new-rank" id="rankup-new-rank-label">🌟 Navqiron</div>
+    <button class="premium-btn-primary" onclick="closeRankUpModal()">Ajoyib!</button>
+  </div>
+</div>
+
 <a href="index.html" onclick="event.preventDefault();location.replace('index.html')" style="position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">‹ Menyu</a>
 
+<script src="core.js"></script>
 <script>
 const LS_KEY = "arabic_uz_5bolim_v1";
-const ACH_KEY = "arabic_achievements_v1";
-const ALIFBO_KEY = "arabic_alifbo_pref";
 
 // ═══ UMUMIY ISM TIZIMI ═══
-const SHARED_NAME_KEY = "arabic_student_name";
 let currentName = localStorage.getItem(SHARED_NAME_KEY) || "";
+function getShopFlag(key){
+  try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return d[key]; }catch(e){ return undefined; }
+}
+
 if(!currentName){ location.replace('index.html'); }
 
 // ---------------- Kirill -> Lotin ----------------
@@ -632,20 +833,74 @@ function loadProgress(){
 function saveProgress(state){
   localStorage.setItem(LS_KEY, JSON.stringify(state));
 }
-function addAchievementXP(xp){
-  try{
-    const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
-    d.xp = (Number(d.xp)||0) + xp;
-    localStorage.setItem(ACH_KEY, JSON.stringify(d));
-  }catch(e){}
+function awardSessionXP(mode, fullXP){
+  var today = new Date().toISOString().slice(0,10);
+  var key = 'arabic_xp_daily_5';
+  var log = {};
+  try{ log = JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){ log = {}; }
+  if(log.date !== today){ log = {date: today, done: {}}; }
+  if(!log.done) log.done = {};
+  var earned;
+  if(log.done[mode]){
+    earned = 1;
+  } else {
+    earned = fullXP;
+    log.done[mode] = true;
+  }
+  localStorage.setItem(key, JSON.stringify(log));
+  addAchievementXP(earned);
+  return earned;
 }
-function getAchievementXP(){
-  try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Number(d.xp)||0; }catch(e){ return 0; }
+function renderEpicProfile(prefix){
+  var xp = getAchievementXP();
+  var rank = getRank(xp);
+  var name = currentName || 'Talaba';
+  var initial = name.trim().charAt(0).toUpperCase() || '?';
+  var avatarEl = document.getElementById('epic-avatar-'+prefix);
+  var nameEl = document.getElementById('epic-name-'+prefix);
+  var titleEl = document.getElementById('epic-title-'+prefix);
+  var xpEl = document.getElementById('epic-xp-'+prefix);
+  var profileEl = document.getElementById('epic-profile-'+prefix);
+  var hasAura = getShopFlag('premium_aura');
+  var frameTier = getShopFlag('avatar_frame_tier') || '';
+  if(avatarEl){
+    avatarEl.textContent = initial;
+    avatarEl.classList.toggle('has-aura', hasAura);
+    avatarEl.classList.remove('frame-bronze','frame-silver','frame-gold');
+    if(frameTier) avatarEl.classList.add('frame-'+frameTier);
+  }
+  if(profileEl) profileEl.classList.toggle('aura-active', hasAura);
+  if(nameEl){
+    nameEl.textContent = name;
+    nameEl.classList.toggle('aura-active', hasAura);
+  }
+  if(titleEl){ titleEl.textContent = rank.label; titleEl.className = 'epic-title ' + rank.cls; }
+  if(xpEl) xpEl.textContent = xp + ' XP';
+  applyActiveTheme();
+}
+// Do'konda sotib olingan mavzu rangini <html> ga qo'llash (index.html bilan umumiy bayroq)
+function applyActiveTheme(){
+  var theme = getShopFlag('active_theme') || 'gold';
+  document.documentElement.classList.remove('theme-emerald','theme-ruby');
+  if(theme === 'emerald') document.documentElement.classList.add('theme-emerald');
+  if(theme === 'ruby') document.documentElement.classList.add('theme-ruby');
 }
 
 let screenStack = ['home'];
 function goScreen(name, push){
   if(name !== 'quiz') clearInterval(window.__quizTimerInt);
+  if(name !== 'match') clearInterval(mmTimerInt);
+  if(smartPath.active && SMART_PATH_CHAIN_SCREENS.indexOf(name) === -1){
+    smartPath.active = false;
+  }
+  if(name !== 'quiz-result' && name !== 'match-result'){
+    var trophyEl = document.getElementById('victory-trophy-pop');
+    if(trophyEl) trophyEl.classList.remove('show');
+    var fxEl = document.getElementById('victory-fx');
+    if(fxEl) fxEl.innerHTML = '';
+    if(vcState && vcState.cleanup){ vcState.cleanup(); }
+    vcState = null;
+  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById('screen-'+name);
   if(el) el.classList.add('active');
@@ -656,6 +911,10 @@ function goScreen(name, push){
   if(name === 'lugat') renderLugat();
   if(name === 'stats') renderStats();
   if(name === 'gap') startGapTuzish();
+  if(name === 'match-setup'){
+    var mb = document.getElementById('mm-best');
+    if(mb) mb.textContent = localStorage.getItem('arabic_mm_best_5') || '0';
+  }
   if(name === 'quiz-setup'){
     var qtl = document.getElementById('quiz-total-label');
     if(qtl) qtl.textContent = quizQuestionCount + ' ta';
@@ -695,6 +954,7 @@ function renderHome(){
   document.getElementById('home-xp').textContent = getAchievementXP();
   document.getElementById('home-learned').textContent = state.learned.length + '/' + totalItems;
   document.getElementById('home-mastered').textContent = mastered;
+  renderEpicProfile('home');
 }
 
 let activeCatFilter = 'all';
@@ -752,6 +1012,10 @@ function shuffle(arr){
 }
 
 /* ---------------- Flashkard rejimi ---------------- */
+/* ═══════════════ 🔥 TURBO DARS (Smart Path) - global holat ═══════════════ */
+var smartPath = { active:false, step:0, hadAnyError:false, pctBefore:0 };
+var SMART_PATH_CHAIN_SCREENS = ['flashcard','match','gap','quiz','quiz-result'];
+
 let fcState = null;
 function startFlashcard(){
   const count = parseInt(document.getElementById('fc-count').value,10);
@@ -793,7 +1057,6 @@ function answerFlashcard(knew){
   state.box = newBox;
   if(knew){
     fcState.know++;
-    addAchievementXP(2);
   } else {
     fcState.dontknow++;
   }
@@ -802,6 +1065,12 @@ function answerFlashcard(knew){
   if(fcState.idx < fcState.words.length){
     renderFlashcard();
   } else {
+    if(smartPath.active){
+      if(fcState.dontknow > 0) smartPath.hadAnyError = true;
+      smartPathAdvance();
+      return;
+    }
+    awardSessionXP('flashcard', 1);
     document.getElementById('fc-result-know').textContent = fcState.know;
     document.getElementById('fc-result-dontknow').textContent = fcState.dontknow;
     goScreen('flashcard-result');
@@ -962,6 +1231,7 @@ function advanceQuiz(){
   }
 }
 function finishQuiz(){
+  var pctBefore = getCourseProgressPct();
   const state = loadProgress();
   const newBox = {...(state.box||{})};
   let correctCount=0;
@@ -975,9 +1245,19 @@ function finishQuiz(){
   });
   state.box = newBox;
   saveProgress(state);
-  addAchievementXP(correctCount*3);
+  var pctAfter = getCourseProgressPct();
   const total = quizState.results.length;
   const wrongCount = total - correctCount;
+
+  if(smartPath.active){
+    if(wrongCount > 0) smartPath.hadAnyError = true;
+    finishSmartPath(correctCount, total, pctBefore, pctAfter);
+    return;
+  }
+
+  var totalBefore = getAchievementXP();
+  var earnedXP = awardSessionXP('quiz', 4);
+  var totalAfter = getAchievementXP();
   document.getElementById('result-correct').textContent = correctCount;
   document.getElementById('result-wrong').textContent = wrongCount;
   document.getElementById('result-percent').textContent = Math.round((correctCount/total)*100)+'%';
@@ -985,6 +1265,12 @@ function finishQuiz(){
   var qrBtnT = document.getElementById('qr-retry-btn');
   if(qrBtnT){ qrBtnT.textContent = 'Yana test'; qrBtnT.onclick = function(){ goScreen('quiz-setup'); }; }
   goScreen('quiz-result');
+  runVictoryCelebration({
+    xpElId:'qr-xp', courseFillElId:'vc-course-fill-qr', courseLabelElId:'vc-course-label-qr',
+    actionsElId:'vc-actions-qr', hintElId:'vc-hint-qr',
+    earnedXP: earnedXP, coursePctBefore: pctBefore, coursePctAfter: pctAfter,
+    rankBefore: getRank(totalBefore), rankAfter: getRank(totalAfter)
+  });
 }
 
 /* ---------------- Gap tuzish ---------------- */
@@ -997,6 +1283,7 @@ function gtShuffleIdx(n){
   return arr;
 }
 function selectGapLevel(lvl, el){
+  if(smartPath.active) return;
   gapState.level = lvl;
   gapState.idx = 0;
   gapState.correct = 0;
@@ -1048,7 +1335,7 @@ function renderGapCurrent(){
 function renderGapPool(){
   var html = '';
   gapState.pool.forEach(function(item){
-    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'">'+item.word+'</div>';
+    html += '<div class="tile'+(item.used?' gone':'')+'" data-uid="'+item.uid+'"><span class="gt-tile-audio" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+item.word.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i></span>'+item.word+'</div>';
   });
   document.getElementById('gt-pool').innerHTML = html;
   document.querySelectorAll('#gt-pool .tile').forEach(function(t){
@@ -1103,15 +1390,19 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
   var resultEl = document.getElementById('gt-result-area');
   document.getElementById('gt-btn-row').style.display = 'none';
   if(isCorrect){
+    playCorrect();
     resultEl.className = 'gt-result ok show';
-    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr);
-    addAchievementXP(8);
+    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr)+
+      '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     gapState.correct++;
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
-    setTimeout(advanceGapQuestion, 1000);
+    setTimeout(advanceGapQuestion, 1800);
   } else {
+    playWrong();
+    if(smartPath.active) smartPath.hadAnyError = true;
     resultEl.className = 'gt-result bad show';
-    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr);
+    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr)+
+      '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
     document.getElementById('gt-next-btn').style.display = '';
   }
@@ -1120,7 +1411,13 @@ function advanceGapQuestion(){
   gapState.idx++;
   if(gapState.idx < gapState.list.length){
     renderGapCurrent();
+  } else if(smartPath.active){
+    smartPathAdvance();
   } else {
+    var pctNow = getCourseProgressPct();
+    var totalBefore = getAchievementXP();
+    var earnedXP = awardSessionXP('gap', 2);
+    var totalAfter = getAchievementXP();
     var gTotal = gapState.list.length;
     var gWrong = gTotal - gapState.correct;
     document.getElementById('result-correct').textContent = gapState.correct;
@@ -1130,14 +1427,19 @@ function advanceGapQuestion(){
     var qrBtn = document.getElementById('qr-retry-btn');
     if(qrBtn){ qrBtn.textContent = 'Yana mashq'; qrBtn.onclick = function(){ goScreen('gap'); }; }
     goScreen('quiz-result');
+    runVictoryCelebration({
+      xpElId:'qr-xp', courseFillElId:'vc-course-fill-qr', courseLabelElId:'vc-course-label-qr',
+      actionsElId:'vc-actions-qr', hintElId:'vc-hint-qr',
+      earnedXP: earnedXP, coursePctBefore: pctNow, coursePctAfter: pctNow,
+      rankBefore: getRank(totalBefore), rankAfter: getRank(totalAfter)
+    });
   }
 }
 
 
 function renderStats(){
   const state = loadProgress();
-  const nameEl = document.getElementById('stats-student-name');
-  if(nameEl) nameEl.textContent = 'Talaba: ' + currentName;
+  renderEpicProfile('stats');
   const totalItems = ALL_WORDS.length + GRAMMAR_ITEMS.length;
   document.getElementById('stat-learned').textContent = state.learned.length;
   document.getElementById('stat-total').textContent = totalItems;
@@ -1148,6 +1450,10 @@ function renderStats(){
 
 updateAlifboLabel();
 renderHome();
+// 🔥 Turbo Dars: index.html'dan '?turbo=1' bilan kelingan bo'lsa - avtomatik ishga tushadi
+if(new URLSearchParams(location.search).get('turbo') === '1'){
+  setTimeout(function(){ startSmartPath(); }, 150);
+}
 
 /* ===== Global "tap" effekti (mobil qurilmalar uchun) ===== */
 (function(){
@@ -1162,6 +1468,719 @@ renderHome();
     setTimeout(function(){ el.classList.remove('tapped'); }, 240);
   }, {passive:true});
 })();
+/* ═══════════════ ARABCHA TALAFFUZ (Web Speech API - Do'kondan sotib olinadi) ═══════════════ */
+let arabicVoice = null, arabicVoiceFemale = null, arabicVoiceMale = null;
+function loadArabicVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  const arVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ar'));
+  arabicVoice = arVoices[0] || null;
+  // Qurilmada bir nechta arabcha ovoz bo'lsa - nomidan jinsini aniqlashga harakat qilamiz
+  arabicVoiceFemale = arVoices.find(v => /female|hoda|zariyah|salma|laila|amira|woman/i.test(v.name)) || null;
+  arabicVoiceMale = arVoices.find(v => /male|naayf|hamed|majed|tarik|man(?!y)/i.test(v.name)) || null;
+}
+if('speechSynthesis' in window){
+  loadArabicVoice();
+  window.speechSynthesis.onvoiceschanged = loadArabicVoice;
+}
+// "أنا" so'zidan keyingi so'z تاء مربوطة (ة) bilan tugasa - ayol nutqi deb aniqlaymiz
+function detectArabicGender(text){
+  var anaIdx = text.indexOf('أنا');
+  if(anaIdx === -1) return null; // Birinchi shaxs emas - jinsni aniqlab bo'lmaydi
+  var after = text.slice(anaIdx + 'أنا'.length).trim();
+  var words = after.split(/\s+/).slice(0, 3);
+  for(var i=0;i<words.length;i++){
+    var w = words[i].replace(/[.,،؟!]/g, '');
+    // Barcha harakatlarni (tashkil belgilarini) olib tashlab, faqat harflarni tekshiramiz
+    var bare = w.replace(/[\u064B-\u0652\u0670]/g, '');
+    if(/ة$/.test(bare)) return 'female';
+  }
+  return 'male';
+}
+function speakArabic(text, btnEl){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.audio-btn.playing, .audio-mini.playing, .gt-listen-btn.playing').forEach(el=>el.classList.remove('playing'));
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ar-SA';
+  var gender = detectArabicGender(text);
+  var chosenVoice = arabicVoice;
+  if(gender === 'female' && arabicVoiceFemale) chosenVoice = arabicVoiceFemale;
+  else if(gender === 'male' && arabicVoiceMale) chosenVoice = arabicVoiceMale;
+  if(chosenVoice) utter.voice = chosenVoice;
+  utter.rate = 0.8;
+  if(btnEl) btnEl.classList.add('playing');
+  utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
+  utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
+  window.speechSynthesis.speak(utter);
+}
+function handleAudioClick(mode, text, btnEl){
+  if(!getShopFlag('audio_'+mode)){
+    showShopLockedToast();
+    return;
+  }
+  speakArabic(text, btnEl);
+}
+function showShopLockedToast(){
+  var t = document.createElement('div');
+  t.className = 'shop-toast err';
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-weight:700;font-size:13px;padding:12px 22px;border-radius:14px;box-shadow:var(--shadow-deep);z-index:99999;white-space:nowrap;background:linear-gradient(135deg,#E8765C,#F0A188);color:#2a0d07;';
+  t.textContent = "Bu — XP Bozoridan sotib olinadigan funksiya";
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='opacity .3s ease'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2200);
+}
+
+/* ═══════════════ OVOZ EFFEKTI (Web Audio API - fayl kerak emas) ═══════════════ */
+var __audioCtx = null;
+function __getAudioCtx(){
+  if(!__audioCtx){
+    try{ __audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ return null; }
+  }
+  return __audioCtx;
+}
+// Ovoz o'chirish sozlamasi (localStorage'da saqlanadi)
+// Bitta nota chalish
+function __tone(freq, startT, dur, type, vol){
+  var ctx = __getAudioCtx(); if(!ctx) return;
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  osc.connect(gain); gain.connect(ctx.destination);
+  var t = ctx.currentTime + startT;
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(vol || 0.15, t + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.start(t); osc.stop(t + dur);
+}
+// To'g'ri javob - yoqimli "ding" (yuqoriga ko'tariluvchi 2 nota)
+function playCorrect(){
+  if(!soundEnabled()) return;
+  __tone(587.33, 0, 0.12, 'sine', 0.15);   // D5
+  __tone(880.00, 0.08, 0.18, 'sine', 0.15); // A5
+}
+// Xato javob - yumshoq "buzz" (pastga tushuvchi)
+function playWrong(){
+  if(!soundEnabled()) return;
+  __tone(220, 0, 0.15, 'triangle', 0.12);
+  __tone(164.81, 0.1, 0.2, 'triangle', 0.12); // E3
+}
+// Plitka bosilganda - qisqa "tik"
+function playTap(){
+  if(!soundEnabled()) return;
+  __tone(440, 0, 0.05, 'sine', 0.08);
+}
+// O'yin/mashq tugadi - yoqimli, yumshoq "tada" (ko'tariluvchi arpeggio + quyuq yakuniy akkord)
+// Toza, ikki zarbali "bell" tovushi (iOS bildirishnoma uslubida) - har nota + yumshoq oktava yuqori "shimmer"
+function playFinish(){
+  if(!soundEnabled()) return;
+  __tone(659.25, 0,    0.4, 'sine', 0.16);  // E5 - asosiy zarba
+  __tone(1318.51, 0,   0.4, 'sine', 0.045); // E6 - yumshoq shimmer (asosiy nota bilan birga)
+  __tone(987.77, 0.16, 0.6, 'sine', 0.17);  // B5 - yakuniy, quyuqroq zarba
+  __tone(1975.53, 0.16,0.6, 'sine', 0.05);  // B6 - yumshoq shimmer
+}
+// Vaqt tugab, mashq TO'LIQ tugallanmaganda - neytral, yumshoq ohang (g'alaba fanfarasi emas)
+function playSoftFinish(){
+  if(!soundEnabled()) return;
+  __tone(587.33, 0, 0.35, 'sine', 0.12); // D5 - bitta yumshoq, neytral zarba
+}
+// Kassa apparati "tik" ovozi - XP hisoblagich sanayotganda
+function playCoinTick(){
+  if(!soundEnabled()) return;
+  __tone(1100 + Math.random()*300, 0, 0.04, 'square', 0.05);
+}
+// Progress-bar to'lganda - yumshoq "shitirlash"
+function playProgressWhoosh(){
+  if(!soundEnabled()) return;
+  __tone(300, 0, 0.5, 'sine', 0.06);
+  __tone(480, 0.05, 0.4, 'sine', 0.05);
+}
+// Unvon oshganda - alohida epik ovoz (4 nota, kengroq)
+function playRankUp(){
+  if(!soundEnabled()) return;
+  __tone(392.00, 0, 0.15, 'sine', 0.15);   // G4
+  __tone(523.25, 0.1, 0.15, 'sine', 0.15); // C5
+  __tone(659.25, 0.2, 0.15, 'sine', 0.15); // E5
+  __tone(783.99, 0.3, 0.45, 'sine', 0.18); // G5
+}
+
+
+/* ═══════════════ MUQADDAS TANTANA (Victory Celebration) ═══════════════ */
+var vcState = null;
+
+function getCourseProgressPct(){
+  var state = loadProgress();
+  var totalItems = ALL_WORDS.length + GRAMMAR_ITEMS.length;
+  return totalItems > 0 ? Math.round((state.learned.length/totalItems)*100) : 0;
+}
+
+function vcCreateConfetti(container){
+  if(!container) return;
+  var style = getShopFlag('active_confetti') || 'default';
+  var palettes = {
+    default: ['#D4A23A','#F0C56B','#6FBF8B','#E8765C','#5BD5F0','#EDEFF5'],
+    silver: ['#C0C6D0','#EDEFF5','#9AA1B2','#FFFFFF','#D4D9E0'],
+    fire: ['#E8765C','#F0A188','#FFB347','#D4A23A','#FF6B4A']
+  };
+  var colors = palettes[style] || palettes.default;
+  container.innerHTML = '';
+  var n = 34;
+  for(var i=0;i<n;i++){
+    var p = document.createElement('div');
+    p.className = 'confetti-piece';
+    var left = Math.random()*100;
+    var delay = Math.random()*0.35;
+    var dur = 1.1 + Math.random()*0.7;
+    var color = colors[Math.floor(Math.random()*colors.length)];
+    var round = Math.random()>0.5 ? 'border-radius:50%;' : '';
+    p.style.cssText = 'left:'+left+'%; background:'+color+'; animation-delay:'+delay+'s; animation-duration:'+dur+'s; '+round;
+    container.appendChild(p);
+  }
+}
+
+function showRankUpModal(rank){
+  playRankUp();
+  var modal = document.getElementById('rankup-modal');
+  var label = document.getElementById('rankup-new-rank-label');
+  if(label){
+    label.textContent = rank.label;
+    label.className = 'rankup-new-rank ' + rank.cls;
+  }
+  if(modal) modal.classList.add('show');
+}
+function closeRankUpModal(){
+  var modal = document.getElementById('rankup-modal');
+  if(modal) modal.classList.remove('show');
+}
+
+function runVictoryCelebration(cfg){
+  if(vcState && vcState.cleanup) vcState.cleanup();
+
+  var xpEl = document.getElementById(cfg.xpElId);
+  var fillEl = document.getElementById(cfg.courseFillElId);
+  var labelEl = document.getElementById(cfg.courseLabelElId);
+  var actionsEl = document.getElementById(cfg.actionsElId);
+  var hintEl = document.getElementById(cfg.hintElId);
+  var screenEl = actionsEl ? actionsEl.closest('.screen') : null;
+
+  if(xpEl) xpEl.textContent = '+0 XP';
+  if(fillEl){
+    fillEl.style.transition = 'none';
+    fillEl.style.width = (cfg.coursePctBefore||0) + '%';
+    void fillEl.offsetWidth;
+    fillEl.style.transition = 'width 1s ease';
+  }
+  if(labelEl) labelEl.textContent = "Bo'lim progressi: " + (cfg.coursePctBefore||0) + '%';
+  if(actionsEl) actionsEl.classList.remove('show');
+  if(hintEl) hintEl.style.display = '';
+
+  var timers = [];
+  var finished = false;
+
+  function finalizeInstantly(){
+    if(finished) return;
+    finished = true;
+    timers.forEach(function(t){ clearTimeout(t); });
+    if(xpEl) xpEl.textContent = '+' + cfg.earnedXP + ' XP';
+    if(fillEl){ fillEl.style.transition = 'none'; fillEl.style.width = cfg.coursePctAfter + '%'; }
+    if(labelEl) labelEl.textContent = "Bo'lim progressi: " + cfg.coursePctAfter + '%';
+    if(actionsEl) actionsEl.classList.add('show');
+    if(hintEl) hintEl.style.display = 'none';
+    maybeShowRankUp();
+    if(screenEl) screenEl.removeEventListener('pointerdown', skipHandler);
+  }
+
+  function maybeShowRankUp(){
+    if(cfg.rankBefore && cfg.rankAfter && cfg.rankBefore.cls !== cfg.rankAfter.cls){
+      setTimeout(function(){ showRankUpModal(cfg.rankAfter); }, 250);
+    }
+  }
+
+  function skipHandler(e){
+    if(e.target.closest('button')) return; // tugmalar o'z ishini bajarsin
+    finalizeInstantly();
+  }
+
+  vcState = {
+    cleanup: function(){ timers.forEach(function(t){ clearTimeout(t); }); finished = true; }
+  };
+
+  // QADAM 1 (0ms): tantanali akkord (yoki mashq to'liq tugallanmagan bo'lsa - yumshoq neytral ohang) + konfetti + kubok
+  if(cfg.soft){ playSoftFinish(); } else { playFinish(); }
+  vcCreateConfetti(document.getElementById('victory-fx'));
+  var trophy = document.getElementById('victory-trophy-pop');
+  if(trophy){ trophy.classList.remove('show'); void trophy.offsetWidth; trophy.classList.add('show'); }
+
+  // QADAM 2 (500ms): XP hisoblagich 0'dan yakuniy qiymatgacha "yuguradi"
+  timers.push(setTimeout(function(){
+    if(finished) return;
+    var target = cfg.earnedXP;
+    var startTime = Date.now();
+    var dur = 600;
+    var tickCount = 0;
+    (function step(){
+      if(finished) return;
+      var t = Math.min(1, (Date.now()-startTime)/dur);
+      var val = Math.round(target * t);
+      if(xpEl) xpEl.textContent = '+' + val + ' XP';
+      if(Math.floor(t*8) > tickCount){ tickCount = Math.floor(t*8); playCoinTick(); }
+      if(t < 1){
+        timers.push(setTimeout(step, 40));
+      } else if(xpEl){
+        xpEl.textContent = '+' + target + ' XP';
+      }
+    })();
+  }, 500));
+
+  // QADAM 3 (1500ms): bo'lim progress-bari to'ladi
+  timers.push(setTimeout(function(){
+    if(finished) return;
+    playProgressWhoosh();
+    if(fillEl) fillEl.style.width = cfg.coursePctAfter + '%';
+    if(labelEl) labelEl.textContent = "Bo'lim progressi: " + cfg.coursePctAfter + '%';
+  }, 1500));
+
+  // QADAM 4 (2600ms): tugmalar ochiladi, unvon oshgan bo'lsa modal chiqadi
+  timers.push(setTimeout(function(){
+    if(finished) return;
+    finished = true;
+    if(actionsEl) actionsEl.classList.add('show');
+    if(hintEl) hintEl.style.display = 'none';
+    maybeShowRankUp();
+    if(screenEl) screenEl.removeEventListener('pointerdown', skipHandler);
+  }, 2600));
+
+  // Ekranga tegilsa - darhol tugatish (sabrsiz foydalanuvchilar uchun)
+  if(screenEl){
+    screenEl.addEventListener('pointerdown', skipHandler);
+  }
+}
+
+function showShareToast(){
+  var t = document.createElement('div');
+  t.textContent = 'Natija nusxalandi, do\u2018stlaringizga yuboring!';
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0B0E14;font-weight:700;font-size:13px;padding:12px 22px;border-radius:14px;box-shadow:var(--shadow-deep);z-index:99999;animation:popIn .25s var(--ease); white-space:nowrap;';
+  document.body.appendChild(t);
+  setTimeout(function(){
+    t.style.transition = 'opacity .3s ease';
+    t.style.opacity = '0';
+    setTimeout(function(){ t.remove(); }, 300);
+  }, 2200);
+}
+function copyShareText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showShareToast).catch(function(){
+      __legacyCopy(text); showShareToast();
+    });
+  } else {
+    __legacyCopy(text); showShareToast();
+  }
+}
+function __legacyCopy(text){
+  try{
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(e){}
+}
+
+// Natija uchun chiroyli kartochka (canvas orqali chiziladi - rasm fayl kerak emas)
+function buildShareCanvas(){
+  var canvas = document.createElement('canvas');
+  var W = 800, H = 800;
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+
+  var bgGrad = ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0, '#171B26');
+  bgGrad.addColorStop(1, '#0B0E14');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.strokeStyle = 'rgba(212,162,58,0.55)';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(20,20,W-40,H-40);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#F0C56B';
+  ctx.font = '700 26px Arial, sans-serif';
+  ctx.fillText("AL-MANHAJUL AL-A\u2019LAMIY", W/2, 90);
+
+  var name = currentName || 'Talaba';
+  var initial = name.trim().charAt(0).toUpperCase() || '?';
+  var cx = W/2, cy = 230, r = 80;
+  var avatarGrad = ctx.createLinearGradient(cx-r, cy-r, cx+r, cy+r);
+  avatarGrad.addColorStop(0, '#D4A23A');
+  avatarGrad.addColorStop(1, '#F0C56B');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fillStyle = avatarGrad;
+  ctx.fill();
+  ctx.fillStyle = '#0B0E14';
+  ctx.font = '700 64px Arial, sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(initial, cx, cy+4);
+  ctx.textBaseline = 'alphabetic';
+
+  ctx.fillStyle = '#EDEFF5';
+  ctx.font = '700 42px Arial, sans-serif';
+  ctx.fillText(name, W/2, 372);
+
+  var rank = getRank(getAchievementXP());
+  ctx.fillStyle = '#F0C56B';
+  ctx.font = '600 28px Arial, sans-serif';
+  ctx.fillText(rank.label, W/2, 420);
+
+  var xp = getAchievementXP();
+  ctx.fillStyle = '#F0C56B';
+  ctx.font = '800 68px Arial, sans-serif';
+  ctx.fillText(xp + ' XP', W/2, 520);
+  ctx.fillStyle = '#9AA1B2';
+  ctx.font = '400 20px Arial, sans-serif';
+  ctx.fillText('Umumiy XP', W/2, 552);
+
+  ctx.fillStyle = '#9AA1B2';
+  ctx.font = '400 22px Arial, sans-serif';
+  ctx.fillText("Arab tili platformasida mashq qilmoqda", W/2, 660);
+  ctx.fillStyle = '#D4A23A';
+  ctx.font = '700 26px Arial, sans-serif';
+  ctx.fillText("Sen ham o\u2018z bilimingni sinab ko\u2018r!", W/2, 702);
+
+  return canvas;
+}
+function downloadShareImage(canvas){
+  try{
+    var link = document.createElement('a');
+    link.download = 'arab-tili-natija.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }catch(e){}
+}
+function shareResult(){
+  var rank = getRank(getAchievementXP()).label;
+  var text = "Men bugun Arab tili platformasida ajoyib natija ko\u2018rsatdim! Mening umumiy unvonim: " + rank + ". Sen ham o\u2018z bilimingni sinab ko\u2018r!";
+  var canvas;
+  try{ canvas = buildShareCanvas(); }catch(e){ copyShareText(text); return; }
+
+  canvas.toBlob(function(blob){
+    if(!blob){ downloadShareImage(canvas); copyShareText(text); return; }
+    var file;
+    try{ file = new File([blob], 'arab-tili-natija.png', {type:'image/png'}); }catch(e){ file = null; }
+    if(file && navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({files:[file], text: text}).catch(function(){
+        downloadShareImage(canvas);
+      });
+    } else {
+      // Rasm ulashib bo'lmasa - kartochkani yuklab olamiz + matnni buferga nusxalaymiz
+      downloadShareImage(canvas);
+      copyShareText(text);
+    }
+  }, 'image/png');
+}
+
+/* ═══════════════ MATCH MADNESS (so'z moslashtirish o'yini) ═══════════════ */
+var mmState = null;
+var mmTimerInt = null;
+
+// Uzun so'zga qarab shrift o'lchamini moslashtirish (Duolingo usuli)
+function mmFontSize(text, isArabic){
+  var len = (text || '').length;
+  if(isArabic){
+    // Arabcha: 4 plitka bo'lgani uchun joy ko'p - kattaroq shrift
+    if(len <= 6) return '32px';
+    if(len <= 10) return '27px';
+    if(len <= 16) return '22px';
+    return '18px';
+  } else {
+    // Tarjima (lotin/kirill)
+    if(len <= 8) return '16px';
+    if(len <= 16) return '14px';
+    if(len <= 26) return '12px';
+    return '11px';
+  }
+}
+
+var MM_ROUND_TIMES = [40, 30, 25, 20, 20]; // Raund 1: 40s, 2: 30s, 3: 25s, 4-5: 20s (asta qiyinlashadi)
+function startMatchMadness(){
+  // Yangi sessiya: 4-5 raund ketma-ket, har raundda 4 juft
+  mmState = {
+    round: 0,
+    maxRounds: 4 + Math.floor(Math.random()*2), // 4 yoki 5 raund
+    totalMatched: 0,     // butun sessiya bo'yicha
+    maxCombo: 0,
+    combo: 0,
+    timeLeft: MM_ROUND_TIMES[0],  // HAR RAUNDGA alohida beriladi (mmNextRound'da qayta tiklanadi)
+    finished: false,
+    locked: false,
+    selected: null,
+    roundMatched: 0,
+    roundTotal: 0
+  };
+  clearInterval(mmTimerInt);
+  mmTimerInt = setInterval(function(){
+    if(!mmState || mmState.finished) return;
+    mmState.timeLeft--;
+    document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
+    if(mmState.timeLeft <= 5){ document.getElementById('mm-timer').classList.add('warn'); }
+    if(mmState.timeLeft <= 0){ finishMatchMadness(false); }
+  }, 1000);
+  goScreen('match');
+  mmNextRound();
+}
+
+function mmNextRound(){
+  mmState.round++;
+  mmState.roundMatched = 0;
+  mmState.selected = null;
+  mmState.locked = false;
+  // Har yangi raundda vaqt qayta beriladi - jadval bo'yicha asta kamayadi (40, 30, 25, 20, 20...)
+  mmState.timeLeft = MM_ROUND_TIMES[mmState.round-1] !== undefined ? MM_ROUND_TIMES[mmState.round-1] : MM_ROUND_TIMES[MM_ROUND_TIMES.length-1];
+  document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
+  document.getElementById('mm-timer').classList.remove('warn');
+
+  // 4 juft tanlaymiz (mobil uchun qulay)
+  var pool = ALL_WORDS.filter(function(w){ return w.uz && w.ar && dtxt(w.uz).length <= 30; });
+  if(pool.length < 4) pool = ALL_WORDS.slice();
+  var picked = shuffle(pool).slice(0, 4);
+  mmState.roundTotal = picked.length;
+
+  var arItems = shuffle(picked.map(function(w){ return {id:w.id, text:w.ar, side:'ar'}; }));
+  var uzItems = shuffle(picked.map(function(w){ return {id:w.id, text:dtxt(w.uz), side:'uz'}; }));
+
+  var colAr = document.getElementById('mm-col-ar');
+  var colUz = document.getElementById('mm-col-uz');
+  colAr.innerHTML = arItems.map(function(it){
+    return '<div class="mm-tile ar-tile" data-id="'+it.id+'" data-side="ar" style="font-size:'+mmFontSize(it.text, true)+'"><span class="audio-mini" onclick="event.stopPropagation(); handleAudioClick(\'match\', \''+it.text.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i></span>'+it.text+'</div>';
+  }).join('');
+  colUz.innerHTML = uzItems.map(function(it){
+    return '<div class="mm-tile uz-tile" data-id="'+it.id+'" data-side="uz" style="font-size:'+mmFontSize(it.text, false)+'">'+it.text+'</div>';
+  }).join('');
+
+  document.querySelectorAll('#screen-match .mm-tile').forEach(function(t){
+    t.addEventListener('click', function(){ mmTileClick(t); });
+  });
+
+  document.getElementById('mm-progress').textContent = 'Raund ' + mmState.round + '/' + mmState.maxRounds + ' · ' + mmState.roundMatched + '/' + mmState.roundTotal + ' juft';
+  updateMmCombo();
+}
+
+function mmTileClick(tile){
+  if(!mmState || mmState.locked || mmState.finished) return;
+  if(tile.classList.contains('correct') || tile.classList.contains('empty')) return;
+
+  var side = tile.getAttribute('data-side');
+  var id = tile.getAttribute('data-id');
+  playTap();
+
+  if(!mmState.selected){
+    mmState.selected = {side:side, id:id, el:tile};
+    tile.classList.add('selected');
+    return;
+  }
+  if(mmState.selected.el === tile){
+    tile.classList.remove('selected');
+    mmState.selected = null;
+    return;
+  }
+  if(mmState.selected.side === side){
+    mmState.selected.el.classList.remove('selected');
+    mmState.selected = {side:side, id:id, el:tile};
+    tile.classList.add('selected');
+    return;
+  }
+
+  var first = mmState.selected;
+  var isMatch = (first.id === id);
+
+  if(isMatch){
+    playCorrect();
+    mmState.combo++;
+    if(mmState.combo > mmState.maxCombo) mmState.maxCombo = mmState.combo;
+    mmState.roundMatched++;
+    mmState.totalMatched++;
+    first.el.classList.remove('selected');
+    first.el.classList.add('correct');
+    tile.classList.add('correct');
+    updateMmCombo();
+    document.getElementById('mm-progress').textContent = 'Raund ' + mmState.round + '/' + mmState.maxRounds + ' · ' + mmState.roundMatched + '/' + mmState.roundTotal + ' juft';
+    mmState.selected = null;
+
+    mmState.locked = true;
+    setTimeout(function(){
+      first.el.classList.add('fade-out');
+      tile.classList.add('fade-out');
+      setTimeout(function(){
+        first.el.classList.add('empty');
+        tile.classList.add('empty');
+        mmState.locked = false;
+        // Raund tugadimi?
+        if(mmState.roundMatched >= mmState.roundTotal){
+          if(mmState.round >= mmState.maxRounds){
+            finishMatchMadness(true); // barcha raundlar tugadi
+          } else {
+            // Keyingi raundga silliq o'tish
+            setTimeout(mmNextRound, 400);
+          }
+        }
+      }, 200);
+    }, 250);
+  } else {
+    playWrong();
+    if(smartPath.active) smartPath.hadAnyError = true;
+    mmState.combo = 0;
+    updateMmCombo();
+    mmState.locked = true;
+    first.el.classList.remove('selected');
+    first.el.classList.add('wrong');
+    tile.classList.add('wrong');
+    setTimeout(function(){
+      first.el.classList.remove('wrong');
+      tile.classList.remove('wrong');
+      mmState.locked = false;
+      mmState.selected = null;
+    }, 450);
+  }
+}
+
+function updateMmCombo(){
+  var el = document.getElementById('mm-combo');
+  if(mmState.combo >= 2){
+    el.textContent = mmState.combo + 'x combo!';
+    el.classList.add('show');
+    el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+function finishMatchMadness(completed){
+  if(!mmState || mmState.finished) return;
+  mmState.finished = true;
+  clearInterval(mmTimerInt);
+
+  if(smartPath.active){
+    if(!completed) smartPath.hadAnyError = true;
+    var bestSp = parseInt(localStorage.getItem('arabic_mm_best_5') || '0', 10);
+    if(mmState.totalMatched > bestSp){ localStorage.setItem('arabic_mm_best_5', mmState.totalMatched); }
+    smartPathAdvance();
+    return;
+  }
+
+  var pctNow = getCourseProgressPct(); // Match Madness umumiy progressga ta'sir qilmaydi
+  var totalBefore = getAchievementXP();
+  var earnedXP = awardSessionXP('match', 2);
+  var totalAfter = getAchievementXP();
+
+  var best = parseInt(localStorage.getItem('arabic_mm_best_5') || '0', 10);
+  if(mmState.totalMatched > best){
+    localStorage.setItem('arabic_mm_best_5', mmState.totalMatched);
+  }
+
+  document.getElementById('mm-result-title').textContent = completed ? 'Zo\u2019r! Barcha raund tugadi! \uD83C\uDF89' : 'Vaqt tugadi!';
+  document.getElementById('mm-result-pairs').textContent = mmState.totalMatched;
+  document.getElementById('mm-result-combo').textContent = mmState.maxCombo + 'x';
+  goScreen('match-result');
+  runVictoryCelebration({
+    xpElId:'mm-result-xp', courseFillElId:'vc-course-fill-mm', courseLabelElId:'vc-course-label-mm',
+    actionsElId:'vc-actions-mm', hintElId:'vc-hint-mm',
+    earnedXP: earnedXP, coursePctBefore: pctNow, coursePctAfter: pctNow,
+    rankBefore: getRank(totalBefore), rankAfter: getRank(totalAfter),
+    soft: !completed
+  });
+}
+
+function quitMatchMadness(){
+  clearInterval(mmTimerInt);
+  if(mmState) mmState.finished = true;
+  goScreen('home');
+}
+
+/* ═══════════════ 🔥 TURBO DARS (Smart Path) - zanjir funksiyalari ═══════════════ */
+function startSmartPath(){
+  smartPath.active = true;
+  smartPath.step = 1;
+  smartPath.hadAnyError = false;
+  smartPath.pctBefore = getCourseProgressPct();
+  fcState = { words: shuffle(ALL_WORDS).slice(0,5), idx:0, know:0, dontknow:0, flipped:false };
+  goScreen('flashcard');
+  renderFlashcard();
+}
+function smartPathRunMatch(){
+  smartPath.step = 2;
+  mmState = {
+    round:0, maxRounds:2, totalMatched:0, maxCombo:0, combo:0,
+    timeLeft: MM_ROUND_TIMES[0], finished:false, locked:false, selected:null,
+    roundMatched:0, roundTotal:0
+  };
+  clearInterval(mmTimerInt);
+  mmTimerInt = setInterval(function(){
+    if(!mmState || mmState.finished) return;
+    mmState.timeLeft--;
+    document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
+    if(mmState.timeLeft <= 5){ document.getElementById('mm-timer').classList.add('warn'); }
+    if(mmState.timeLeft <= 0){ finishMatchMadness(false); }
+  }, 1000);
+  goScreen('match');
+  mmNextRound();
+}
+function smartPathRunGap(){
+  smartPath.step = 3;
+  goScreen('gap');
+  gapState.list = shuffle(GAP_TUZISH_DATA.slice()).slice(0,3);
+  gapState.order = gtShuffleIdx(gapState.list.length);
+  gapState.idx = 0;
+  gapState.correct = 0;
+  renderGapCurrent();
+}
+function smartPathRunQuiz(){
+  smartPath.step = 4;
+  var wordItems = ALL_WORDS.map(function(w){ return {kind:'word', data:w}; });
+  var wordDirsRaw = wordItems.map(function(_,i){ return i%2===0 ? 'ar2uz':'uz2ar'; });
+  var wordDirsShuffled = shuffle(wordDirsRaw);
+  wordItems.forEach(function(it,i){ it.dir = wordDirsShuffled[i]; });
+  var grammarItems = GRAMMAR_ITEMS.map(function(g){ return {kind:'grammar', data:g}; });
+  var items = shuffle(wordItems.concat(grammarItems)).slice(0,3);
+  quizState = { items:items, idx:0, results:[], timePerQ: quizTimePerQ };
+  goScreen('quiz');
+  renderQuizQuestion();
+}
+function smartPathAdvance(){
+  if(smartPath.step === 1){ smartPathRunMatch(); }
+  else if(smartPath.step === 2){ smartPathRunGap(); }
+  else if(smartPath.step === 3){ smartPathRunQuiz(); }
+}
+function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
+  var totalBefore = getAchievementXP();
+  var baseEarned = awardSessionXP('smartpath', 15);
+  var perfectBonus = 0;
+  if(baseEarned === 15 && !smartPath.hadAnyError){
+    perfectBonus = 2;
+    addAchievementXP(2);
+  }
+  var earnedXP = baseEarned + perfectBonus;
+  var totalAfter = getAchievementXP();
+
+  document.getElementById('result-correct').textContent = examCorrect;
+  document.getElementById('result-wrong').textContent = examTotal - examCorrect;
+  document.getElementById('result-percent').textContent = examTotal>0 ? Math.round((examCorrect/examTotal)*100)+'%' : '0%';
+  var qrTitle = document.getElementById('qr-title'); if(qrTitle) qrTitle.textContent = "🔥 Turbo Dars tugadi!";
+  var qrBtn = document.getElementById('qr-retry-btn');
+  if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ startSmartPath(); }; }
+
+  goScreen('quiz-result');
+  runVictoryCelebration({
+    xpElId:'qr-xp', courseFillElId:'vc-course-fill-qr', courseLabelElId:'vc-course-label-qr',
+    actionsElId:'vc-actions-qr', hintElId:'vc-hint-qr',
+    earnedXP: earnedXP, coursePctBefore: pctBefore, coursePctAfter: pctAfter,
+    rankBefore: getRank(totalBefore), rankAfter: getRank(totalAfter)
+  });
+  smartPath.active = false;
+}
+
 </script>
 </body>
 </html>

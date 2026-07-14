@@ -229,8 +229,79 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   background:linear-gradient(135deg,#D4A23A,#F0C56B);color:#0B0E14;
   font-size:15px;font-weight:800;
 }
+/* Modal ichidagi G'olib kartasi */
+.rm-winner-card{background:linear-gradient(160deg, #1e2230 0%, #14161d 55%, #1a1710 100%); border:2px solid var(--gold, #D4A23A); border-radius:20px; padding:24px 18px 20px; margin-bottom:14px; box-shadow:0 8px 30px rgba(212,162,58,0.25);}
+.rm-crown{font-size:42px; line-height:1; margin-bottom:4px; filter:drop-shadow(0 4px 10px rgba(212,162,58,0.5));}
+.rm-wc-title{font-size:19px; font-weight:900; letter-spacing:2.5px; color:#F0C56B; text-shadow:0 2px 12px rgba(240,197,107,0.4);}
+.rm-wc-sub{font-size:11px; color:#B8BECC; margin-top:3px; letter-spacing:0.5px;}
+.rm-wc-divider{height:1px; background:linear-gradient(90deg, transparent, #D4A23A, transparent); margin:14px 8px;}
+.rm-wc-name-label{font-size:9.5px; text-transform:uppercase; letter-spacing:2px; color:#8A93A6;}
+.rm-wc-name{font-size:23px; font-weight:800; color:#EDEFF5; margin:3px 0 9px;}
+.rm-wc-rank{display:inline-block; background:linear-gradient(135deg, #D4A23A, #F0C56B); color:#0B0E14; font-weight:800; font-size:12px; padding:6px 14px; border-radius:18px; box-shadow:0 4px 14px rgba(212,162,58,0.4);}
+.rm-wc-pct-row{font-size:13px; color:#B8BECC; margin-top:14px;}
+.rm-wc-pct-row span{color:#F0C56B; font-weight:800; font-size:16px;}
+.rm-wc-foot{font-size:11.5px; color:#B8BECC; margin-top:10px; font-style:italic;}
+.rm-hint{font-size:11.5px; color:#F0C56B; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px;}
 .confetti{position:absolute;top:-10px;width:8px;height:14px;opacity:.9;animation:confettiFall linear forwards}
 @keyframes confettiFall{to{transform:translateY(420px) rotate(540deg);opacity:0}}
+/* ═══════════════ Premium Aura + Avatar ramkalari ═══════════════ */
+.hero-avatar.has-aura{animation:auraGlow 2.2s ease-in-out infinite;}
+@keyframes auraGlow{0%,100%{box-shadow:0 0 0 4px rgba(212,162,58,0.15), 0 4px 16px rgba(212,162,58,.25);}50%{box-shadow:0 0 0 6px rgba(212,162,58,0.3), 0 4px 26px rgba(240,197,107,.5);}}
+.hero-card.aura-active{border-color:rgba(240,197,107,0.5);}
+.hero-greet.aura-active{text-shadow:0 0 10px rgba(240,197,107,0.6);}
+.hero-avatar.frame-bronze{box-shadow:0 0 0 3px #CD8B5E, 0 4px 16px rgba(205,139,94,.4);}
+.hero-avatar.frame-silver{box-shadow:0 0 0 3px #C0C6D0, 0 4px 16px rgba(192,198,208,.4);}
+.hero-avatar.frame-gold{box-shadow:0 0 0 3px #FFD86B, 0 4px 20px rgba(255,216,107,.5); animation:frameGoldPulse 2s ease-in-out infinite;}
+@keyframes frameGoldPulse{0%,100%{box-shadow:0 0 0 3px #FFD86B, 0 4px 16px rgba(255,216,107,.4);}50%{box-shadow:0 0 0 4px #FFD86B, 0 4px 26px rgba(255,216,107,.7);}}
+.hero-avatar.has-aura.frame-bronze,.hero-avatar.has-aura.frame-silver,.hero-avatar.has-aura.frame-gold{animation:none;}
+
+/* ═══════════════ Mavzu ranglari (Zumrad/Yoqut) ═══════════════ */
+html.theme-emerald{ --gold:#2FBF71; --gold2:#6FE3A0; }
+html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
+
+/* ═══════════════ XP Do'kon ═══════════════ */
+.shop-wallet{background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.08)); border:1px solid rgba(212,162,58,0.4); border-radius:20px; padding:20px; text-align:center; margin-bottom:16px; box-shadow:var(--shadow-soft);}
+.shop-wallet-label{font-size:11px; color:#8A93A6; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;}
+.shop-wallet-num{font-size:36px; font-weight:800; color:var(--gold2);}
+.shop-wallet-note{font-size:12px; color:#8A93A6; margin-top:6px;}
+.shop-item{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.78)); border:1px solid var(--gold-line); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow-soft);}
+.shop-item-head{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.shop-item-icon{font-size:24px; flex-shrink:0;}
+.shop-item-title{font-size:15px; font-weight:700;}
+.shop-item-desc{font-size:12.5px; color:#8A93A6; line-height:1.5; margin-bottom:10px;}
+.shop-item-footer{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.shop-item-price{font-size:14px; font-weight:800; color:var(--gold2);}
+.shop-buy-row{display:flex; gap:8px;}
+.shop-buy-btn{padding:9px 14px; border-radius:12px; border:none; font-weight:700; font-size:12.5px; cursor:pointer; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; transition:transform .15s var(--ease), opacity .15s ease;}
+.shop-buy-btn:active{transform:scale(.95);}
+.shop-buy-btn.owned{background:rgba(111,191,139,0.18); color:#8FD9A8; border:1px solid #6FBF8B; cursor:default;}
+.shop-buy-btn.active-flag{background:rgba(111,191,139,0.3); color:#8FD9A8; border:1px solid #6FBF8B;}
+.shop-buy-btn.disabled{opacity:0.4; cursor:not-allowed;}
+.shop-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); font-weight:700; font-size:13px; padding:12px 22px; border-radius:14px; box-shadow:var(--shadow-deep); z-index:99999; white-space:nowrap; animation:fadeIn .25s ease;}
+.shop-toast.ok{background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14;}
+.shop-toast.err{background:linear-gradient(135deg,#E8765C,#F0A188); color:#2a0d07;}
+.mystery-result{text-align:center; font-size:14px; font-weight:700; color:var(--gold2); margin-top:8px; min-height:20px;}
+
+/* ═══════════════ Bonus dars - maqollar modali ═══════════════ */
+.proverb-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9500; display:none; align-items:center; justify-content:center; padding:20px;}
+.proverb-modal-bg.show{display:flex;}
+.proverb-card-modal{background:linear-gradient(160deg, rgba(38,42,54,0.95), rgba(20,22,29,0.97)); border:1px solid var(--gold-line); border-radius:22px; padding:26px 22px; max-width:360px; max-height:80vh; overflow-y:auto; box-shadow:var(--shadow-deep);}
+.proverb-item{border-bottom:1px solid var(--gold-line); padding-bottom:14px; margin-bottom:14px;}
+.proverb-item:last-of-type{border-bottom:none; margin-bottom:0; padding-bottom:0;}
+.proverb-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:20px; color:var(--gold2); line-height:2.2; text-align:center; margin-bottom:8px;}
+.proverb-uz{font-size:13px; color:#EDEFF5; text-align:center; line-height:1.5;}
+.proverb-close-btn{width:100%; margin-top:6px; padding:12px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; font-weight:800; font-size:14px; cursor:pointer;}
+.entry-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9600; display:none; align-items:center; justify-content:center; padding:20px;}
+.entry-modal-bg.show{display:flex;}
+.entry-modal-card{background:linear-gradient(160deg, rgba(38,42,54,0.96), rgba(20,22,29,0.98)); border:1px solid rgba(212,162,58,0.3); border-radius:22px; padding:24px 20px; max-width:360px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.entry-modal-title{font-size:16px; font-weight:800; text-align:center; margin-bottom:18px; color:#EDEFF5;}
+.entry-option{width:100%; text-align:left; border-radius:16px; padding:14px 16px; margin-bottom:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); transition:transform .15s ease;}
+.entry-option:active{transform:scale(.97);}
+.entry-option-title{font-size:14.5px; font-weight:700; color:#EDEFF5; margin-bottom:4px;}
+.entry-option-desc{font-size:12px; color:#8A93A6; line-height:1.5;}
+.entry-option.turbo{background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.08)); border-color:rgba(212,162,58,0.4);}
+.entry-option.turbo .entry-option-title{color:#F0C56B;}
+.entry-cancel{width:100%; text-align:center; padding:10px; font-size:13px; color:#8A93A6; cursor:pointer; margin-top:2px;}
 </style>
 </head>
 <body>
@@ -303,6 +374,94 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
     Linkni saqlab qo'ying — <b>bitta link, barcha bo'limlar</b>.
   </div>
 
+  <div class="section-label"><span class="path-dot"></span>Qo'shimcha</div>
+  <a href="ManhajA1-Lugat-Umumiy.html" class="reward-card unlocked" style="text-decoration:none; display:block;">
+    <div class="reward-icon-wrap"><i class="ti ti-book-2"></i></div>
+    <div class="reward-title">📚 Umumiy Lug'at</div>
+    <div class="reward-desc">Barcha 12 bo'limning so'zlarini bitta joyda ko'ring va qidiring</div>
+  </a>
+
+  <div class="section-label"><span class="path-dot"></span>🛍️ XP Bozori</div>
+
+  <div class="shop-wallet">
+    <div class="shop-wallet-label">Sarflanadigan hamyon</div>
+    <div class="shop-wallet-num" id="shopWalletBalance">0 XP</div>
+    <div class="shop-wallet-note" id="shopWalletNote">Jami to'plangan: 0 XP (unvon uchun, kamaymaydi)</div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🛡️</div><div class="shop-item-title">Kunlik himoya (Streak Freeze)</div></div>
+    <div class="shop-item-desc">Bir kun darsni o'tkazib yuborsangiz ham, kunlik zanjiringiz buzilmasligi uchun himoya faollashtiradi.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">150 XP</div><button class="shop-buy-btn" id="shopBtnFreeze" onclick="buyStreakFreeze()">Sotib olish</button></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🎨</div><div class="shop-item-title">Premium Aura</div></div>
+    <div class="shop-item-desc">Ismingiz atrofida chiroyli, animatsiyali oltin porlash effekti yonadi.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">300 XP</div><button class="shop-buy-btn" id="shopBtnAura" onclick="buyPremiumAura()">Sotib olish</button></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Bonus dars (Arab maqollari)</div></div>
+    <div class="shop-item-desc">3 ta eng go'zal arab maqolini — arabcha matni, o'qilishi va chuqur ma'nosi bilan — oching.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">500 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🖼️</div><div class="shop-item-title">Avatar ramkasi</div></div>
+    <div class="shop-item-desc">Rasmingiz atrofida bezakli chegara — bronza, kumush yoki oltin.</div>
+    <div class="shop-buy-row">
+      <button class="shop-buy-btn" id="shopBtnFrameBronze" onclick="buyAvatarFrame('bronze',200)">Bronza · 200 XP</button>
+      <button class="shop-buy-btn" id="shopBtnFrameSilver" onclick="buyAvatarFrame('silver',400)">Kumush · 400 XP</button>
+      <button class="shop-buy-btn" id="shopBtnFrameGold" onclick="buyAvatarFrame('gold',700)">Oltin · 700 XP</button>
+    </div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🎁</div><div class="shop-item-title">Sirli quti</div></div>
+    <div class="shop-item-desc">100 XP to'lab, tasodifiy miqdorda XP yutib oling — omadingizni sinang!</div>
+    <div class="shop-item-footer"><div class="shop-item-price">100 XP</div><button class="shop-buy-btn" id="shopBtnMystery" onclick="buyMysteryBox()">Ochish</button></div>
+    <div class="mystery-result" id="mysteryResult"></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🌈</div><div class="shop-item-title">Mavzu rangi</div></div>
+    <div class="shop-item-desc">Ilova aksent rangini o'zgartiring.</div>
+    <div class="shop-buy-row">
+      <button class="shop-buy-btn" id="shopBtnThemeEmerald" onclick="buyTheme('emerald',250)">Zumrad · 250 XP</button>
+      <button class="shop-buy-btn" id="shopBtnThemeRuby" onclick="buyTheme('ruby',250)">Yoqut · 250 XP</button>
+      <button class="shop-buy-btn" id="shopBtnThemeGold" onclick="activateTheme('gold')">Standart oltin</button>
+    </div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">✨</div><div class="shop-item-title">G'alaba konfetti uslubi</div></div>
+    <div class="shop-item-desc">Dars yakunida yog'iladigan konfettining rangini tanlang.</div>
+    <div class="shop-buy-row">
+      <button class="shop-buy-btn" id="shopBtnConfettiSilver" onclick="buyConfetti('silver',200)">Kumush · 200 XP</button>
+      <button class="shop-buy-btn" id="shopBtnConfettiFire" onclick="buyConfetti('fire',200)">Olov · 200 XP</button>
+      <button class="shop-buy-btn" id="shopBtnConfettiDefault" onclick="activateConfetti('default')">Standart</button>
+    </div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Flashkard talaffuzi</div></div>
+    <div class="shop-item-desc">Flashkard rejimida arabcha so'zning to'g'ri talaffuzini eshiting.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioFc" onclick="buyAudio('flashcard', 400, 'shopBtnAudioFc')">Sotib olish</button></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Gap Tuzish talaffuzi</div></div>
+    <div class="shop-item-desc">Gap Tuzishda so'z plitkalarining arabcha talaffuzini eshiting.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">250 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 250, 'shopBtnAudioGap')">Sotib olish</button></div>
+  </div>
+
+  <div class="shop-item">
+    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Match Madness talaffuzi</div></div>
+    <div class="shop-item-desc">Eng ilg'or paket — Match Madness plitkalarining arabcha talaffuzini eshiting.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">900 XP</div><button class="shop-buy-btn" id="shopBtnAudioMatch" onclick="buyAudio('match', 900, 'shopBtnAudioMatch')">Sotib olish</button></div>
+  </div>
+
   <div class="section-label"><span class="path-dot"></span>Maxsus</div>
 
   <div class="reward-card locked" id="examCard">
@@ -314,30 +473,74 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   </div>
 
   <div class="reward-card locked" id="rewardCard" style="margin-top:12px">
-    <div class="reward-icon-wrap"><i class="ti ti-gift"></i></div>
+    <div class="reward-icon-wrap"><i class="ti ti-trophy"></i></div>
     <div class="reward-info">
-      <div class="reward-title">Sovg'alar</div>
-      <div class="reward-desc" id="rewardDesc">Imtihonga tayyorgarlik testini yakunlang</div>
+      <div class="reward-title">🏆 G'olib kartasi</div>
+      <div class="reward-desc" id="rewardDesc">Yakuniy imtihonni 80%+ bilan topshiring</div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════ KIRISH TANLOVI MODAL ═══════════ -->
+<div class="entry-modal-bg" id="entryModal">
+  <div class="entry-modal-card">
+    <div class="entry-modal-title" id="entryModalTitle">Bo'limga kirish</div>
+    <div class="entry-option" onclick="enterNormal()">
+      <div class="entry-option-title">📖 Oddiy yo'l</div>
+      <div class="entry-option-desc">Barcha rejimlarni (Lug'at, Test, Gap tuzish va h.k.) o'zingiz tanlab, o'z tezligingizda o'rganasiz.</div>
+    </div>
+    <div class="entry-option turbo" onclick="enterTurbo()">
+      <div class="entry-option-title">🔥 Turbo Dars</div>
+      <div class="entry-option-desc">Qisqa, avtomatik zanjir (5 daqiqa) — charchash kam, ochkolar (XP) ikki barobar qiymatli!</div>
+    </div>
+    <div class="entry-cancel" onclick="closeEntryModal()">Bekor qilish</div>
+  </div>
+</div>
+
+<!-- ═══════════ MAQOLLAR MODAL (Bonus dars) ═══════════ -->
+<div class="proverb-modal-bg" id="proverbModal">
+  <div class="proverb-card-modal">
+    <h3 style="text-align:center; margin-bottom:16px;">🔑 Arab maqollari</h3>
+    <div class="proverb-item">
+      <div class="proverb-ar">العِلْمُ فِي الصِّغَرِ كَالنَّقْشِ عَلَى الحَجَرِ</div>
+      <div class="proverb-uz">Yoshlikda o'rganilgan bilim — toshga o'yilgan naqsh kabidir.</div>
+    </div>
+    <div class="proverb-item">
+      <div class="proverb-ar">مَنْ طَلَبَ العُلَا سَهِرَ اللَّيَالِي</div>
+      <div class="proverb-uz">Yuksaklikka intilgan inson tunlarni bedor o'tkazadi.</div>
+    </div>
+    <div class="proverb-item">
+      <div class="proverb-ar">الوَقْتُ كَالسَّيْفِ إِنْ لَمْ تَقْطَعْهُ قَطَعَكَ</div>
+      <div class="proverb-uz">Vaqt qilich kabidir, agar sen uni kesmasang, u seni kesadi.</div>
+    </div>
+    <button class="proverb-close-btn" onclick="closeProverbModal()">Yopish</button>
   </div>
 </div>
 
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
 <div class="reward-modal" id="rewardModal">
   <div class="reward-modal-inner" id="rewardModalInner">
-    <div class="reward-trophy"><i class="ti ti-trophy"></i></div>
-    <div class="reward-modal-title">Tabriklaymiz!</div>
-    <div class="reward-modal-text" id="rewardModalText"></div>
-    <button class="reward-close-btn" id="rewardCloseBtn">Rahmat! <i class="ti ti-confetti"></i></button>
+    <div class="rm-winner-card">
+      <div class="rm-crown">🏆</div>
+      <div class="rm-wc-title">G'OLIB KARTASI</div>
+      <div class="rm-wc-sub">Al-Manhaj al-A'lamiy · A1 daraja</div>
+      <div class="rm-wc-divider"></div>
+      <div class="rm-wc-name-label">Ushbu karta egasi</div>
+      <div class="rm-wc-name" id="rmWcName">Talaba</div>
+      <div class="rm-wc-rank">🏆 Al-Manhaj Fotihi — A1</div>
+      <div class="rm-wc-pct-row">Natija: <span id="rmWcPct">0%</span></div>
+      <div class="rm-wc-foot">A1 darajasini muvaffaqiyatli yakunladi</div>
+    </div>
+    <div class="rm-hint"><i class="ti ti-camera"></i> Skrinshot qilib ulashing!</div>
+    <button class="reward-close-btn" id="rewardCloseBtn">Yopish <i class="ti ti-confetti"></i></button>
   </div>
 </div>
 
+<script src="core.js"></script>
 <script>
 'use strict';
 
 // ═══ UMUMIY ISM TIZIMI — barcha bo'limlar shu kalitdan foydalanadi ═══
-var SHARED_NAME_KEY = 'arabic_student_name';
-var ACH_KEY = 'arabic_achievements_v1';
 
 // Har bo'lim mavzusiga mos ikonka (faqat vizual, ma'lumotga ta'sir qilmaydi)
 var BOLIM_ICONS = {
@@ -347,22 +550,205 @@ var BOLIM_ICONS = {
 };
 
 function initHeroStats(name){
-  var ach = {};
-  try{ ach = JSON.parse(localStorage.getItem(ACH_KEY) || '{}'); }catch(e){}
-  var xp = Number(ach.xp) || 0;
-  var streak = Number(ach.streak) || 0;
+  var xp = getAchievementXP(); // MUHIM: eski 'ach.xp' o'rniga to'g'ri total_xp o'qiladi
+  var streak = getStreak();
 
   var initials = (name || '').trim().split(/\s+/).map(function(w){ return w.charAt(0); }).slice(0,2).join('').toUpperCase();
   var avatarEl = document.getElementById('heroAvatar');
   var greetEl = document.getElementById('heroGreet');
   var xpEl = document.getElementById('heroXp');
   var streakEl = document.getElementById('heroStreak');
+  var cardEl = document.querySelector('.hero-card');
 
   if(avatarEl) avatarEl.textContent = initials || '?';
   if(greetEl) greetEl.textContent = 'Xush kelibsiz, ' + name + '!';
   if(xpEl) xpEl.textContent = xp;
   if(streakEl) streakEl.textContent = streak;
+
+  applyCosmetics(avatarEl, greetEl, cardEl);
 }
+
+// ═══ XP Do'kon: kosmetik effektlarni sahifaga qo'llash ═══
+function getShopFlag(key){
+  try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return d[key]; }catch(e){ return undefined; }
+}
+function setShopFlag(key, val){
+  try{
+    const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
+    d[key] = val;
+    localStorage.setItem(ACH_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function applyCosmetics(avatarEl, greetEl, cardEl){
+  var hasAura = !!getShopFlag('premium_aura');
+  var frameTier = getShopFlag('avatar_frame_tier') || '';
+  var theme = getShopFlag('active_theme') || 'gold';
+
+  if(avatarEl){
+    avatarEl.classList.toggle('has-aura', hasAura);
+    avatarEl.classList.remove('frame-bronze','frame-silver','frame-gold');
+    if(frameTier) avatarEl.classList.add('frame-'+frameTier);
+  }
+  if(cardEl) cardEl.classList.toggle('aura-active', hasAura);
+  if(greetEl) greetEl.classList.toggle('aura-active', hasAura);
+
+  document.documentElement.classList.remove('theme-emerald','theme-ruby');
+  if(theme === 'emerald') document.documentElement.classList.add('theme-emerald');
+  if(theme === 'ruby') document.documentElement.classList.add('theme-ruby');
+}
+
+/* ═══════════════ XP DO'KON — xarid funksiyalari ═══════════════ */
+function shopToast(msg, isErr){
+  var t = document.createElement('div');
+  t.className = 'shop-toast ' + (isErr ? 'err' : 'ok');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='opacity .3s ease'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2200);
+}
+function refreshHeroAndShop(){
+  var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
+  initHeroStats(name);
+  renderShop();
+}
+function renderShop(){
+  var wallet = getWalletXP();
+  var total = getAchievementXP();
+  var balEl = document.getElementById('shopWalletBalance');
+  var noteEl = document.getElementById('shopWalletNote');
+  if(balEl) balEl.textContent = wallet + ' XP';
+  if(noteEl) noteEl.textContent = "Jami to'plangan: " + total + " XP (unvon uchun, kamaymaydi)";
+
+  setBtn('shopBtnFreeze', getShopFlag('streak_freeze'), 150, wallet, 'Faol ✓');
+  setBtn('shopBtnAura', getShopFlag('premium_aura'), 300, wallet, 'Faol ✓');
+  setBtn('shopBtnBonus', getShopFlag('bonus_lesson'), 500, wallet, "Ko'rish", true);
+
+  var frameTier = getShopFlag('avatar_frame_tier') || '';
+  setFrameBtn('shopBtnFrameBronze', 'bronze', frameTier, 200, wallet);
+  setFrameBtn('shopBtnFrameSilver', 'silver', frameTier, 400, wallet);
+  setFrameBtn('shopBtnFrameGold', 'gold', frameTier, 700, wallet);
+
+  var theme = getShopFlag('active_theme') || 'gold';
+  setThemeBtn('shopBtnThemeEmerald', 'emerald', theme, 250, wallet);
+  setThemeBtn('shopBtnThemeRuby', 'ruby', theme, 250, wallet);
+  var goldBtn = document.getElementById('shopBtnThemeGold');
+  if(goldBtn) goldBtn.className = 'shop-buy-btn' + (theme==='gold' ? ' active-flag' : '');
+
+  var confetti = getShopFlag('active_confetti') || 'default';
+  setThemeBtn('shopBtnConfettiSilver', 'silver', confetti, 200, wallet, 'confetti_owned_silver');
+  setThemeBtn('shopBtnConfettiFire', 'fire', confetti, 200, wallet, 'confetti_owned_fire');
+  var defBtn = document.getElementById('shopBtnConfettiDefault');
+  if(defBtn) defBtn.className = 'shop-buy-btn' + (confetti==='default' ? ' active-flag' : '');
+
+  setBtn('shopBtnAudioFc', getShopFlag('audio_flashcard'), 400, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioGap', getShopFlag('audio_gap'), 250, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioMatch', getShopFlag('audio_match'), 900, wallet, 'Faol ✓');
+}
+function setBtn(id, owned, cost, wallet, ownedLabel, alwaysClickable){
+  var btn = document.getElementById(id);
+  if(!btn) return;
+  if(owned){
+    btn.textContent = ownedLabel;
+    btn.className = 'shop-buy-btn owned';
+  } else {
+    btn.textContent = 'Sotib olish';
+    btn.className = 'shop-buy-btn' + (wallet >= cost ? '' : ' disabled');
+  }
+}
+function setFrameBtn(id, tier, currentTier, cost, wallet){
+  var btn = document.getElementById(id);
+  if(!btn) return;
+  var owned = currentTier === tier;
+  if(owned){ btn.className = 'shop-buy-btn active-flag'; }
+  else { btn.className = 'shop-buy-btn' + (wallet >= cost ? '' : ' disabled'); }
+}
+function setThemeBtn(id, name, currentActive, cost, wallet, ownedFlagKey){
+  var btn = document.getElementById(id);
+  if(!btn) return;
+  var flagKey = ownedFlagKey || ('theme_owned_' + name);
+  var owned = !!getShopFlag(flagKey);
+  if(currentActive === name){ btn.className = 'shop-buy-btn active-flag'; }
+  else if(owned){ btn.className = 'shop-buy-btn owned'; }
+  else { btn.className = 'shop-buy-btn' + (wallet >= cost ? '' : ' disabled'); }
+}
+
+function buyStreakFreeze(){
+  if(getShopFlag('streak_freeze')) return;
+  if(!spendWalletXP(150)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag('streak_freeze', true);
+  shopToast('Himoya faollashdi!');
+  refreshHeroAndShop();
+}
+function buyPremiumAura(){
+  if(getShopFlag('premium_aura')) return;
+  if(!spendWalletXP(300)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag('premium_aura', true);
+  shopToast('Aura yoqildi!');
+  refreshHeroAndShop();
+}
+function buyBonusLesson(){
+  if(getShopFlag('bonus_lesson')){ openProverbModal(); return; }
+  if(!spendWalletXP(500)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag('bonus_lesson', true);
+  shopToast('Bonus dars ochildi!');
+  refreshHeroAndShop();
+  setTimeout(openProverbModal, 300);
+}
+function buyAvatarFrame(tier, cost){
+  var current = getShopFlag('avatar_frame_tier');
+  if(current === tier) return;
+  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag('avatar_frame_tier', tier);
+  shopToast('Ramka faollashdi!');
+  refreshHeroAndShop();
+}
+function buyMysteryBox(){
+  if(!spendWalletXP(100)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  var roll = Math.random();
+  var outcome;
+  if(roll < 0.05) outcome = 500;
+  else if(roll < 0.35) outcome = 150;
+  else if(roll < 0.85) outcome = 50;
+  else outcome = 20;
+  addAchievementXP(outcome);
+  var resEl = document.getElementById('mysteryResult');
+  if(resEl) resEl.textContent = '\uD83C\uDF89 Siz +' + outcome + ' XP yutdingiz!';
+  shopToast('Sirli quti ochildi: +' + outcome + ' XP!');
+  refreshHeroAndShop();
+}
+function buyTheme(name, cost){
+  var flagKey = 'theme_owned_' + name;
+  if(getShopFlag(flagKey)){ activateTheme(name); return; }
+  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag(flagKey, true);
+  activateTheme(name);
+  shopToast('Mavzu rangi ochildi!');
+}
+function activateTheme(name){
+  setShopFlag('active_theme', name);
+  refreshHeroAndShop();
+}
+function buyConfetti(name, cost){
+  var flagKey = 'confetti_owned_' + name;
+  if(getShopFlag(flagKey)){ activateConfetti(name); return; }
+  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag(flagKey, true);
+  activateConfetti(name);
+  shopToast('Konfetti uslubi ochildi!');
+}
+function activateConfetti(name){
+  setShopFlag('active_confetti', name);
+  refreshHeroAndShop();
+}
+function buyAudio(mode, cost, btnId){
+  var flagKey = 'audio_' + mode;
+  if(getShopFlag(flagKey)) return;
+  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag(flagKey, true);
+  shopToast('Talaffuz ovozi ochildi!');
+  refreshHeroAndShop();
+}
+function openProverbModal(){ document.getElementById('proverbModal').classList.add('show'); }
+function closeProverbModal(){ document.getElementById('proverbModal').classList.remove('show'); }
 
 function initNameGate(){
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
@@ -389,6 +775,7 @@ function initNameGate(){
     gate.style.display = 'none';
     app.style.display = 'block';
     initHeroStats(savedName);
+    renderShop();
     return true;
   }
 
@@ -420,11 +807,11 @@ var BOLIMLAR = [
   {num:8,  key:'arabic_uz_8bolim_v1',  total:62,  desc:"Taom va ichimliklar"},
   {num:9,  key:'arabic_uz_9bolim_v1',  total:79,  desc:"Xarid qilish"},
   {num:10, key:'arabic_uz_10bolim_v1', total:66,  desc:"Shifokorda"},
-  {num:11, key:'arabic_uz_11bolim_v1', total:134, desc:"Hobbylar va sport"}
+  {num:11, key:'arabic_uz_11bolim_v1', total:134, desc:"Hobbylar va sport"},
+  {num:12, key:'arabic_uz_12bolim_v1', total:101, desc:"Kunlik dastur"}
 ];
 
 var LOCKED_BOLIMLAR = [
-  {num:12, phrase:"Sayohat nihoyasi"}
 ];
 
 function getLearnedCount(key){
@@ -463,10 +850,39 @@ function buildCard(item, isLocked, pct){
     '<div class="g-pct">' + pctLine + '</div>' +
     bar;
 
-  var tag = isLocked ? 'div' : 'a';
-  var href = isLocked ? '' : ' href="' + (item.href || ('ManhajA1-bolim' + item.num + '.html')) + '"';
+  var href = item.href || ('ManhajA1-bolim' + item.num + '.html');
+  var clickAttr = isLocked ? '' : ' onclick="openEntryModal(' + item.num + ', \'' + href.replace(/'/g,"\\'") + '\', \'' + (item.desc||'').replace(/'/g,"\\'") + '\')"';
 
-  return '<' + tag + href + ' class="g-card ' + state + '" data-bolim="' + item.num + '">' + inner + '</' + tag + '>';
+  return '<div class="g-card ' + state + '"' + clickAttr + ' data-bolim="' + item.num + '">' + inner + '</div>';
+}
+
+/* ═══ Kirish tanlovi: Oddiy yo'l yoki 🔥 Turbo Dars ═══ */
+function openEntryModal(num, href, desc){
+  window.__entryHref = href;
+  var modal = document.getElementById('entryModal');
+  var title = document.getElementById('entryModalTitle');
+  if(title) title.textContent = num + "-bo'lim" + (desc ? ' — ' + desc : '');
+  if(modal) modal.classList.add('show');
+}
+function closeEntryModal(){
+  var modal = document.getElementById('entryModal');
+  if(modal) modal.classList.remove('show');
+}
+function enterNormal(){
+  var href = window.__entryHref;
+  closeEntryModal();
+  if(href) location.href = href;
+}
+function enterTurbo(){
+  var href = window.__entryHref;
+  closeEntryModal();
+  if(!href) return;
+  var sep = href.indexOf('#');
+  if(sep === -1){
+    location.href = href + '?turbo=1';
+  } else {
+    location.href = href.slice(0,sep) + '?turbo=1' + href.slice(sep);
+  }
 }
 
 function initRoadmap(){
@@ -517,8 +933,12 @@ function initRoadmap(){
   }
 
   updateExamCard(allAbove80, below80Count);
-  var examScorePct = Number(localStorage.getItem('arabic_exam_score_pct') || 0);
-  updateRewardCard(examScorePct >= 80);
+  var examPassed = false;
+  try{
+    var examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}');
+    examPassed = !!examData.passed;
+  }catch(e){}
+  updateRewardCard(examPassed);
 }
 
 function updateRewardCard(examPassed){
@@ -558,18 +978,19 @@ function updateExamCard(unlocked, below80Count){
 }
 
 function openExamModal(){
-  var modal = document.getElementById('rewardModal');
-  var text = document.getElementById('rewardModalText');
-  var savedName = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
-  text.innerHTML = '<b>' + savedName + '</b>, siz imtihonga tayyorgarlik darajasiga yetdingiz! Barcha bo\'limlardan aralashtirilgan 50\u2013100 savolli yakuniy test tez orada shu yerga qo\'shiladi.';
-  modal.classList.add('show');
+  location.href = 'ManhajA1-Yakuniy-Imtihon.html';
 }
 
 function openRewardModal(){
-  var modal = document.getElementById('rewardModal');
-  var text = document.getElementById('rewardModalText');
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
-  text.innerHTML = '<b>' + savedName + '</b>, siz barcha bo\'limlarni a\'lo darajada o\'zlashtirdingiz! Bu ajoyib natija — shunday davom eting.';
+  var examData = {};
+  try{ examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}'); }catch(e){}
+  var pct = examData.bestPct || 0;
+
+  document.getElementById('rmWcName').textContent = savedName;
+  document.getElementById('rmWcPct').textContent = pct + '%';
+
+  var modal = document.getElementById('rewardModal');
   modal.classList.add('show');
   spawnConfetti();
 }

@@ -31,6 +31,25 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .wrap{width:100%;max-width:480px;position:relative;z-index:1}
 
 .header{text-align:center;margin-bottom:18px}
+/* ═══════════════ PAPKA (TAB) NAVIGATSIYASI ═══════════════ */
+.tab-bar{position:sticky; top:0; z-index:500; display:flex; gap:4px; justify-content:space-between; overflow-x:auto; padding:10px 2px 12px; margin:0 -16px 18px; padding-left:16px; padding-right:16px; background:linear-gradient(180deg, rgba(11,14,20,0.97) 75%, rgba(11,14,20,0)); scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 2px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:transform .15s var(--ease), background .15s ease, border-color .15s ease; white-space:nowrap; min-width:0;}
+.tab-btn:active{transform:scale(.95);}
+.tab-btn .tab-icon{font-size:18px; line-height:1;}
+.tab-btn .tab-label{font-size:9px; font-weight:700; color:#8A93A6; letter-spacing:0.1px; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+.tab-btn.active{background:linear-gradient(135deg, rgba(212,162,58,0.22), rgba(240,197,107,0.12)); border-color:rgba(212,162,58,0.45);}
+.tab-btn.active .tab-label{color:#F0C56B;}
+.tab-btn .tab-dot{width:6px; height:6px; border-radius:50%; background:#E8765C; position:absolute; margin-left:16px; margin-top:-4px; display:none;}
+.tab-btn.has-alert .tab-dot{display:block;}
+.tab-content{display:none;}
+.tab-content.active{display:block; animation:tabFadeIn .25s ease;}
+@keyframes tabFadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.quick-links-row{display:flex; gap:10px; margin-top:14px;}
+.quick-link-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; font-size:12px; font-weight:700; color:#D4A23A; transition:transform .15s var(--ease);}
+.quick-link-btn:active{transform:scale(.96);}
+.quick-link-btn i{font-size:22px;}
+.tab-info-note{font-size:12px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
 .kicker{color:#D4A23A;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
 .title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl;line-height:1.8}
 .subtitle{color:#8A93A6;font-size:13px;font-weight:500}
@@ -335,158 +354,229 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
   </div>
 
-  <!-- ═══ HERO — ISM, XP, STREAK ═══ -->
-  <div class="hero-card">
-    <div class="hero-avatar" id="heroAvatar">?</div>
-    <div class="hero-info">
-      <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
-      <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
+  <!-- ═══════════ PAPKA (TAB) TUGMALARI ═══════════ -->
+  <div class="tab-bar" id="tabBar">
+    <div class="tab-btn active" data-tab="home" onclick="switchTab('home')">
+      <span class="tab-icon">🏠</span><span class="tab-label">Bosh</span>
     </div>
-    <div class="hero-stats">
-      <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
-      <div class="stat-pill"><i class="ti ti-star-filled"></i><span id="heroXp">0</span></div>
+    <div class="tab-btn" data-tab="bolimlar" onclick="switchTab('bolimlar')">
+      <span class="tab-icon">📚</span><span class="tab-label">Bo'limlar</span>
     </div>
-  </div>
-
-  <!-- ═══ UMUMIY NATIJA ═══ -->
-  <div class="summary-card">
-    <div class="summary-ring-wrap">
-      <svg class="summary-ring-svg" viewBox="0 0 84 84">
-        <defs>
-          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#F0C56B"/>
-            <stop offset="100%" stop-color="#D4A23A"/>
-          </linearGradient>
-        </defs>
-        <circle class="summary-ring-track" cx="42" cy="42" r="37"/>
-        <circle class="summary-ring-fill" id="summaryRing" cx="42" cy="42" r="37"/>
-      </svg>
-      <div class="summary-ring-pct" id="summaryPct">0%</div>
+    <div class="tab-btn" data-tab="bozor" onclick="switchTab('bozor')">
+      <span class="tab-icon">🛍️</span><span class="tab-label">Bozor</span>
     </div>
-    <div class="summary-info">
-      <div class="summary-label">Umumiy o'zlashtirish</div>
-      <div class="summary-sub" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
+    <div class="tab-btn" data-tab="imtihon" onclick="switchTab('imtihon')">
+      <span class="tab-icon">📝</span><span class="tab-label">Imtihon</span>
+    </div>
+    <div class="tab-btn" data-tab="sovga" onclick="switchTab('sovga')">
+      <span class="tab-icon">🎁</span><span class="tab-label">Sovg'a</span>
+    </div>
+    <div class="tab-btn" data-tab="golib" onclick="switchTab('golib')">
+      <span class="tab-icon">🏆</span><span class="tab-label">G'olib</span>
     </div>
   </div>
 
-  <div class="section-label"><span class="path-dot"></span>O'quv yo'li</div>
+  <!-- ═══════════ TAB: BOSH SAHIFA ═══════════ -->
+  <div class="tab-content active" id="tab-home">
+    <!-- ═══ HERO — ISM, XP, STREAK ═══ -->
+    <div class="hero-card">
+      <div class="hero-avatar" id="heroAvatar">?</div>
+      <div class="hero-info">
+        <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
+        <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
+        <div class="stat-pill"><i class="ti ti-star-filled"></i><span id="heroXp">0</span></div>
+      </div>
+    </div>
 
-  <!-- ═══════════ BO'LIMLAR GRID ═══════════ -->
-  <div class="roadmap" id="roadmap">
-    <div class="bolim-grid" id="roadRows"></div>
-  </div>
+    <!-- ═══ UMUMIY NATIJA ═══ -->
+    <div class="summary-card">
+      <div class="summary-ring-wrap">
+        <svg class="summary-ring-svg" viewBox="0 0 84 84">
+          <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#F0C56B"/>
+              <stop offset="100%" stop-color="#D4A23A"/>
+            </linearGradient>
+          </defs>
+          <circle class="summary-ring-track" cx="42" cy="42" r="37"/>
+          <circle class="summary-ring-fill" id="summaryRing" cx="42" cy="42" r="37"/>
+        </svg>
+        <div class="summary-ring-pct" id="summaryPct">0%</div>
+      </div>
+      <div class="summary-info">
+        <div class="summary-label">Umumiy o'zlashtirish</div>
+        <div class="summary-sub" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
+      </div>
+    </div>
 
-  <div class="footer-note">
-    Yangi bo'limlar qo'shilganda shu sahifa avtomatik yangilanadi.<br/>
-    Linkni saqlab qo'ying — <b>bitta link, barcha bo'limlar</b>.
-  </div>
-
-  <div class="section-label"><span class="path-dot"></span>Qo'shimcha</div>
-  <div class="reward-card locked" id="lugatCard">
-    <div class="reward-icon-wrap"><i class="ti ti-book-2"></i></div>
-    <div class="reward-info">
-      <div class="reward-title">📚 Umumiy Lug'at</div>
-      <div class="reward-desc" id="lugatDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+    <div class="quick-links-row">
+      <div class="quick-link-btn" onclick="switchTab('bolimlar')"><i class="ti ti-books"></i><span>Bo'limlar</span></div>
+      <div class="quick-link-btn" onclick="switchTab('bozor')"><i class="ti ti-shopping-bag"></i><span>Bozor</span></div>
     </div>
   </div>
 
-  <div class="section-label"><span class="path-dot"></span>🛍️ XP Bozori</div>
+  <!-- ═══════════ TAB: BO'LIMLAR ═══════════ -->
+  <div class="tab-content" id="tab-bolimlar">
+    <div class="section-label"><span class="path-dot"></span>O'quv yo'li</div>
 
-  <div class="shop-wallet">
-    <div class="shop-wallet-label">Sarflanadigan hamyon</div>
-    <div class="shop-wallet-num" id="shopWalletBalance">0 XP</div>
-    <div class="shop-wallet-note" id="shopWalletNote">Jami to'plangan: 0 XP (unvon uchun, kamaymaydi)</div>
-  </div>
+    <!-- ═══════════ BO'LIMLAR GRID ═══════════ -->
+    <div class="roadmap" id="roadmap">
+      <div class="bolim-grid" id="roadRows"></div>
+    </div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🛡️</div><div class="shop-item-title">Kunlik himoya (Streak Freeze)</div></div>
-    <div class="shop-item-desc">Bir kun darsni o'tkazib yuborsangiz ham, kunlik zanjiringiz buzilmasligi uchun himoya faollashtiradi.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">150 XP</div><button class="shop-buy-btn" id="shopBtnFreeze" onclick="buyStreakFreeze()">Sotib olish</button></div>
-  </div>
-
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🎨</div><div class="shop-item-title">Premium Aura</div></div>
-    <div class="shop-item-desc">Ismingiz atrofida chiroyli, animatsiyali oltin porlash effekti yonadi.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">300 XP</div><button class="shop-buy-btn" id="shopBtnAura" onclick="buyPremiumAura()">Sotib olish</button></div>
-  </div>
-
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Arab maqollari (kolleksiya)</div></div>
-    <div class="shop-item-desc" id="shopBonusDesc">Har xariddan 3 tadan yangi maqol oching — arabcha matni, o'qilishi va chuqur ma'nosi bilan. Maksimum 5 marta (jami 15 ta maqol).</div>
-    <div class="shop-item-footer"><div class="shop-item-price" id="shopBonusPrice">150 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
-  </div>
-
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🖼️</div><div class="shop-item-title">Avatar ramkasi</div></div>
-    <div class="shop-item-desc">Rasmingiz atrofida bezakli chegara — bronza, kumush yoki oltin.</div>
-    <div class="shop-buy-row">
-      <button class="shop-buy-btn" id="shopBtnFrameBronze" onclick="buyAvatarFrame('bronze',200)">Bronza · 200 XP</button>
-      <button class="shop-buy-btn" id="shopBtnFrameSilver" onclick="buyAvatarFrame('silver',400)">Kumush · 400 XP</button>
-      <button class="shop-buy-btn" id="shopBtnFrameGold" onclick="buyAvatarFrame('gold',700)">Oltin · 700 XP</button>
+    <div class="footer-note">
+      Yangi bo'limlar qo'shilganda shu sahifa avtomatik yangilanadi.<br/>
+      Linkni saqlab qo'ying — <b>bitta link, barcha bo'limlar</b>.
     </div>
   </div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🎁</div><div class="shop-item-title">Sirli quti</div></div>
-    <div class="shop-item-desc">100 XP to'lab, tasodifiy miqdorda XP yutib oling — omadingizni sinang!</div>
-    <div class="shop-item-footer"><div class="shop-item-price">100 XP</div><button class="shop-buy-btn" id="shopBtnMystery" onclick="buyMysteryBox()">Ochish</button></div>
-    <div class="mystery-result" id="mysteryResult"></div>
-  </div>
+  <!-- ═══════════ TAB: BOZOR ═══════════ -->
+  <div class="tab-content" id="tab-bozor">
+    <div class="section-label"><span class="path-dot"></span>🛍️ XP Bozori</div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🌈</div><div class="shop-item-title">Mavzu rangi</div></div>
-    <div class="shop-item-desc">Ilova aksent rangini o'zgartiring.</div>
-    <div class="shop-buy-row">
-      <button class="shop-buy-btn" id="shopBtnThemeEmerald" onclick="buyTheme('emerald',250)">Zumrad · 250 XP</button>
-      <button class="shop-buy-btn" id="shopBtnThemeRuby" onclick="buyTheme('ruby',250)">Yoqut · 250 XP</button>
-      <button class="shop-buy-btn" id="shopBtnThemeGold" onclick="activateTheme('gold')">Standart oltin</button>
+    <div class="shop-wallet">
+      <div class="shop-wallet-label">Sarflanadigan hamyon</div>
+      <div class="shop-wallet-num" id="shopWalletBalance">0 XP</div>
+      <div class="shop-wallet-note" id="shopWalletNote">Jami to'plangan: 0 XP (unvon uchun, kamaymaydi)</div>
     </div>
-  </div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">✨</div><div class="shop-item-title">G'alaba konfetti uslubi</div></div>
-    <div class="shop-item-desc">Dars yakunida yog'iladigan konfettining rangini tanlang.</div>
-    <div class="shop-buy-row">
-      <button class="shop-buy-btn" id="shopBtnConfettiSilver" onclick="buyConfetti('silver',200)">Kumush · 200 XP</button>
-      <button class="shop-buy-btn" id="shopBtnConfettiFire" onclick="buyConfetti('fire',200)">Olov · 200 XP</button>
-      <button class="shop-buy-btn" id="shopBtnConfettiDefault" onclick="activateConfetti('default')">Standart</button>
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🛡️</div><div class="shop-item-title">Kunlik himoya (Streak Freeze)</div></div>
+      <div class="shop-item-desc">Bir kun darsni o'tkazib yuborsangiz ham, kunlik zanjiringiz buzilmasligi uchun himoya faollashtiradi.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">150 XP</div><button class="shop-buy-btn" id="shopBtnFreeze" onclick="buyStreakFreeze()">Sotib olish</button></div>
     </div>
-  </div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Arabcha talaffuz (to'liq paket)</div></div>
-    <div class="shop-item-desc">Flashkard, Gap Tuzish va Match Madness — barchasida so'zlarning to'g'ri arabcha talaffuzini eshiting.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">700 XP</div><button class="shop-buy-btn" id="shopBtnAudioAll" onclick="buyAudio('unlocked', 700, 'shopBtnAudioAll')">Sotib olish</button></div>
-  </div>
-
-  <div class="section-label"><span class="path-dot"></span>XP Xarajatlari</div>
-  <div class="reward-card unlocked" id="spendHistoryCard" onclick="toggleSpendHistory()" style="cursor:pointer;">
-    <div class="reward-icon-wrap"><i class="ti ti-receipt"></i></div>
-    <div class="reward-info">
-      <div class="reward-title">Xarid tarixi</div>
-      <div class="reward-desc" id="spendHistoryDesc">Hali xarid qilinmagan</div>
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🎨</div><div class="shop-item-title">Premium Aura</div></div>
+      <div class="shop-item-desc">Ismingiz atrofida chiroyli, animatsiyali oltin porlash effekti yonadi.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">300 XP</div><button class="shop-buy-btn" id="shopBtnAura" onclick="buyPremiumAura()">Sotib olish</button></div>
     </div>
-  </div>
-  <div id="spendHistoryList" style="display:none; margin-top:8px;"></div>
 
-  <div class="section-label"><span class="path-dot"></span>Maxsus</div>
-
-  <div class="reward-card locked" id="examCard">
-    <div class="reward-icon-wrap"><i class="ti ti-target-arrow"></i></div>
-    <div class="reward-info">
-      <div class="reward-title">Imtihonga tayyorgarlik</div>
-      <div class="reward-desc" id="examDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Arab maqollari (kolleksiya)</div></div>
+      <div class="shop-item-desc" id="shopBonusDesc">Har xariddan 3 tadan yangi maqol oching — arabcha matni, o'qilishi va chuqur ma'nosi bilan. Maksimum 5 marta (jami 15 ta maqol).</div>
+      <div class="shop-item-footer"><div class="shop-item-price" id="shopBonusPrice">150 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
     </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🖼️</div><div class="shop-item-title">Avatar ramkasi</div></div>
+      <div class="shop-item-desc">Rasmingiz atrofida bezakli chegara — bronza, kumush yoki oltin.</div>
+      <div class="shop-buy-row">
+        <button class="shop-buy-btn" id="shopBtnFrameBronze" onclick="buyAvatarFrame('bronze',200)">Bronza · 200 XP</button>
+        <button class="shop-buy-btn" id="shopBtnFrameSilver" onclick="buyAvatarFrame('silver',400)">Kumush · 400 XP</button>
+        <button class="shop-buy-btn" id="shopBtnFrameGold" onclick="buyAvatarFrame('gold',700)">Oltin · 700 XP</button>
+      </div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🎁</div><div class="shop-item-title">Sirli quti</div></div>
+      <div class="shop-item-desc">100 XP to'lab, tasodifiy miqdorda XP yutib oling — omadingizni sinang!</div>
+      <div class="shop-item-footer"><div class="shop-item-price">100 XP</div><button class="shop-buy-btn" id="shopBtnMystery" onclick="buyMysteryBox()">Ochish</button></div>
+      <div class="mystery-result" id="mysteryResult"></div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🌈</div><div class="shop-item-title">Mavzu rangi</div></div>
+      <div class="shop-item-desc">Ilova aksent rangini o'zgartiring.</div>
+      <div class="shop-buy-row">
+        <button class="shop-buy-btn" id="shopBtnThemeEmerald" onclick="buyTheme('emerald',250)">Zumrad · 250 XP</button>
+        <button class="shop-buy-btn" id="shopBtnThemeRuby" onclick="buyTheme('ruby',250)">Yoqut · 250 XP</button>
+        <button class="shop-buy-btn" id="shopBtnThemeGold" onclick="activateTheme('gold')">Standart oltin</button>
+      </div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">✨</div><div class="shop-item-title">G'alaba konfetti uslubi</div></div>
+      <div class="shop-item-desc">Dars yakunida yog'iladigan konfettining rangini tanlang.</div>
+      <div class="shop-buy-row">
+        <button class="shop-buy-btn" id="shopBtnConfettiSilver" onclick="buyConfetti('silver',200)">Kumush · 200 XP</button>
+        <button class="shop-buy-btn" id="shopBtnConfettiFire" onclick="buyConfetti('fire',200)">Olov · 200 XP</button>
+        <button class="shop-buy-btn" id="shopBtnConfettiDefault" onclick="activateConfetti('default')">Standart</button>
+      </div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Arabcha talaffuz (to'liq paket)</div></div>
+      <div class="shop-item-desc">Flashkard, Gap Tuzish va Match Madness — barchasida so'zlarning to'g'ri arabcha talaffuzini eshiting.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">700 XP</div><button class="shop-buy-btn" id="shopBtnAudioAll" onclick="buyAudio('unlocked', 700, 'shopBtnAudioAll')">Sotib olish</button></div>
+    </div>
+
+    <div class="section-label"><span class="path-dot"></span>XP Xarajatlari</div>
+    <div class="reward-card unlocked" id="spendHistoryCard" onclick="toggleSpendHistory()" style="cursor:pointer;">
+      <div class="reward-icon-wrap"><i class="ti ti-receipt"></i></div>
+      <div class="reward-info">
+        <div class="reward-title">Xarid tarixi</div>
+        <div class="reward-desc" id="spendHistoryDesc">Hali xarid qilinmagan</div>
+      </div>
+    </div>
+    <div id="spendHistoryList" style="display:none; margin-top:8px;"></div>
   </div>
 
-  <div class="reward-card locked" id="rewardCard" style="margin-top:12px">
-    <div class="reward-icon-wrap"><i class="ti ti-trophy"></i></div>
-    <div class="reward-info">
-      <div class="reward-title">🏆 G'olib kartasi</div>
-      <div class="reward-desc" id="rewardDesc">Yakuniy imtihonni 80%+ bilan topshiring</div>
+  <!-- ═══════════ TAB: IMTIHON ═══════════ -->
+  <div class="tab-content" id="tab-imtihon">
+    <div class="section-label"><span class="path-dot"></span>📝 Yakuniy Imtihon</div>
+    <div class="reward-card locked" id="examCard">
+      <div class="reward-icon-wrap"><i class="ti ti-target-arrow"></i></div>
+      <div class="reward-info">
+        <div class="reward-title">Imtihonga tayyorgarlik</div>
+        <div class="reward-desc" id="examDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+      </div>
+    </div>
+    <div class="tab-info-note">Imtihon barcha 12 bo'limdan aralashtirilgan savollardan iborat. O'tish balli — 80%.</div>
+  </div>
+
+  <!-- ═══════════ TAB: SOVG'A ═══════════ -->
+  <div class="tab-content" id="tab-sovga">
+    <div class="section-label"><span class="path-dot"></span>🎁 Sovg'alar</div>
+    <div class="reward-card locked" id="lugatCard">
+      <div class="reward-icon-wrap"><i class="ti ti-book-2"></i></div>
+      <div class="reward-info">
+        <div class="reward-title">📚 Umumiy Lug'at</div>
+        <div class="reward-desc" id="lugatDesc">Barcha tayyor bo'limlarni kamida 80% ga yetkazing</div>
+      </div>
+    </div>
+    <div class="reward-card locked" id="rewardCard" style="margin-top:12px">
+      <div class="reward-icon-wrap"><i class="ti ti-trophy"></i></div>
+      <div class="reward-info">
+        <div class="reward-title">🏆 G'olib kartasi</div>
+        <div class="reward-desc" id="rewardDesc">Yakuniy imtihonni 80%+ bilan topshiring</div>
+      </div>
+    </div>
+    <div class="tab-info-note">Imtihonni muvaffaqiyatli topshirganingizda +500 XP, maxsus unvon va shaxsiy G'olib kartasi qo'lga kiritasiz.</div>
+  </div>
+
+  <!-- ═══════════ TAB: G'OLIB KARTASI ═══════════ -->
+  <div class="tab-content" id="tab-golib">
+    <div class="section-label"><span class="path-dot"></span>🏆 G'olib kartasi</div>
+    <div id="golibTabLocked" style="display:none;">
+      <div class="reward-card locked">
+        <div class="reward-icon-wrap"><i class="ti ti-lock"></i></div>
+        <div class="reward-info">
+          <div class="reward-title">Hali ochilmagan</div>
+          <div class="reward-desc">Yakuniy imtihonni 80%+ natija bilan topshirganingizda, sizning shaxsiy G'olib kartangiz shu yerda paydo bo'ladi.</div>
+        </div>
+      </div>
+    </div>
+    <div id="golibTabUnlocked" style="display:none;">
+      <div class="rm-winner-card">
+        <div class="rm-crown">🏆</div>
+        <div class="rm-wc-title">G'OLIB KARTASI</div>
+        <div class="rm-wc-sub">Al-Manhaj al-A'lamiy · A1 daraja</div>
+        <div class="rm-wc-divider"></div>
+        <div class="rm-wc-name-label">Ushbu karta egasi</div>
+        <div class="rm-wc-name" id="golibTabName">Talaba</div>
+        <div class="rm-wc-rank">🏆 Al-Manhaj Fotihi — A1</div>
+        <div class="rm-wc-pct-row">Natija: <span id="golibTabPct">0%</span></div>
+        <div class="rm-wc-foot">A1 darajasini muvaffaqiyatli yakunladi</div>
+      </div>
+      <div class="rm-hint" style="margin-top:12px;"><i class="ti ti-camera"></i> Skrinshot qilib ulashing!</div>
     </div>
   </div>
 </div>
+
 
 <!-- ═══════════ KIRISH TANLOVI MODAL ═══════════ -->
 <div class="entry-modal-bg" id="entryModal">
@@ -604,6 +694,35 @@ function shopToast(msg, isErr){
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function(){ t.style.transition='opacity .3s ease'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2200);
+}
+// ═══════════ PAPKA (TAB) ALMASHTIRISH ═══════════
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el){ el.classList.remove('active'); });
+  var content = document.getElementById('tab-'+name);
+  var btn = document.querySelector('.tab-btn[data-tab="'+name+'"]');
+  if(content) content.classList.add('active');
+  if(btn) btn.classList.add('active');
+  document.getElementById('tabBar').scrollIntoView({behavior:'smooth', block:'start'});
+  if(name === 'golib') renderGolibTab();
+}
+function renderGolibTab(){
+  var examData = {};
+  try{ examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}'); }catch(e){}
+  var passed = !!examData.passed;
+  var lockedEl = document.getElementById('golibTabLocked');
+  var unlockedEl = document.getElementById('golibTabUnlocked');
+  if(!lockedEl || !unlockedEl) return;
+  if(passed){
+    lockedEl.style.display = 'none';
+    unlockedEl.style.display = 'block';
+    var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
+    document.getElementById('golibTabName').textContent = name;
+    document.getElementById('golibTabPct').textContent = (examData.bestPct || 0) + '%';
+  } else {
+    lockedEl.style.display = 'block';
+    unlockedEl.style.display = 'none';
+  }
 }
 function refreshHeroAndShop(){
   var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';

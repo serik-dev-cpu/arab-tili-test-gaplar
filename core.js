@@ -84,7 +84,7 @@ function getWalletXP(){
     return Number(d.wallet_xp)||0;
   }catch(e){ return 0; }
 }
-function spendWalletXP(amount){
+function spendWalletXP(amount, label){
   // Kelajakdagi do'kon uchun - hamyondan xarid, total_xp o'zgarmaydi (unvon buzilmaydi)
   try{
     const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
@@ -92,9 +92,17 @@ function spendWalletXP(amount){
     if(wallet < amount) return false;
     d.wallet_xp = wallet - amount;
     if(d.total_xp === undefined) d.total_xp = Number(d.xp)||0;
+    if(label){
+      if(!Array.isArray(d.spend_log)) d.spend_log = [];
+      d.spend_log.unshift({label: label, amount: amount, date: new Date().toISOString()});
+      if(d.spend_log.length > 50) d.spend_log = d.spend_log.slice(0, 50);
+    }
     localStorage.setItem(ACH_KEY, JSON.stringify(d));
     return true;
   }catch(e){ return false; }
+}
+function getSpendLog(){
+  try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Array.isArray(d.spend_log) ? d.spend_log : []; }catch(e){ return []; }
 }
 
 // ─────────────── Unvon (rank) ───────────────

@@ -66,6 +66,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .hero-greet{font-size:15px;font-weight:700;color:#EDEFF5;margin-bottom:2px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero-sub{font-size:12px;color:#8A93A6}
+.epic-title{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#D4A23A;}
+.level-badge{display:inline-block; font-size:9.5px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg,var(--gold),var(--gold2)); padding:2px 7px; border-radius:8px; margin-left:5px; letter-spacing:0.5px; vertical-align:middle;}
 .hero-stats{display:flex;gap:8px;flex-shrink:0;z-index:1}
 .stat-pill{
   display:flex;align-items:center;gap:5px;
@@ -289,8 +291,13 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .proverb-item{border-bottom:1px solid var(--gold-line); padding-bottom:14px; margin-bottom:14px;}
 .proverb-item:last-of-type{border-bottom:none; margin-bottom:0; padding-bottom:0;}
 .proverb-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:20px; color:var(--gold2); line-height:2.2; text-align:center; margin-bottom:8px;}
-.proverb-uz{font-size:13px; color:#EDEFF5; text-align:center; line-height:1.5;}
+.proverb-uz{font-size:13px; color:#EDEFF5; text-align:center; line-height:1.5; margin-bottom:8px;}
+.proverb-share-btn{display:block; margin:0 auto; font-size:11.5px; color:var(--gold2); background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:14px; padding:5px 14px; cursor:pointer;}
 .proverb-close-btn{width:100%; margin-top:6px; padding:12px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; font-weight:800; font-size:14px; cursor:pointer;}
+.spend-log-item{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; margin-bottom:6px; font-size:12.5px;}
+.spend-log-label{color:#EDEFF5;}
+.spend-log-date{color:#6B7280; font-size:10.5px; margin-top:2px;}
+.spend-log-amount{color:#E8765C; font-weight:800; white-space:nowrap;}
 .entry-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9600; display:none; align-items:center; justify-content:center; padding:20px;}
 .entry-modal-bg.show{display:flex;}
 .entry-modal-card{background:linear-gradient(160deg, rgba(38,42,54,0.96), rgba(20,22,29,0.98)); border:1px solid rgba(212,162,58,0.3); border-radius:22px; padding:24px 20px; max-width:360px; width:100%; box-shadow:0 12px 40px rgba(0,0,0,0.5);}
@@ -333,7 +340,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="hero-avatar" id="heroAvatar">?</div>
     <div class="hero-info">
       <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
-      <div class="hero-sub">Bugun ham davom etamizmi?</div>
+      <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
     </div>
     <div class="hero-stats">
       <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
@@ -402,9 +409,9 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 
   <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Bonus dars (Arab maqollari)</div></div>
-    <div class="shop-item-desc">3 ta eng go'zal arab maqolini — arabcha matni, o'qilishi va chuqur ma'nosi bilan — oching.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">500 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
+    <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Arab maqollari (kolleksiya)</div></div>
+    <div class="shop-item-desc" id="shopBonusDesc">Har xariddan 3 tadan yangi maqol oching — arabcha matni, o'qilishi va chuqur ma'nosi bilan. Maksimum 5 marta (jami 15 ta maqol).</div>
+    <div class="shop-item-footer"><div class="shop-item-price" id="shopBonusPrice">150 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
   </div>
 
   <div class="shop-item">
@@ -445,22 +452,20 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 
   <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Flashkard talaffuzi</div></div>
-    <div class="shop-item-desc">Flashkard rejimida arabcha so'zning to'g'ri talaffuzini eshiting.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioFc" onclick="buyAudio('flashcard', 400, 'shopBtnAudioFc')">Sotib olish</button></div>
+    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Arabcha talaffuz (to'liq paket)</div></div>
+    <div class="shop-item-desc">Flashkard, Gap Tuzish va Match Madness — barchasida so'zlarning to'g'ri arabcha talaffuzini eshiting.</div>
+    <div class="shop-item-footer"><div class="shop-item-price">700 XP</div><button class="shop-buy-btn" id="shopBtnAudioAll" onclick="buyAudio('unlocked', 700, 'shopBtnAudioAll')">Sotib olish</button></div>
   </div>
 
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Gap Tuzish talaffuzi</div></div>
-    <div class="shop-item-desc">Gap Tuzishda so'z plitkalarining arabcha talaffuzini eshiting.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">250 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 250, 'shopBtnAudioGap')">Sotib olish</button></div>
+  <div class="section-label"><span class="path-dot"></span>XP Xarajatlari</div>
+  <div class="reward-card unlocked" id="spendHistoryCard" onclick="toggleSpendHistory()" style="cursor:pointer;">
+    <div class="reward-icon-wrap"><i class="ti ti-receipt"></i></div>
+    <div class="reward-info">
+      <div class="reward-title">Xarid tarixi</div>
+      <div class="reward-desc" id="spendHistoryDesc">Hali xarid qilinmagan</div>
+    </div>
   </div>
-
-  <div class="shop-item">
-    <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Match Madness talaffuzi</div></div>
-    <div class="shop-item-desc">Eng ilg'or paket — Match Madness plitkalarining arabcha talaffuzini eshiting.</div>
-    <div class="shop-item-footer"><div class="shop-item-price">900 XP</div><button class="shop-buy-btn" id="shopBtnAudioMatch" onclick="buyAudio('match', 900, 'shopBtnAudioMatch')">Sotib olish</button></div>
-  </div>
+  <div id="spendHistoryList" style="display:none; margin-top:8px;"></div>
 
   <div class="section-label"><span class="path-dot"></span>Maxsus</div>
 
@@ -500,19 +505,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 <!-- ═══════════ MAQOLLAR MODAL (Bonus dars) ═══════════ -->
 <div class="proverb-modal-bg" id="proverbModal">
   <div class="proverb-card-modal">
-    <h3 style="text-align:center; margin-bottom:16px;">🔑 Arab maqollari</h3>
-    <div class="proverb-item">
-      <div class="proverb-ar">العِلْمُ فِي الصِّغَرِ كَالنَّقْشِ عَلَى الحَجَرِ</div>
-      <div class="proverb-uz">Yoshlikda o'rganilgan bilim — toshga o'yilgan naqsh kabidir.</div>
-    </div>
-    <div class="proverb-item">
-      <div class="proverb-ar">مَنْ طَلَبَ العُلَا سَهِرَ اللَّيَالِي</div>
-      <div class="proverb-uz">Yuksaklikka intilgan inson tunlarni bedor o'tkazadi.</div>
-    </div>
-    <div class="proverb-item">
-      <div class="proverb-ar">الوَقْتُ كَالسَّيْفِ إِنْ لَمْ تَقْطَعْهُ قَطَعَكَ</div>
-      <div class="proverb-uz">Vaqt qilich kabidir, agar sen uni kesmasang, u seni kesadi.</div>
-    </div>
+    <h3 style="text-align:center; margin-bottom:6px;">🔑 Arab maqollari</h3>
+    <div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:16px;" id="proverbCountLabel">0 / 15 maqol ochildi</div>
+    <div id="proverbListContainer"></div>
+    <button class="shop-buy-btn" id="proverbBuyMoreBtn" onclick="buyBonusLesson()" style="width:100%; margin-bottom:10px;">Yana 3 tasi — 150 XP</button>
     <button class="proverb-close-btn" onclick="closeProverbModal()">Yopish</button>
   </div>
 </div>
@@ -559,11 +555,13 @@ function initHeroStats(name){
   var xpEl = document.getElementById('heroXp');
   var streakEl = document.getElementById('heroStreak');
   var cardEl = document.querySelector('.hero-card');
+  var rankLabelEl = document.getElementById('heroRankLabel');
 
   if(avatarEl) avatarEl.textContent = initials || '?';
   if(greetEl) greetEl.textContent = 'Xush kelibsiz, ' + name + '!';
   if(xpEl) xpEl.textContent = xp;
   if(streakEl) streakEl.textContent = streak;
+  if(rankLabelEl){ var rank = getRank(xp); rankLabelEl.textContent = rank.label; }
 
   applyCosmetics(avatarEl, greetEl, cardEl);
 }
@@ -609,6 +607,40 @@ function refreshHeroAndShop(){
   var name = localStorage.getItem(SHARED_NAME_KEY) || 'Talaba';
   initHeroStats(name);
   renderShop();
+  updateSpendHistoryCard();
+}
+function toggleSpendHistory(){
+  var list = document.getElementById('spendHistoryList');
+  if(!list) return;
+  var showing = list.style.display !== 'none';
+  if(showing){ list.style.display = 'none'; return; }
+  renderSpendHistoryList();
+  list.style.display = 'block';
+}
+function renderSpendHistoryList(){
+  var list = document.getElementById('spendHistoryList');
+  var log = getSpendLog();
+  if(!list) return;
+  if(log.length === 0){
+    list.innerHTML = '<div style="text-align:center; color:#6B7280; font-size:12px; padding:12px 0;">Hali hech narsa sotib olinmagan</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<log.length;i++){
+    var item = log[i];
+    var d = new Date(item.date);
+    var dateStr = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+    html += '<div class="spend-log-item"><div><div class="spend-log-label">'+item.label+'</div><div class="spend-log-date">'+dateStr+'</div></div><div class="spend-log-amount">-'+item.amount+' XP</div></div>';
+  }
+  list.innerHTML = html;
+}
+function updateSpendHistoryCard(){
+  var log = getSpendLog();
+  var desc = document.getElementById('spendHistoryDesc');
+  if(!desc) return;
+  if(log.length === 0){ desc.textContent = 'Hali xarid qilinmagan'; return; }
+  var total = log.reduce(function(sum, item){ return sum + item.amount; }, 0);
+  desc.textContent = log.length + ' ta xarid — jami ' + total + ' XP sarflandi';
 }
 function renderShop(){
   var wallet = getWalletXP();
@@ -620,7 +652,22 @@ function renderShop(){
 
   setBtn('shopBtnFreeze', getShopFlag('streak_freeze'), 150, wallet, 'Faol ✓');
   setBtn('shopBtnAura', getShopFlag('premium_aura'), 300, wallet, 'Faol ✓');
-  setBtn('shopBtnBonus', getShopFlag('bonus_lesson'), 500, wallet, "Ko'rish", true);
+  var proverbPurchases = getProverbPurchases();
+  var bonusBtn = document.getElementById('shopBtnBonus');
+  var bonusPriceEl = document.getElementById('shopBonusPrice');
+  if(bonusBtn){
+    if(proverbPurchases >= PROVERB_MAX_PURCHASES){
+      bonusBtn.textContent = "Barchasi ochildi — Ko'rish";
+      bonusBtn.className = 'shop-buy-btn owned';
+    } else if(proverbPurchases > 0){
+      bonusBtn.textContent = 'Yana 3 tasi (' + proverbPurchases + '/5)';
+      bonusBtn.className = 'shop-buy-btn' + (wallet < PROVERB_COST ? ' disabled' : '');
+    } else {
+      bonusBtn.textContent = 'Sotib olish';
+      bonusBtn.className = 'shop-buy-btn' + (wallet < PROVERB_COST ? ' disabled' : '');
+    }
+  }
+  if(bonusPriceEl) bonusPriceEl.textContent = PROVERB_COST + ' XP';
 
   var frameTier = getShopFlag('avatar_frame_tier') || '';
   setFrameBtn('shopBtnFrameBronze', 'bronze', frameTier, 200, wallet);
@@ -639,9 +686,7 @@ function renderShop(){
   var defBtn = document.getElementById('shopBtnConfettiDefault');
   if(defBtn) defBtn.className = 'shop-buy-btn' + (confetti==='default' ? ' active-flag' : '');
 
-  setBtn('shopBtnAudioFc', getShopFlag('audio_flashcard'), 400, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioGap', getShopFlag('audio_gap'), 250, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioMatch', getShopFlag('audio_match'), 900, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioAll', getShopFlag('audio_unlocked'), 700, wallet, 'Faol ✓');
 }
 function setBtn(id, owned, cost, wallet, ownedLabel, alwaysClickable){
   var btn = document.getElementById(id);
@@ -673,36 +718,157 @@ function setThemeBtn(id, name, currentActive, cost, wallet, ownedFlagKey){
 
 function buyStreakFreeze(){
   if(getShopFlag('streak_freeze')) return;
-  if(!spendWalletXP(150)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(150, "Kunlik himoya (Streak Freeze)")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag('streak_freeze', true);
   shopToast('Himoya faollashdi!');
   refreshHeroAndShop();
 }
 function buyPremiumAura(){
   if(getShopFlag('premium_aura')) return;
-  if(!spendWalletXP(300)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(300, "Premium Aura")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag('premium_aura', true);
   shopToast('Aura yoqildi!');
   refreshHeroAndShop();
 }
+// ═══ Arab maqollari - 15 ta, har xaridda 3 tadan ochiladi (maksimum 5 marta) ═══
+var PROVERBS_DATA = [
+  {ar:"العِلْمُ فِي الصِّغَرِ كَالنَّقْشِ عَلَى الحَجَرِ", uz:"Yoshlikda o'rganilgan bilim — toshga o'yilgan naqsh kabidir."},
+  {ar:"مَنْ طَلَبَ العُلَا سَهِرَ اللَّيَالِي", uz:"Yuksaklikka intilgan inson tunlarni bedor o'tkazadi."},
+  {ar:"الوَقْتُ كَالسَّيْفِ إِنْ لَمْ تَقْطَعْهُ قَطَعَكَ", uz:"Vaqt qilich kabidir, agar sen uni kesmasang, u seni kesadi."},
+  {ar:"رُبَّ رَمْيَةٍ مِنْ غَيْرِ رَامٍ", uz:"Ba'zan otishni bilmagan kishi ham nishonga tegadi."},
+  {ar:"الصَّدِيقُ وَقْتَ الضِّيقِ", uz:"Haqiqiy do'st — qiyinchilik paytida biladigan do'stdir."},
+  {ar:"مَنْ جَدَّ وَجَدَ", uz:"Kim harakat qilsa, albatta erishadi."},
+  {ar:"الوِقَايَةُ خَيْرٌ مِنَ العِلَاجِ", uz:"Oldini olish — davolashdan yaxshiroqdir."},
+  {ar:"لَا تُؤَجِّلْ عَمَلَ اليَوْمِ إِلَى الغَدِ", uz:"Bugungi ishni ertaga qoldirma."},
+  {ar:"العَقْلُ السَّلِيمُ فِي الجِسْمِ السَّلِيمِ", uz:"Sog'lom tanda — sog'lom aql."},
+  {ar:"خَيْرُ الكَلَامِ مَا قَلَّ وَدَلَّ", uz:"Eng yaxshi so'z — qisqa va ma'noli bo'lgan so'zdir."},
+  {ar:"الصَّبْرُ مِفْتَاحُ الفَرَجِ", uz:"Sabr — najotning kalitidir."},
+  {ar:"مَنْ زَرَعَ حَصَدَ", uz:"Kim eksa, o'shani o'radi."},
+  {ar:"الجَارُ قَبْلَ الدَّارِ", uz:"Uyni emas, qo'shnini tanla."},
+  {ar:"اتَّقِ شَرَّ مَنْ أَحْسَنْتَ إِلَيْهِ", uz:"Yaxshilik qilgan kishingning yomonligidan ehtiyot bo'l."},
+  {ar:"إِذَا كَانَ الكَلَامُ مِنْ فِضَّةٍ فَالسُّكُوتُ مِنْ ذَهَبٍ", uz:"Agar so'z kumush bo'lsa, sukut — oltindir."}
+];
+var PROVERB_COST = 150;
+var PROVERB_MAX_PURCHASES = 5;
+
+function getProverbPurchases(){
+  return Number(getShopFlag('proverb_purchases')) || 0;
+}
 function buyBonusLesson(){
-  if(getShopFlag('bonus_lesson')){ openProverbModal(); return; }
-  if(!spendWalletXP(500)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
-  setShopFlag('bonus_lesson', true);
-  shopToast('Bonus dars ochildi!');
+  var purchases = getProverbPurchases();
+  if(purchases >= PROVERB_MAX_PURCHASES){ openProverbModal(); return; }
+  if(!spendWalletXP(PROVERB_COST, "Arab maqollari (3 tasi)")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  setShopFlag('proverb_purchases', purchases + 1);
+  shopToast('3 ta yangi maqol ochildi!');
   refreshHeroAndShop();
   setTimeout(openProverbModal, 300);
 }
+function renderProverbModal(){
+  var purchases = getProverbPurchases();
+  var unlockedCount = purchases * 3;
+  var container = document.getElementById('proverbListContainer');
+  var countLabel = document.getElementById('proverbCountLabel');
+  var buyBtn = document.getElementById('proverbBuyMoreBtn');
+  if(countLabel) countLabel.textContent = unlockedCount + ' / ' + PROVERBS_DATA.length + ' maqol ochildi';
+
+  if(container){
+    var html = '';
+    for(var i=0; i<unlockedCount && i<PROVERBS_DATA.length; i++){
+      var p = PROVERBS_DATA[i];
+      html += '<div class="proverb-item">' +
+        '<div class="proverb-ar">' + p.ar + '</div>' +
+        '<div class="proverb-uz">' + p.uz + '</div>' +
+        '<span class="proverb-share-btn" onclick="shareProverb(' + i + ')"><i class="ti ti-share"></i> Ulashish</span>' +
+        '</div>';
+    }
+    if(unlockedCount === 0){
+      html = '<div style="text-align:center; color:#8A93A6; font-size:13px; padding:20px 0;">Hali maqol ochilmagan. Pastdagi tugma orqali birinchisini oching!</div>';
+    }
+    container.innerHTML = html;
+  }
+  if(buyBtn){
+    if(purchases >= PROVERB_MAX_PURCHASES){
+      buyBtn.textContent = 'Barcha maqollar ochildi ✓';
+      buyBtn.className = 'shop-buy-btn owned';
+      buyBtn.style.cssText = 'width:100%; margin-bottom:10px;';
+      buyBtn.onclick = null;
+    } else {
+      buyBtn.textContent = 'Yana 3 tasi — ' + PROVERB_COST + ' XP';
+      buyBtn.className = 'shop-buy-btn' + (getWalletXP() < PROVERB_COST ? ' disabled' : '');
+      buyBtn.style.cssText = 'width:100%; margin-bottom:10px;';
+      buyBtn.onclick = buyBonusLesson;
+    }
+  }
+}
+function shareProverb(idx){
+  var p = PROVERBS_DATA[idx];
+  if(!p) return;
+  var canvas = document.createElement('canvas');
+  canvas.width = 800; canvas.height = 500;
+  var ctx = canvas.getContext('2d');
+  var grad = ctx.createLinearGradient(0,0,0,500);
+  grad.addColorStop(0, '#1e2230'); grad.addColorStop(1, '#14161d');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,800,500);
+  ctx.strokeStyle = '#D4A23A'; ctx.lineWidth = 3; ctx.strokeRect(15,15,770,470);
+  ctx.fillStyle = '#F0C56B'; ctx.font = 'bold 20px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('🔑 ARAB MAQOLLARI', 400, 70);
+  ctx.font = '46px "Amiri", serif'; ctx.direction = 'rtl';
+  wrapCanvasText(ctx, p.ar, 400, 220, 680, 60);
+  ctx.fillStyle = '#EDEFF5'; ctx.font = '20px Inter, sans-serif'; ctx.direction = 'ltr';
+  wrapCanvasText(ctx, p.uz, 400, 360, 680, 30);
+  ctx.fillStyle = '#8A93A6'; ctx.font = '14px Inter, sans-serif';
+  ctx.fillText('Al-Manhajul al-A\u2018lamiy · A1', 400, 460);
+
+  canvas.toBlob(function(blob){
+    if(!blob) return;
+    var file;
+    try{ file = new File([blob], 'arab-maqol.png', {type:'image/png'}); }catch(e){ file = null; }
+    if(file && navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({files:[file]}).catch(function(){ downloadBlobImage(blob); });
+    } else {
+      downloadBlobImage(blob);
+    }
+  }, 'image/png');
+}
+function downloadBlobImage(blob){
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'arab-maqol.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
+  var words = text.split(' ');
+  var line = '';
+  var lines = [];
+  for(var n=0; n<words.length; n++){
+    var testLine = line + words[n] + ' ';
+    if(ctx.measureText(testLine).width > maxWidth && n > 0){
+      lines.push(line);
+      line = words[n] + ' ';
+    } else {
+      line = testLine;
+    }
+  }
+  lines.push(line);
+  var startY = y - (lines.length-1)*lineHeight/2;
+  for(var i=0;i<lines.length;i++){
+    ctx.fillText(lines[i].trim(), x, startY + i*lineHeight);
+  }
+}
+function openProverbModal(){ renderProverbModal(); document.getElementById('proverbModal').classList.add('show'); }
+function closeProverbModal(){ document.getElementById('proverbModal').classList.remove('show'); }
+
 function buyAvatarFrame(tier, cost){
   var current = getShopFlag('avatar_frame_tier');
   if(current === tier) return;
-  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(cost, "Avatar ramkasi (" + tier + ")")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag('avatar_frame_tier', tier);
   shopToast('Ramka faollashdi!');
   refreshHeroAndShop();
 }
 function buyMysteryBox(){
-  if(!spendWalletXP(100)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(100, "Sirli quti")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   var roll = Math.random();
   var outcome;
   if(roll < 0.05) outcome = 500;
@@ -718,7 +884,7 @@ function buyMysteryBox(){
 function buyTheme(name, cost){
   var flagKey = 'theme_owned_' + name;
   if(getShopFlag(flagKey)){ activateTheme(name); return; }
-  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(cost, "Mavzu rangi (" + name + ")")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag(flagKey, true);
   activateTheme(name);
   shopToast('Mavzu rangi ochildi!');
@@ -730,7 +896,7 @@ function activateTheme(name){
 function buyConfetti(name, cost){
   var flagKey = 'confetti_owned_' + name;
   if(getShopFlag(flagKey)){ activateConfetti(name); return; }
-  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(cost, "Konfetti uslubi (" + name + ")")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag(flagKey, true);
   activateConfetti(name);
   shopToast('Konfetti uslubi ochildi!');
@@ -742,13 +908,11 @@ function activateConfetti(name){
 function buyAudio(mode, cost, btnId){
   var flagKey = 'audio_' + mode;
   if(getShopFlag(flagKey)) return;
-  if(!spendWalletXP(cost)){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(!spendWalletXP(cost, "Arabcha talaffuz")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag(flagKey, true);
   shopToast('Talaffuz ovozi ochildi!');
   refreshHeroAndShop();
 }
-function openProverbModal(){ document.getElementById('proverbModal').classList.add('show'); }
-function closeProverbModal(){ document.getElementById('proverbModal').classList.remove('show'); }
 
 function initNameGate(){
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
@@ -776,6 +940,7 @@ function initNameGate(){
     app.style.display = 'block';
     initHeroStats(savedName);
     renderShop();
+    updateSpendHistoryCard();
     return true;
   }
 

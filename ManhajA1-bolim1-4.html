@@ -219,6 +219,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 .epic-info{flex:1; min-width:0;}
 .epic-name{font-size:20px; font-weight:800; letter-spacing:-0.02em; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .epic-title{display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:700; margin-top:5px; padding:3px 10px; border-radius:12px;}
+.level-badge{display:inline-block; font-size:9.5px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg,var(--gold1),var(--gold2)); padding:2px 7px; border-radius:8px; margin-left:5px; letter-spacing:0.5px; vertical-align:middle;}
 .epic-xp-mini{font-size:11px; color:var(--muted); margin-top:4px;}
 .rank-bronze{color:#CD8B5E; background:rgba(205,139,94,0.15); border:1px solid rgba(205,139,94,0.35);}
 .rank-silver{color:#C0C6D0; background:rgba(192,198,208,0.15); border:1px solid rgba(192,198,208,0.35);}
@@ -248,9 +249,15 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 .rankup-title{font-size:22px; font-weight:800; margin-bottom:18px; color:var(--text);}
 .rankup-new-rank{font-size:20px; font-weight:800; margin:0 0 20px; padding:10px 20px; border-radius:14px; display:inline-block;}
 .rankup-new-rank.rank-sultan{animation:sultanGlow 1.5s ease-in-out infinite;}
+.floating-home-btn{position:fixed; bottom:22px; right:16px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--gold1),var(--gold2)); color:#0B0E14; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 18px rgba(212,162,58,0.45); cursor:pointer; z-index:9000; transition:transform .15s var(--ease);}
+.floating-home-btn:active{transform:scale(.92);}
 </style>
 </head>
 <body>
+
+<div class="floating-home-btn" id="floatingHomeBtn" onclick="showScreen('menu')" style="display:none;">
+  <i class="ti ti-home"></i>
+</div>
 
 <!-- ═══════════ BO'LIM TANLASH EKRANI ═══════════ -->
 <!-- ═══════════ BO'LIM MENYUSI ═══════════ -->
@@ -265,7 +272,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="epic-avatar" id="epic-avatar-menu">?</div>
     <div class="epic-info">
       <div class="epic-name" id="epic-name-menu">...</div>
-      <span class="epic-title" id="epic-title-menu">🌟 Navqiron</span>
+      <span class="epic-title" id="epic-title-menu">🌟 Navqiron</span><span class="level-badge">A1</span>
       <div class="epic-xp-mini" id="epic-xp-menu">0 XP</div>
     </div>
   </div>
@@ -301,7 +308,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="epic-avatar" id="epic-avatar-stats">?</div>
     <div class="epic-info">
       <div class="epic-name" id="epic-name-stats">...</div>
-      <span class="epic-title" id="epic-title-stats">🌟 Navqiron</span>
+      <span class="epic-title" id="epic-title-stats">🌟 Navqiron</span><span class="level-badge">A1</span>
       <div class="epic-xp-mini" id="epic-xp-stats">0 XP</div>
     </div>
   </div>
@@ -499,11 +506,18 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 <div class="victory-fx" id="victory-fx"></div>
 <div class="victory-trophy-pop" id="victory-trophy-pop"><i class="ti ti-trophy"></i></div>
 <div class="rankup-modal-bg" id="rankup-modal">
-  <div class="rankup-card">
+  <div class="rankup-card" id="rankup-card-inner">
     <div class="rankup-label">Tabriklaymiz!</div>
     <div class="rankup-title">Yangi unvon ochildi</div>
     <div class="rankup-new-rank" id="rankup-new-rank-label">🌟 Navqiron</div>
     <button class="btn btn-gold btn-block" onclick="closeRankUpModal()">Ajoyib!</button>
+  </div>
+  <div class="rankup-card" id="rankup-shop-offer" style="display:none;">
+    <div class="rankup-label" style="font-size:32px;">🛍️</div>
+    <div class="rankup-title">XP Bozorida yangi imkoniyatlar bor!</div>
+    <div style="color:#9BA3B4; font-size:13px; margin:6px 0 16px;">Ovoz, ramka, mavzu rangi va boshqa qiziqarli narsalarni sotib oling.</div>
+    <button class="btn btn-gold btn-block" onclick="location.href='index.html'">Hozir xarid qilish</button>
+    <button class="btn btn-block" onclick="closeRankUpModal()" style="margin-top:10px; background:rgba(255,255,255,0.06); color:#EDEFF5;">Davom etamiz</button>
   </div>
 </div>
 
@@ -1402,6 +1416,8 @@ function showScreen(name, push){
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   var target = document.getElementById('screen-'+name);
   if(target) target.classList.add('active');
+  var fhb = document.getElementById('floatingHomeBtn');
+  if(fhb) fhb.style.display = (name === 'menu') ? 'none' : 'flex';
   if(push !== false){ history.pushState({screen:name, bolim:currentBolim}, '', '#b'+(currentBolim||'')+'-'+name); }
   window.scrollTo(0,0);
   renderScreen(name);
@@ -1809,6 +1825,9 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     if(!smartPath.active) addAchievementXP(8);
     gtState.correctCount++;
+    if(getShopFlag('audio_unlocked')){
+      setTimeout(function(){ speakArabic(gtState.currentSentence.ar, document.querySelector('.gt-listen-btn')); }, 300);
+    }
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
     document.getElementById('gt-next-btn').style.display = 'none';
     setTimeout(advanceGapQuestion, 1800);
@@ -1818,6 +1837,9 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div>'+dtxt(gtState.currentSentence.uz)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
+    if(getShopFlag('audio_unlocked')){
+      setTimeout(function(){ speakArabic(gtState.currentSentence.ar, document.querySelector('.gt-listen-btn')); }, 300);
+    }
     // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
     document.getElementById('gt-next-btn').style.display = '';
   }
@@ -1843,6 +1865,9 @@ function renderFlashcard(){
   document.getElementById('flash-uz').textContent = dtxt(word.uz);
   document.getElementById('flash-card').classList.remove('flipped');
   fkState.flipped = false;
+  if(getShopFlag('audio_unlocked')){
+    setTimeout(function(){ speakArabic(word.ar, document.getElementById('fc-audio-btn')); }, 250);
+  }
 }
 document.getElementById('flash-card').addEventListener('click', function(){
   fkState.flipped = !fkState.flipped;
@@ -2076,13 +2101,23 @@ function showRankUpModal(rank){
   playRankUp();
   var modal = document.getElementById('rankup-modal');
   var label = document.getElementById('rankup-new-rank-label');
+  var cardInner = document.getElementById('rankup-card-inner');
+  var shopOffer = document.getElementById('rankup-shop-offer');
   if(label){
     label.textContent = rank.label;
     label.className = 'rankup-new-rank ' + rank.cls;
   }
+  if(cardInner) cardInner.style.display = '';
+  if(shopOffer) shopOffer.style.display = 'none';
   if(modal) modal.classList.add('show');
+  clearTimeout(window.__rankupAutoTimer);
+  window.__rankupAutoTimer = setTimeout(function(){
+    if(cardInner) cardInner.style.display = 'none';
+    if(shopOffer) shopOffer.style.display = '';
+  }, 2500);
 }
 function closeRankUpModal(){
+  clearTimeout(window.__rankupAutoTimer);
   var modal = document.getElementById('rankup-modal');
   if(modal) modal.classList.remove('show');
 }
@@ -2295,7 +2330,7 @@ function downloadShareImage(canvas){
 }
 function shareResult(){
   var rank = getRank(getAchievementXP()).label;
-  var text = "Men bugun Arab tili platformasida ajoyib natija ko\u2018rsatdim! Mening umumiy unvonim: " + rank + ". Sen ham o\u2018z bilimingni sinab ko\u2018r!";
+  var text = "Men bugun Arab tili platformasida ajoyib natija ko\u2018rsatdim! Mening umumiy unvonim: " + rank + ". Sen ham o\u2018z bilimingni sinab ko\u2018r!\n\nhttps://serik-dev-cpu.github.io/arab-tili-test-gaplar/";
   var canvas;
   try{ canvas = buildShareCanvas(); }catch(e){ copyShareText(text); return; }
 
@@ -2387,7 +2422,7 @@ function mmNextRound(){
   var colAr = document.getElementById('mm-col-ar');
   var colUz = document.getElementById('mm-col-uz');
   colAr.innerHTML = arItems.map(function(it){
-    return '<div class="mm-tile ar-tile" data-id="'+it.id+'" data-side="ar" style="font-size:'+mmFontSize(it.text, true)+'"><span class="audio-mini" onclick="event.stopPropagation(); handleAudioClick(\'match\', \''+it.text.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i></span>'+it.text+'</div>';
+    return '<div class="mm-tile ar-tile" data-id="'+it.id+'" data-side="ar" style="font-size:'+mmFontSize(it.text, true)+'">'+it.text+'</div>';
   }).join('');
   colUz.innerHTML = uzItems.map(function(it){
     return '<div class="mm-tile uz-tile" data-id="'+it.id+'" data-side="uz" style="font-size:'+mmFontSize(it.text, false)+'">'+it.text+'</div>';
@@ -2431,6 +2466,10 @@ function mmTileClick(tile){
 
   if(isMatch){
     playCorrect();
+    var arEl = (first.side === 'ar') ? first.el : tile;
+    if(getShopFlag('audio_unlocked')){
+      speakArabic(arEl.textContent.trim());
+    }
     mmState.combo++;
     if(mmState.combo > mmState.maxCombo) mmState.maxCombo = mmState.combo;
     mmState.roundMatched++;
@@ -2668,7 +2707,7 @@ function speakArabic(text, btnEl){
   window.speechSynthesis.speak(utter);
 }
 function handleAudioClick(mode, text, btnEl){
-  if(!getShopFlag('audio_'+mode)){
+  if(!getShopFlag('audio_unlocked')){
     showShopLockedToast();
     return;
   }

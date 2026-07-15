@@ -434,6 +434,15 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="quick-link-btn" onclick="switchTab('bolimlar')"><i class="ti ti-books"></i><span>Bo'limlar</span></div>
       <div class="quick-link-btn" onclick="switchTab('bozor')"><i class="ti ti-shopping-bag"></i><span>Bozor</span></div>
     </div>
+
+    <!-- ═══ HADIQATUL-ILM — markazlashtirilgan xato so'zlar (bilim bog'i) ═══ -->
+    <div class="reward-card unlocked" id="mistakesCard" onclick="openMistakesModal()" style="cursor:pointer; display:none;">
+      <div class="reward-icon-wrap"><i class="ti ti-notebook"></i></div>
+      <div class="reward-info">
+        <div class="reward-title">🌿 Hadiqatul-Ilm</div>
+        <div class="reward-desc" id="mistakesCardDesc">0 ta kurtak</div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══════════ TAB: BO'LIMLAR ═══════════ -->
@@ -643,6 +652,13 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
+<!-- ═══════════ QORA RO'YXAT MODAL ═══════════ -->
+<div class="proverb-modal-bg" id="mistakesModal">
+  <div class="proverb-card-modal" id="mistakesModalCard">
+    <!-- Bu ichki HTML JS orqali (renderMistakesModal) to'ldiriladi -->
+  </div>
+</div>
+
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
 <script src="core.js"></script>
 <script>
@@ -825,7 +841,154 @@ function refreshHeroAndShop(){
   initHeroStats(name);
   renderShop();
   updateSpendHistoryCard();
+  refreshMistakesCard();
 }
+/* ═══════════════ HADIQATUL-ILM (markazlashtirilgan xato so'zlar / bilim bog'i) ═══════════════ */
+var MISTAKES_QUIZ_SIZE = 10;
+var MISTAKES_LIVES = 3;
+var mistakesQuizState = null;
+
+function shuffleArr(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp = a[i]; a[i]=a[j]; a[j]=tmp;
+  }
+  return a;
+}
+
+function refreshMistakesCard(){
+  var list = getMistakes();
+  var card = document.getElementById('mistakesCard');
+  var desc = document.getElementById('mistakesCardDesc');
+  if(!card) return;
+  if(list.length === 0){ card.style.display = 'none'; return; }
+  card.style.display = 'flex';
+  if(desc) desc.textContent = list.length + " ta kurtak \u2014 Hadiqani parvarish qilish: " + getMistakeClearPrice() + ' XP';
+}
+
+function openMistakesModal(){
+  mistakesQuizState = null;
+  renderMistakesLanding();
+  document.getElementById('mistakesModal').classList.add('show');
+}
+function closeMistakesModal(){
+  document.getElementById('mistakesModal').classList.remove('show');
+  mistakesQuizState = null;
+  refreshMistakesCard();
+}
+function renderMistakesLanding(){
+  var list = getMistakes();
+  var price = getMistakeClearPrice();
+  var wallet = getWalletXP();
+  var card = document.getElementById('mistakesModalCard');
+  if(!card) return;
+  if(list.length === 0){
+    card.innerHTML =
+      '<h3 style="text-align:center; margin-bottom:6px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+      '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin:10px 0 18px;">Hozircha kurtaklar yo\'q \u2014 bog\'ingiz to\'liq gullagan!</div>' +
+      '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
+    return;
+  }
+  var canAfford = wallet >= price;
+  card.innerHTML =
+    '<h3 style="text-align:center; margin-bottom:6px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:16px;">' + list.length + " ta kurtak yig'ilgan" + '</div>' +
+    '<div style="font-size:13px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Parvarish mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 kurtaklar gullaydi va Hadiqadan chiqadi. Jon tugasa, kurtaklar joyida qoladi.</div>' +
+    '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Parvarish qilish \u2014 ' + price + ' XP</button>' +
+    (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:12px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +
+    '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
+}
+function startMistakesQuiz(){
+  var list = getMistakes();
+  if(list.length === 0) return;
+  var price = getMistakeClearPrice();
+  if(!spendWalletXP(price, "Hadiqatul-Ilm parvarish mashqi")){ renderMistakesLanding(); return; }
+  refreshHeroAndShop();
+  var indices = shuffleArr(list.map(function(_, i){ return i; })).slice(0, Math.min(MISTAKES_QUIZ_SIZE, list.length));
+  mistakesQuizState = { indices: indices, idx: 0, lives: MISTAKES_LIVES, failed: false };
+  renderMistakesQuestion();
+}
+function renderMistakesQuestion(){
+  var st = mistakesQuizState;
+  var card = document.getElementById('mistakesModalCard');
+  if(!st || !card) return;
+  var list = getMistakes();
+  var entry = list[st.indices[st.idx]];
+  if(!entry){ finishMistakesQuiz(true); return; }
+  var opts = entry.options && entry.options.length ? shuffleArr(entry.options) : shuffleArr([entry.correct]);
+  var livesHtml = '';
+  for(var i=0;i<MISTAKES_LIVES;i++){ livesHtml += (i < st.lives) ? '\u2764\uFE0F' : '\uD83D\uDDA4'; }
+  var qFontFamily = entry.questionIsArabic ? "'Noto Naskh Arabic','Amiri',serif" : "'Inter',sans-serif";
+  var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">' +
+      '<span style="font-size:13px; color:#9BA3B4;">' + (st.idx+1) + ' / ' + st.indices.length + '</span>' +
+      '<span style="font-size:18px; letter-spacing:2px;">' + livesHtml + '</span>' +
+    '</div>' +
+    '<div style="text-align:center; font-size:' + (entry.questionIsArabic ? '26px' : '17px') + '; font-weight:700; font-family:' + qFontFamily + '; direction:' + (entry.questionIsArabic ? 'rtl' : 'ltr') + '; line-height:1.8; margin-bottom:6px; color:#EDEFF5;">' + entry.question + '</div>' +
+    (entry.sub ? '<div style="text-align:center; font-size:12px; color:#8A93A6; margin-bottom:14px;">' + entry.sub + '</div>' : '<div style="margin-bottom:14px;"></div>') +
+    '<div id="mistakesOptWrap" style="display:flex; flex-direction:column; gap:9px; margin-bottom:6px;"></div>' +
+    '<div id="mistakesResultArea" style="margin-top:8px;"></div>';
+  card.innerHTML = html;
+  var wrap = document.getElementById('mistakesOptWrap');
+  opts.forEach(function(optText){
+    var isArabicOpt = entry.correctIsArabic;
+    var btn = document.createElement('button');
+    btn.className = 'shop-buy-btn';
+    btn.style.cssText = 'width:100%; text-align:center; font-size:' + (isArabicOpt ? '17px' : '13px') + '; font-family:' + (isArabicOpt ? "'Noto Naskh Arabic','Amiri',serif" : "'Inter',sans-serif") + '; direction:' + (isArabicOpt ? 'rtl' : 'ltr') + '; padding:12px;';
+    btn.textContent = optText;
+    btn.onclick = function(){ answerMistakesQuestion(this, entry); };
+    wrap.appendChild(btn);
+  });
+}
+function answerMistakesQuestion(btnEl, entry){
+  var st = mistakesQuizState;
+  if(!st) return;
+  var wrap = document.getElementById('mistakesOptWrap');
+  Array.from(wrap.children).forEach(function(b){ b.onclick = null; });
+  var isCorrect = btnEl.textContent === entry.correct;
+  if(isCorrect){
+    btnEl.style.borderColor = '#7ED8A0';
+  } else {
+    btnEl.style.borderColor = '#E8765C';
+    st.lives--;
+    Array.from(wrap.children).forEach(function(b){ if(b.textContent === entry.correct) b.style.borderColor = '#7ED8A0'; });
+  }
+  var ra = document.getElementById('mistakesResultArea');
+  if(st.lives <= 0){
+    ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:13px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 kurtaklar Hadiqada qoladi</div>' +
+      '<button class="proverb-close-btn" onclick="finishMistakesQuiz(false)">Tugatish</button>';
+    return;
+  }
+  var nextBtn = document.createElement('button');
+  nextBtn.className = 'proverb-close-btn';
+  nextBtn.textContent = (st.idx < st.indices.length - 1) ? 'Keyingi \u2192' : 'Yakunlash';
+  nextBtn.onclick = function(){
+    st.idx++;
+    if(st.idx < st.indices.length){ renderMistakesQuestion(); } else { finishMistakesQuiz(true); }
+  };
+  ra.appendChild(nextBtn);
+}
+function finishMistakesQuiz(success){
+  var st = mistakesQuizState;
+  var card = document.getElementById('mistakesModalCard');
+  if(!st || !card) return;
+  if(success){
+    removeMistakesByIndex(st.indices);
+    incMistakeClearCount();
+    card.innerHTML =
+      '<div style="text-align:center; font-size:40px; margin-bottom:6px;">\uD83C\uDF89</div>' +
+      '<h3 style="text-align:center; margin-bottom:8px;">Tabriklaymiz!</h3>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">' + st.indices.length + " ta kurtak gulladi va Hadiqadan chiqarildi." + '</div>' +
+      '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
+  } else {
+    card.innerHTML =
+      '<h3 style="text-align:center; margin-bottom:8px;">\uD83D\uDC94 Mashq tugadi</h3>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">Jonlar tugadi, lekin xavotir olmang \u2014 kurtaklar Hadiqada joyida qoldi. Yana urinib ko\'ring!</div>' +
+      '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
+  }
+  mistakesQuizState = null;
+}
+
 function toggleSpendHistory(){
   var list = document.getElementById('spendHistoryList');
   if(!list) return;
@@ -1130,7 +1293,6 @@ function buyAudio(mode, cost, btnId){
   shopToast('Talaffuz ovozi ochildi!');
   refreshHeroAndShop();
 }
-
 function initNameGate(){
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
   var gate = document.getElementById('nameGate');
@@ -1159,6 +1321,7 @@ function initNameGate(){
     renderShop();
     updateSpendHistoryCard();
     renderRankProgress();
+    refreshMistakesCard();
     return true;
   }
 

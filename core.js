@@ -124,6 +124,53 @@ function getStreak(){
   try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Number(d.streak)||0; }catch(e){ return 0; }
 }
 
+// ─────────────── Hadiqatul-Ilm (xato so'zlar / bilim bog'i) — markazlashtirilgan ───────────────
+// Har bo'limning Test rejimida xato javob berilgan savol shu yerga (barcha
+// bo'limlar uchun UMUMIY kalitga) o'z-o'zidan yetarli (self-contained) holda
+// saqlanadi — index.html qayta ishlash uchun boshqa fayldan hech narsa
+// so'ramaydi, faqat shu yozuvning o'zidan foydalanadi.
+var MISTAKES_KEY = 'arabic_mistakes_v1';
+var MISTAKE_CLEAR_PRICES = [50, 75, 100, 150]; // oxirgisida qotib qoladi (cheksiz takror)
+
+function addMistake(entry){
+  // entry: {qid, bolim, kind, question, questionIsArabic, correct, correctIsArabic, options, sub}
+  try{
+    var arr = JSON.parse(localStorage.getItem(MISTAKES_KEY) || '[]');
+    if(!Array.isArray(arr)) arr = [];
+    var idx = -1;
+    for(var i=0;i<arr.length;i++){ if(arr[i].qid === entry.qid && arr[i].bolim === entry.bolim){ idx = i; break; } }
+    entry.addedDate = new Date().toISOString();
+    if(idx === -1){ arr.push(entry); } else { arr[idx] = entry; }
+    localStorage.setItem(MISTAKES_KEY, JSON.stringify(arr));
+  }catch(e){}
+}
+function getMistakes(){
+  try{ var arr = JSON.parse(localStorage.getItem(MISTAKES_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }catch(e){ return []; }
+}
+function removeMistakesByIndex(indices){
+  // indices — getMistakes() natijasidagi massiv indekslari (qaysi yozuvlar o'chsin)
+  try{
+    var arr = getMistakes();
+    var keep = arr.filter(function(_, i){ return indices.indexOf(i) === -1; });
+    localStorage.setItem(MISTAKES_KEY, JSON.stringify(keep));
+  }catch(e){}
+}
+function getMistakeClearCount(){
+  try{ var d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Number(d.mistake_clear_count)||0; }catch(e){ return 0; }
+}
+function incMistakeClearCount(){
+  try{
+    var d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
+    d.mistake_clear_count = (Number(d.mistake_clear_count)||0) + 1;
+    localStorage.setItem(ACH_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function getMistakeClearPrice(){
+  var c = getMistakeClearCount();
+  var idx = Math.min(c, MISTAKE_CLEAR_PRICES.length-1);
+  return MISTAKE_CLEAR_PRICES[idx];
+}
+
 // ─────────────── Ovoz sozlamasi ───────────────
 function soundEnabled(){
   return localStorage.getItem('arabic_sound_off') !== '1';

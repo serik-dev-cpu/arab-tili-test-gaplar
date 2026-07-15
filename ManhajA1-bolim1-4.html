@@ -173,6 +173,9 @@
 .mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
 .mm-timer{font-size:15px; font-weight:700; color:var(--gold2); display:flex; align-items:center; gap:6px;}
 .mm-timer.warn{color:#E8765C;}
+.mm-extratime-offer{display:none; position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:9700; align-items:center; gap:10px; background:linear-gradient(160deg, rgba(38,42,54,0.97), rgba(20,22,29,0.98)); border:1px solid rgba(212,162,58,0.4); border-radius:16px; padding:10px 12px 10px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.5); font-size:13px; font-weight:700; color:#EDEFF5; white-space:nowrap; animation:fadeIn .25s ease;}
+.mm-extratime-btn{background:linear-gradient(135deg,var(--gold2),var(--gold1)); color:#1a1408; border:none; border-radius:10px; padding:7px 12px; font-weight:800; font-size:13px; cursor:pointer;}
+.mm-extratime-close{color:#6B7280; cursor:pointer; padding:4px; font-size:15px;}
 .mm-combo{font-size:14px; font-weight:800; color:var(--gold1); opacity:0; transition:opacity .2s var(--ease), transform .2s var(--ease);}
 .mm-combo.show{opacity:1;}
 .mm-combo.pulse{animation:mmComboPulse .35s var(--ease);}
@@ -478,6 +481,11 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="mm-board">
     <div class="mm-col" id="mm-col-ar"></div>
     <div class="mm-col" id="mm-col-uz"></div>
+  </div>
+  <div class="mm-extratime-offer" id="mmExtraTimeOffer">
+    <span>⏱️ +20 soniya kerakmi?</span>
+    <button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button>
+    <span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>
   </div>
 </div>
 
@@ -1592,6 +1600,7 @@ function quizTimeUp(){
   setBox(word.ar, 1);
   var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
   var correctIsArabic = !quizState.currentArToUz;
+  recordQuizMistake(word, correctText, correctIsArabic);
   showQuizAnswerAndWait(correctText, correctIsArabic, true);
 }
 function startQuiz(){
@@ -1667,8 +1676,30 @@ function handleQuizAnswer(btn){
     setBox(word.ar, 1);
     var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
     var correctIsArabic = !quizState.currentArToUz;
+    recordQuizMistake(word, correctText, correctIsArabic);
     showQuizAnswerAndWait(correctText, correctIsArabic, false);
   }
+}
+// Hadiqatul-Ilm: Test'da xato/vaqt tugashi bilan tugagan savolni markazlashtirilgan
+// ro'yxatga (core.js: addMistake) o'z-o'zidan yetarli holda yozib qo'yadi.
+// currentBolim — VOCAB qaysi bo'limga tegishli ekanini bildiradi (1-4 dinamik).
+function recordQuizMistake(word, correctText, correctIsArabic){
+  try{
+    var opts = Array.from(document.querySelectorAll('.opt-btn')).map(function(b){ return b.textContent; });
+    var question = quizState.currentArToUz ? word.ar : dtxt(word.uz);
+    var questionIsArabic = !!quizState.currentArToUz;
+    addMistake({
+      qid: word.ar,
+      bolim: currentBolim,
+      kind: 'word',
+      question: question,
+      questionIsArabic: questionIsArabic,
+      sub: '',
+      correct: correctText,
+      correctIsArabic: correctIsArabic,
+      options: opts
+    });
+  }catch(e){}
 }
 function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
   var ra = document.getElementById('quiz-result-area');
@@ -2421,11 +2452,44 @@ function startMatchMadness(){
     if(!mmState || mmState.finished) return;
     mmState.timeLeft--;
     document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
-    if(mmState.timeLeft <= 5){ document.getElementById('mm-timer').classList.add('warn'); }
+    if(mmState.timeLeft <= 5){
+      document.getElementById('mm-timer').classList.add('warn');
+      offerExtraTime();
+    }
     if(mmState.timeLeft <= 0){ finishMatchMadness(false); }
   }, 1000);
   showScreen('match');
   mmNextRound();
+}
+
+// "+20 soniya" taklifi — raund tugashiga 5 soniya qolganda, raundga FAQAT BIR
+// MARTA ko'rinadi (qayta-qayta chiqib ko'z ovorasini olmasligi uchun).
+function offerExtraTime(){
+  if(!mmState || mmState.extraTimeOffered || mmState.extraTimeUsed) return;
+  mmState.extraTimeOffered = true;
+  var box = document.getElementById('mmExtraTimeOffer');
+  if(box) box.style.display = 'flex';
+}
+function buyExtraTime(){
+  if(!mmState || mmState.finished) return;
+  if(!spendWalletXP(40, "Match Madness +20 soniya")){
+    var box = document.getElementById('mmExtraTimeOffer');
+    if(box) box.innerHTML = '<span>Hamyonda XP yetarli emas ✗</span>';
+    setTimeout(function(){ closeExtraTimeOffer(); }, 1400);
+    return;
+  }
+  mmState.timeLeft += 20;
+  mmState.extraTimeUsed = true;
+  document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
+  document.getElementById('mm-timer').classList.remove('warn');
+  closeExtraTimeOffer();
+}
+function closeExtraTimeOffer(){
+  var box = document.getElementById('mmExtraTimeOffer');
+  if(box){
+    box.style.display = 'none';
+    box.innerHTML = '<span>⏱️ +20 soniya kerakmi?</span><button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button><span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>';
+  }
 }
 
 function mmNextRound(){
@@ -2433,6 +2497,9 @@ function mmNextRound(){
   mmState.roundMatched = 0;
   mmState.selected = null;
   mmState.locked = false;
+  mmState.extraTimeOffered = false;
+  mmState.extraTimeUsed = false;
+  closeExtraTimeOffer();
   // Har yangi raundda vaqt qayta beriladi - jadval bo'yicha asta kamayadi (40, 30, 25, 20, 20...)
   mmState.timeLeft = MM_ROUND_TIMES[mmState.round-1] !== undefined ? MM_ROUND_TIMES[mmState.round-1] : MM_ROUND_TIMES[MM_ROUND_TIMES.length-1];
   document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
@@ -2560,6 +2627,7 @@ function finishMatchMadness(completed){
   if(!mmState || mmState.finished) return;
   mmState.finished = true;
   clearInterval(mmTimerInt);
+  closeExtraTimeOffer();
 
   if(smartPath.active){
     if(!completed) smartPath.hadAnyError = true;
@@ -2595,6 +2663,7 @@ function finishMatchMadness(completed){
 function quitMatchMadness(){
   clearInterval(mmTimerInt);
   if(mmState) mmState.finished = true;
+  closeExtraTimeOffer();
   showScreen('menu');
 }
 

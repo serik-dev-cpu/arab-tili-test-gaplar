@@ -439,7 +439,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="reward-card unlocked" id="mistakesCard" onclick="openMistakesModal()" style="cursor:pointer; display:none;">
       <div class="reward-icon-wrap"><i class="ti ti-notebook"></i></div>
       <div class="reward-info">
-        <div class="reward-title">🌿 Hadiqatul-Ilm</div>
+        <div class="reward-title">🌿 Hadiqatul-Ilm <span style="font-family:'Noto Naskh Arabic','Amiri',serif; color:#F0C56B; font-size:15px;">حَدِيقَةُ الْعِلْمِ</span></div>
+        <div style="font-size:11px; color:#8A93A6; font-style:italic; margin:2px 0 3px;">«Takrorlash — ilmning onasi»</div>
         <div class="reward-desc" id="mistakesCardDesc">0 ta kurtak</div>
       </div>
     </div>
@@ -877,6 +878,24 @@ function closeMistakesModal(){
   mistakesQuizState = null;
   refreshMistakesCard();
 }
+function renderMistakesListHTML(list){
+  // Kurtaklar (xato so'zlar) ro'yxati — talaba nimani takrorlashi kerakligini KO'RADI.
+  // Duolingo ham xatolarni ochiq ko'rsatadi: ko'rish = o'rganishning boshlanishi.
+  var rows = '';
+  for(var i=0;i<list.length;i++){
+    var e = list[i];
+    var q = String(e.question || '');
+    var c = String(e.correct || '');
+    var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:16px; line-height:2.0; direction:rtl;" : "font-size:12px;";
+    var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:15px; line-height:2.0; direction:rtl;" : "font-size:12px;";
+    rows += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.06);">' +
+      '<span style="color:#EDEFF5; ' + qStyle + '">\uD83C\uDF31 ' + q + '</span>' +
+      '<span style="color:#7ED8A0; ' + cStyle + '">' + c + '</span>' +
+    '</div>';
+  }
+  return '<div style="max-height:180px; overflow-y:auto; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:12px; margin-bottom:14px;">' + rows + '</div>';
+}
+
 function renderMistakesLanding(){
   var list = getMistakes();
   var price = getMistakeClearPrice();
@@ -885,15 +904,19 @@ function renderMistakesLanding(){
   if(!card) return;
   if(list.length === 0){
     card.innerHTML =
-      '<h3 style="text-align:center; margin-bottom:6px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+      '<h3 style="text-align:center; margin-bottom:2px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+      '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:6px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
       '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin:10px 0 18px;">Hozircha kurtaklar yo\'q \u2014 bog\'ingiz to\'liq gullagan!</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
     return;
   }
   var canAfford = wallet >= price;
   card.innerHTML =
-    '<h3 style="text-align:center; margin-bottom:6px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
-    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:16px;">' + list.length + " ta kurtak yig'ilgan" + '</div>' +
+    '<h3 style="text-align:center; margin-bottom:2px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+    '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:4px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
+    '<div style="text-align:center; font-size:11px; color:#8A93A6; font-style:italic; margin-bottom:8px;">\u00ABTakrorlash \u2014 ilmning onasi\u00BB</div>' +
+    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta kurtak yig'ilgan" + '</div>' +
+    renderMistakesListHTML(list) +
     '<div style="font-size:13px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Parvarish mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 kurtaklar gullaydi va Hadiqadan chiqadi. Jon tugasa, kurtaklar joyida qoladi.</div>' +
     '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Parvarish qilish \u2014 ' + price + ' XP</button>' +
     (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:12px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +

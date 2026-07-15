@@ -559,7 +559,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="mm-col" id="mm-col-uz"></div>
   </div>
   <div class="mm-extratime-offer" id="mmExtraTimeOffer">
-    <span>⏱️ +20 soniya kerakmi?</span>
+    <span>⏸️ Vaqt to’xtatildi — +20 soniya olasizmi?</span>
     <button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button>
     <span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>
   </div>
@@ -1991,6 +1991,7 @@ function startMatchMadness(){
   clearInterval(mmTimerInt);
   mmTimerInt = setInterval(function(){
     if(!mmState || mmState.finished) return;
+    if(mmState.offerOpen) return; // taklif ochiq bo'lsa vaqt TO'XTAB turadi
     mmState.timeLeft--;
     document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
     if(mmState.timeLeft <= 5){
@@ -2008,6 +2009,7 @@ function startMatchMadness(){
 function offerExtraTime(){
   if(!mmState || mmState.extraTimeOffered || mmState.extraTimeUsed) return;
   mmState.extraTimeOffered = true;
+  mmState.offerOpen = true; // vaqt to'xtaydi, plitkalar qulflanadi — bemalol o'ylang
   var box = document.getElementById('mmExtraTimeOffer');
   if(box) box.style.display = 'flex';
 }
@@ -2021,15 +2023,17 @@ function buyExtraTime(){
   }
   mmState.timeLeft += 20;
   mmState.extraTimeUsed = true;
+  mmState.offerOpen = false;
   document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
   document.getElementById('mm-timer').classList.remove('warn');
   closeExtraTimeOffer();
 }
 function closeExtraTimeOffer(){
+  if(mmState) mmState.offerOpen = false; // vaqt yana yura boshlaydi
   var box = document.getElementById('mmExtraTimeOffer');
   if(box){
     box.style.display = 'none';
-    box.innerHTML = '<span>⏱️ +20 soniya kerakmi?</span><button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button><span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>';
+    box.innerHTML = '<span>⏸️ Vaqt to’xtatildi — +20 soniya olasizmi?</span><button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button><span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>';
   }
 }
 
@@ -2073,7 +2077,7 @@ function mmNextRound(){
 }
 
 function mmTileClick(tile){
-  if(!mmState || mmState.locked || mmState.finished) return;
+  if(!mmState || mmState.locked || mmState.finished || mmState.offerOpen) return;
   if(tile.classList.contains('correct') || tile.classList.contains('empty')) return;
 
   var side = tile.getAttribute('data-side');
@@ -2229,9 +2233,13 @@ function smartPathRunMatch(){
   clearInterval(mmTimerInt);
   mmTimerInt = setInterval(function(){
     if(!mmState || mmState.finished) return;
+    if(mmState.offerOpen) return; // taklif ochiq bo'lsa vaqt TO'XTAB turadi
     mmState.timeLeft--;
     document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
-    if(mmState.timeLeft <= 5){ document.getElementById('mm-timer').classList.add('warn'); }
+    if(mmState.timeLeft <= 5){
+      document.getElementById('mm-timer').classList.add('warn');
+      offerExtraTime();
+    }
     if(mmState.timeLeft <= 0){ finishMatchMadness(false); }
   }, 1000);
   goScreen('match');

@@ -547,10 +547,43 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       </div>
     </div>
 
+    <div class="section-label"><span class="path-dot"></span>🎙️ Mutakallim — Arabcha ovoz</div>
+    <div style="font-size:12px; color:#8A93A6; margin:-4px 0 12px; line-height:1.5;">Har rejim uchun so'z va gaplarning to'g'ri arabcha talaffuzini eshiting. Har birini alohida sotib olasiz.</div>
+
     <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🔊</div><div class="shop-item-title">Arabcha talaffuz (to'liq paket)</div></div>
-      <div class="shop-item-desc">Flashkard, Gap Tuzish va Match Madness — barchasida so'zlarning to'g'ri arabcha talaffuzini eshiting.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">700 XP</div><button class="shop-buy-btn" id="shopBtnAudioAll" onclick="buyAudio('unlocked', 700, 'shopBtnAudioAll')">Sotib olish</button></div>
+      <div class="shop-item-head"><div class="shop-item-icon">🃏</div><div class="shop-item-title">Flashcard ovozi</div></div>
+      <div class="shop-item-desc">Flashcard kartani ochganda so'zning arabcha talaffuzi avtomatik eshitiladi.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioFlashcard" onclick="buyAudio('flashcard', 400, 'shopBtnAudioFlashcard')">Sotib olish</button></div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🔀</div><div class="shop-item-title">Match Madness ovozi</div></div>
+      <div class="shop-item-desc">To'g'ri juftlikni topganingizda so'zning arabcha talaffuzi eshitiladi.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioMatch" onclick="buyAudio('match', 400, 'shopBtnAudioMatch')">Sotib olish</button></div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">📝</div><div class="shop-item-title">Test ovozi</div></div>
+      <div class="shop-item-desc">Testda to'g'ri javob tanlaganingizda arabcha talaffuz o'qib beriladi — quloq va xotira mustahkamlanadi.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">500 XP</div><button class="shop-buy-btn" id="shopBtnAudioTest" onclick="buyAudio('test', 500, 'shopBtnAudioTest')">Sotib olish</button></div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">🧩</div><div class="shop-item-title">Gap Tuzish ovozi</div></div>
+      <div class="shop-item-desc">Gapni tuzganingizdan so'ng butun jumlaning to'g'ri arabcha talaffuzini eshiting — eng foydali, eng to'liq.</div>
+      <div class="shop-item-footer"><div class="shop-item-price">1000 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 1000, 'shopBtnAudioGap')">Sotib olish</button></div>
+    </div>
+
+    <div class="shop-item">
+      <div class="shop-item-head"><div class="shop-item-icon">⚡</div><div class="shop-item-title">Tezlik sozlash</div></div>
+      <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.8x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
+      <div class="shop-item-footer">
+        <div class="confetti-btn-row" id="speedBtnRow">
+          <button class="shop-buy-btn" id="speedBtn08" onclick="setAudioSpeed(0.8)">Sekin 0.8x</button>
+          <button class="shop-buy-btn" id="speedBtn10" onclick="setAudioSpeed(1.0)">Oddiy 1.0x</button>
+          <button class="shop-buy-btn" id="speedBtn12" onclick="setAudioSpeed(1.2)">Tez 1.2x</button>
+        </div>
+      </div>
     </div>
 
     <div class="section-label"><span class="path-dot"></span>XP Xarajatlari</div>
@@ -1145,7 +1178,11 @@ function renderShop(){
   var defBtn = document.getElementById('shopBtnConfettiDefault');
   if(defBtn) defBtn.className = 'shop-buy-btn' + (confetti==='default' ? ' active-flag' : '');
 
-  setBtn('shopBtnAudioAll', getShopFlag('audio_unlocked'), 700, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioFlashcard', getShopFlag('audio_flashcard') || getShopFlag('audio_unlocked'), 400, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioMatch', getShopFlag('audio_match') || getShopFlag('audio_unlocked'), 400, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioTest', getShopFlag('audio_test') || getShopFlag('audio_unlocked'), 500, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioGap', getShopFlag('audio_gap') || getShopFlag('audio_unlocked'), 1000, wallet, 'Faol ✓');
+  updateSpeedButtons();
 }
 function setBtn(id, owned, cost, wallet, ownedLabel, alwaysClickable){
   var btn = document.getElementById(id);
@@ -1366,11 +1403,30 @@ function activateConfetti(name){
 }
 function buyAudio(mode, cost, btnId){
   var flagKey = 'audio_' + mode;
-  if(getShopFlag(flagKey)) return;
-  if(!spendWalletXP(cost, "Arabcha talaffuz")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
+  if(getShopFlag(flagKey) || getShopFlag('audio_unlocked')) return;
+  var modeNames = {flashcard:'Flashcard', match:'Match Madness', test:'Test', gap:'Gap Tuzish'};
+  if(!spendWalletXP(cost, "Mutakallim — " + (modeNames[mode]||mode) + " ovozi")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag(flagKey, true);
-  shopToast('Talaffuz ovozi ochildi!');
+  shopToast((modeNames[mode]||mode) + " ovozi ochildi! 🎙️");
   refreshHeroAndShop();
+}
+// Ovoz tezligi (barcha rejimlarga umumiy) — localStorage'da saqlanadi
+function getAudioSpeed(){
+  var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
+  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8; // default sekin
+}
+function setAudioSpeed(speed){
+  localStorage.setItem('arabic_audio_speed', String(speed));
+  updateSpeedButtons();
+  var names = {0.8:'Sekin (0.8x)', 1.0:'Oddiy (1.0x)', 1.2:'Tez (1.2x)'};
+  shopToast('Ovoz tezligi: ' + (names[speed]||speed));
+}
+function updateSpeedButtons(){
+  var cur = getAudioSpeed();
+  [['speedBtn08',0.8],['speedBtn10',1.0],['speedBtn12',1.2]].forEach(function(pair){
+    var el = document.getElementById(pair[0]);
+    if(el){ el.className = 'shop-buy-btn' + (cur === pair[1] ? ' owned' : ''); }
+  });
 }
 // Kunlik kirmaganlik jazosi haqida ogohlantirish modali
 function showStreakPenaltyModal(p){

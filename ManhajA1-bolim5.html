@@ -781,6 +781,15 @@ function getShopFlag(key){
   try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return d[key]; }catch(e){ return undefined; }
 }
 
+// ═══ Mutakallim (ovoz): rejim bo'yicha ochilganini tekshirish ═══
+// Orqaga moslik: eski 'audio_unlocked' (to'liq paket) barcha rejimlarni ochadi.
+function hasAudioFor(mode){
+  try{
+    if(getShopFlag('audio_unlocked')) return true; // eski to'liq paket
+    return !!getShopFlag('audio_' + mode);
+  }catch(e){ return false; }
+}
+
 if(!currentName){ location.replace('index.html'); }
 
 // ---------------- Kirill -> Lotin ----------------
@@ -1089,7 +1098,7 @@ function renderFlashcard(){
   document.getElementById('fc-card').classList.remove('flipped');
   document.getElementById('fc-hint').style.display = 'block';
   fcState.flipped = false;
-  if(getShopFlag('audio_unlocked')){
+  if(hasAudioFor('flashcard')){
     setTimeout(function(){ speakArabic(w.ar, document.getElementById('fc-audio-btn')); }, 250);
   }
 }
@@ -1284,6 +1293,11 @@ function answerQuiz(item, btnEl, wrap, correctText, correctIsArabic){
   }
   quizState.results.push({ qid: item.kind==='word' ? item.data.ar : item.data.id, kind:item.kind, correct:isCorrect });
   if(isCorrect){
+    // Test ovozi (Mutakallim): to'g'ri javobda so'zning arabcha talaffuzi o'qiladi
+    if(hasAudioFor('test')){
+      var arText = (item.kind==='word') ? item.data.ar : (correctIsArabic ? correctText : '');
+      if(arText){ setTimeout(function(){ speakArabic(arText); }, 150); }
+    }
     setTimeout(()=>{ advanceQuiz(); }, 600);
   } else {
     recordQuizMistake(item, wrap, correctText, correctIsArabic);
@@ -1477,7 +1491,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     gapState.correct++;
-    if(getShopFlag('audio_unlocked')){
+    if(hasAudioFor('gap')){
       setTimeout(function(){ speakArabic(correctAnswer, document.querySelector('.gt-listen-btn')); }, 300);
     }
     // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
@@ -1488,7 +1502,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
-    if(getShopFlag('audio_unlocked')){
+    if(hasAudioFor('gap')){
       setTimeout(function(){ speakArabic(correctAnswer, document.querySelector('.gt-listen-btn')); }, 300);
     }
     // Xato bo'lsa - "Keyingi" tugmasi ko'rsatiladi, talaba to'g'ri javobni o'qib chiqsin
@@ -1596,14 +1610,15 @@ function speakArabic(text, btnEl){
   if(gender === 'female' && arabicVoiceFemale) chosenVoice = arabicVoiceFemale;
   else if(gender === 'male' && arabicVoiceMale) chosenVoice = arabicVoiceMale;
   if(chosenVoice) utter.voice = chosenVoice;
-  utter.rate = 0.8;
+  var _spd = parseFloat(localStorage.getItem('arabic_audio_speed'));
+  utter.rate = (_spd === 0.8 || _spd === 1.0 || _spd === 1.2) ? _spd : 0.8;
   if(btnEl) btnEl.classList.add('playing');
   utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
   utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
   window.speechSynthesis.speak(utter);
 }
 function handleAudioClick(mode, text, btnEl){
-  if(!getShopFlag('audio_unlocked')){
+  if(!hasAudioFor(mode)){
     showShopLockedToast();
     return;
   }
@@ -2167,7 +2182,7 @@ function mmTileClick(tile){
   if(isMatch){
     playCorrect();
     var arEl = (first.side === 'ar') ? first.el : tile;
-    if(getShopFlag('audio_unlocked')){
+    if(hasAudioFor('match')){
       speakArabic(arEl.textContent.trim());
     }
     mmState.combo++;

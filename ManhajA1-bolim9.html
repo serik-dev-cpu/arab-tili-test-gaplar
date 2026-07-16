@@ -797,7 +797,8 @@ function awardSessionXP(mode, fullXP){
   if(!log.done) log.done = {};
   var earned;
   if(log.done[mode]){
-    earned = 1;
+    // Bugun bu rejim allaqachon o'ynalgan - farmga qarshi: to'liq XP ning yarmi (kamida 2)
+    earned = Math.max(2, Math.floor(fullXP / 2));
   } else {
     earned = fullXP;
     log.done[mode] = true;
@@ -815,6 +816,16 @@ function quizXpByCount(){
     if(quizQuestionCount >= QUIZ_COUNT_SEKIN) return 10;
     return 8;
   }catch(e){ return 8; }
+}
+
+// ═══ Gap Tuzish XP: daraja bo'yicha (oson=5, ortacha=8, profi=10) ═══
+function gapXpByLevel(){
+  try{
+    var lvl = (typeof gapState !== 'undefined') ? gapState.level : 'oson';
+    if(lvl === 'profi') return 10;
+    if(lvl === 'ortacha') return 8;
+    return 5;
+  }catch(e){ return 5; }
 }
 function renderEpicProfile(prefix){
   var xp = getAchievementXP();
@@ -1402,7 +1413,7 @@ function advanceGapQuestion(){
   } else {
     var pctNow = getCourseProgressPct();
     var totalBefore = getAchievementXP();
-    var earnedXP = awardSessionXP('gap', 2);
+    var earnedXP = awardSessionXP('gap', gapXpByLevel());
     var totalAfter = getAchievementXP();
     var gTotal = gapState.list.length;
     var gWrong = gTotal - gapState.correct;

@@ -569,7 +569,8 @@ function awardSessionXP(mode, fullXP){
   if(!log.done) log.done = {};
   var earned;
   if(log.done[mode]){
-    earned = 1;
+    // Bugun bu rejim allaqachon o'ynalgan - farmga qarshi: to'liq XP ning yarmi (kamida 2)
+    earned = Math.max(2, Math.floor(fullXP / 2));
   } else {
     earned = fullXP;
     log.done[mode] = true;
@@ -587,6 +588,16 @@ function quizXpByCount(){
     if(quizQuestionCount >= QUIZ_COUNT_SEKIN) return 10;
     return 8;
   }catch(e){ return 8; }
+}
+
+// ═══ Gap Tuzish XP: daraja bo'yicha (oson=5, ortacha=8, profi=10) ═══
+function gapXpByLevel(){
+  try{
+    var lvl = (typeof gtState !== 'undefined') ? gtState.level : 'oson';
+    if(lvl === 'profi') return 10;
+    if(lvl === 'ortacha') return 8;
+    return 5;
+  }catch(e){ return 5; }
 }
 function renderEpicProfile(prefix){
   var xp = getAchievementXP();
@@ -1867,7 +1878,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.className = 'gt-result ok show';
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(gtState.currentSentence.uz)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
-    if(!smartPath.active) addAchievementXP(8);
+    // XP endi Gap Tuzish oxirida (finishSession) daraja bo'yicha beriladi
     gtState.correctCount++;
     if(getShopFlag('audio_unlocked')){
       setTimeout(function(){ speakArabic(gtState.currentSentence.ar, document.querySelector('.gt-listen-btn')); }, 300);
@@ -1969,6 +1980,7 @@ var sessionPctBefore = 0;
 function finishSession(type, correct, total){
   // Test uchun XP: savol soniga qarab 5/8/10 (Flashcard/Gap o'z XP'sini oladi)
   if(type === 'test' && !smartPath.active){ awardSessionXP('quiz', quizXpByCount()); }
+  if(type === 'gaptuzish' && !smartPath.active){ awardSessionXP('gap', gapXpByLevel()); }
   document.getElementById('natija-name').textContent = 'Salom, '+currentName+'!';
   var xpNow = getAchievementXP();
   var earned = Math.max(xpNow - sessionXpBefore, 0);

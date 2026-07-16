@@ -737,6 +737,14 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="stats-progress-bar" style="width:0%"></div></div>
   <div class="center-note" id="stats-progress-text">0%</div>
+  <div class="stat-row" style="margin-top:14px;">
+    <div class="stat-box"><div class="num" id="stat-wallet">0</div><div class="lbl">💰 Hamyon XP</div></div>
+    <div class="stat-box"><div class="num" id="stat-mastered">0</div><div class="lbl">🏆 Mukammal (5-box)</div></div>
+  </div>
+  <div class="stat-row" style="margin-top:10px;">
+    <div class="stat-box"><div class="num" id="stat-streak">0</div><div class="lbl">🔥 Kunlik ketma-ketlik</div></div>
+    <div class="stat-box"><div class="num" id="stat-next-rank">—</div><div class="lbl">📈 Keyingi unvongacha</div></div>
+  </div>
 </div>
 
 <div class="victory-fx" id="victory-fx"></div>
@@ -1511,6 +1519,16 @@ function renderStats(){
   const pct = Math.round((state.learned.length/ALL_WORDS.length)*100);
   document.getElementById('stats-progress-bar').style.width = pct+'%';
   document.getElementById('stats-progress-text').textContent = pct+'%';
+  let mastered = 0;
+  ALL_WORDS.forEach(function(w){ if((state.box[w.ar]||0) >= 5) mastered++; });
+  document.getElementById('stat-wallet').textContent = getWalletXP();
+  document.getElementById('stat-mastered').textContent = mastered;
+  document.getElementById('stat-streak').textContent = getStreak();
+  var xp2 = getAchievementXP();
+  var rIdx2 = getRankIndex(xp2);
+  var nextEl2 = document.getElementById('stat-next-rank');
+  if(rIdx2 >= RANK_THRESHOLDS.length - 1){ nextEl2.textContent = "Eng yuqori!"; }
+  else { nextEl2.textContent = (RANK_THRESHOLDS[rIdx2+1] - xp2) + ' XP'; }
 }
 
 updateAlifboLabel();

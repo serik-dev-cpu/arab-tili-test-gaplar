@@ -167,7 +167,7 @@
   .result-xp{font-size:32px;font-weight:800;color:var(--gold2);margin:10px 0;}
   .result-stats{display:flex;gap:12px;margin-top:16px;}
   .floating-menu-btn{position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4);cursor:pointer;}
-  .name-badge{position:fixed;bottom:24px;right:14px;z-index:99999;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:var(--gold2);font-size:12px;font-weight:700;padding:8px 14px;border-radius:20px;cursor:pointer;}
+  .name-badge{position:fixed;bottom:74px;left:14px;z-index:99999;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:var(--gold2);font-size:12px;font-weight:700;padding:8px 14px;border-radius:20px;cursor:pointer;}
 
 /* ═══════════════ Match Madness (so'z moslashtirish o'yini) ═══════════════ */
 .mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
@@ -322,6 +322,14 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   </div>
   <div class="progress-bar-bg" style="margin-top:14px;"><div class="progress-bar-fill" id="stats-progress-bar" style="width:0%"></div></div>
   <div class="center-note" id="stats-progress-text" style="margin-top:8px;">0%</div>
+  <div class="stat-row" style="margin-top:14px;">
+    <div class="stat-box"><div class="num" id="stat-wallet">0</div><div class="lbl">💰 Hamyon XP</div></div>
+    <div class="stat-box"><div class="num" id="stat-mastered">0</div><div class="lbl">🏆 Mukammal (5-box)</div></div>
+  </div>
+  <div class="stat-row" style="margin-top:10px;">
+    <div class="stat-box"><div class="num" id="stat-streak">0</div><div class="lbl">🔥 Kunlik ketma-ketlik</div></div>
+    <div class="stat-box"><div class="num" id="stat-next-rank">—</div><div class="lbl">📈 Keyingi unvongacha</div></div>
+  </div>
   <div class="center-note" style="color:var(--muted); font-size:12.5px; margin-top:18px;">Faqat Test orqali to'g'ri topilgan so'zlar shu yerda hisoblanadi.</div>
 </div>
 
@@ -649,7 +657,7 @@ function getTestableWordCount(){
 function getCourseProgressPct(){
   var p = loadProgress();
   var denom = getTestableWordCount();
-  return denom > 0 ? Math.round((p.learned.length/denom)*100) : 0;
+  return denom > 0 ? Math.min(100, Math.round((p.learned.length/denom)*100)) : 0;
 }
 
 // ═══ KIRILL <-> LOTIN ═══
@@ -1527,7 +1535,7 @@ function renderMenu(){
   var learnedCount = p.learned.length;
   var mastered = 0;
   VOCAB.forEach(function(w){ if((p.box[w.ar]||1) >= 5) mastered++; });
-  var pct = Math.round((learnedCount/getTestableWordCount())*100);
+  var pct = Math.min(100, Math.round((learnedCount/getTestableWordCount())*100));
   document.getElementById('menu-progress-pct').textContent = pct+'%';
   document.getElementById('menu-progress-bar').style.width = pct+'%';
   document.getElementById('menu-xp').textContent = getAchievementXP();
@@ -1540,12 +1548,22 @@ function renderMenu(){
 function renderStats(){
   var p = loadProgress();
   var learnedCount = p.learned.length;
-  var pct = Math.round((learnedCount/getTestableWordCount())*100);
+  var pct = Math.min(100, Math.round((learnedCount/getTestableWordCount())*100));
   renderEpicProfile('stats');
   document.getElementById('stat-learned').textContent = learnedCount;
   document.getElementById('stat-total').textContent = VOCAB.length;
   document.getElementById('stats-progress-bar').style.width = pct+'%';
   document.getElementById('stats-progress-text').textContent = pct+'%';
+  var mastered = 0;
+  VOCAB.forEach(function(w){ if((p.box[w.ar]||1) >= 5) mastered++; });
+  document.getElementById('stat-wallet').textContent = getWalletXP();
+  document.getElementById('stat-mastered').textContent = mastered;
+  document.getElementById('stat-streak').textContent = getStreak();
+  var xp = getAchievementXP();
+  var rIdx = getRankIndex(xp);
+  var nextEl = document.getElementById('stat-next-rank');
+  if(rIdx >= RANK_THRESHOLDS.length - 1){ nextEl.textContent = "Eng yuqori!"; }
+  else { nextEl.textContent = (RANK_THRESHOLDS[rIdx+1] - xp) + ' XP'; }
 }
 
 // ═══ LUG'AT ═══

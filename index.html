@@ -1554,10 +1554,10 @@ document.getElementById('changeNameLink').addEventListener('click', function(){
 });
 
 var BOLIMLAR = [
-  {num:1,  key:'arabic_uz_1bolim_v1',  total:55,  desc:"Salomlashish va tanishish", href:'ManhajA1-bolim1-4.html#1'},
-  {num:2,  key:'arabic_uz_2bolim_v1',  total:51,  desc:"Oila va oila a'zolari", href:'ManhajA1-bolim1-4.html#2'},
-  {num:3,  key:'arabic_uz_3bolim_v1',  total:50,  desc:"Dars va ta'lim", href:'ManhajA1-bolim1-4.html#3'},
-  {num:4,  key:'arabic_uz_4bolim_v1',  total:158, desc:"Kasblar va ishlar", href:'ManhajA1-bolim1-4.html#4'},
+  {num:1,  key:'arabic_uz_1bolim_v1',  total:42,  desc:"Salomlashish va tanishish", href:'ManhajA1-bolim1-4.html#1'},
+  {num:2,  key:'arabic_uz_2bolim_v1',  total:47,  desc:"Oila va oila a'zolari", href:'ManhajA1-bolim1-4.html#2'},
+  {num:3,  key:'arabic_uz_3bolim_v1',  total:43,  desc:"Dars va ta'lim", href:'ManhajA1-bolim1-4.html#3'},
+  {num:4,  key:'arabic_uz_4bolim_v1',  total:148, desc:"Kasblar va ishlar", href:'ManhajA1-bolim1-4.html#4'},
   {num:5,  key:'arabic_uz_5bolim_v1',  total:115, desc:"Uy va turar-joy"},
   {num:6,  key:'arabic_uz_6bolim_v1',  total:127, desc:"Joylar va ob-havo"},
   {num:7,  key:'arabic_uz_7bolim_v1',  total:121, desc:"Safar va transport"},
@@ -1663,8 +1663,8 @@ function initRoadmap(){
     }
 
     var learned = getLearnedCount(item.key);
-    var pct = item.total ? Math.round(learned / item.total * 100) : 0;
-    totalLearned += learned;
+    var pct = item.total ? Math.min(100, Math.round(learned / item.total * 100)) : 0;
+    totalLearned += Math.min(learned, item.total);
     totalWords += item.total;
     if(learned > 0) anyStarted = true;
     if(pct < 80){ allAbove80 = false; below80Count++; }

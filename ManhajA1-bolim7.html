@@ -1194,7 +1194,13 @@ function startQuiz(){
   const wordDirsShuffled = shuffle(wordDirsRaw);
   wordItems.forEach((it,i)=>{ it.dir = wordDirsShuffled[i]; });
   const grammarItems = GRAMMAR_ITEMS.map(g=>({kind:'grammar', data:g}));
-  const items = shuffle(wordItems.concat(grammarItems)).slice(0, quizQuestionCount);
+  // O'rganilmagan (learned'da yo'q) itemlarni BIRINCHI qo'yamiz — shunda bir necha testda 100% ga yetiladi
+  var _allItems = wordItems.concat(grammarItems);
+  var _learned = (state && state.learned) ? state.learned : [];
+  function _qid(it){ return it.kind==='word' ? it.data.ar : it.data.id; }
+  var _notLearned = shuffle(_allItems.filter(function(it){ return _learned.indexOf(_qid(it))===-1; }));
+  var _alreadyLearned = shuffle(_allItems.filter(function(it){ return _learned.indexOf(_qid(it))!==-1; }));
+  const items = _notLearned.concat(_alreadyLearned).slice(0, quizQuestionCount);
   quizState = { items, idx:0, results:[], timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();

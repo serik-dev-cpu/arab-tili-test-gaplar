@@ -642,9 +642,14 @@ function applyActiveTheme(){
   if(theme === 'emerald') document.documentElement.classList.add('theme-emerald');
   if(theme === 'ruby') document.documentElement.classList.add('theme-ruby');
 }
+function getTestableWordCount(){
+  // Faqat test qilinadigan so'zlar (grammatika atamalari test qilinmaydi, shuning uchun hisobga kirmaydi)
+  return VOCAB.filter(function(w){ return w.turi!=='grammatika_atamasi'; }).length;
+}
 function getCourseProgressPct(){
   var p = loadProgress();
-  return VOCAB.length > 0 ? Math.round((p.learned.length/VOCAB.length)*100) : 0;
+  var denom = getTestableWordCount();
+  return denom > 0 ? Math.round((p.learned.length/denom)*100) : 0;
 }
 
 // ═══ KIRILL <-> LOTIN ═══
@@ -1522,12 +1527,12 @@ function renderMenu(){
   var learnedCount = p.learned.length;
   var mastered = 0;
   VOCAB.forEach(function(w){ if((p.box[w.ar]||1) >= 5) mastered++; });
-  var pct = Math.round((learnedCount/VOCAB.length)*100);
+  var pct = Math.round((learnedCount/getTestableWordCount())*100);
   document.getElementById('menu-progress-pct').textContent = pct+'%';
   document.getElementById('menu-progress-bar').style.width = pct+'%';
   document.getElementById('menu-xp').textContent = getAchievementXP();
   var _mw = document.getElementById('menu-xp-wallet'); if(_mw) _mw.textContent = getWalletXP() + ' qoldiq';
-  document.getElementById('menu-learned').textContent = learnedCount+'/'+VOCAB.length;
+  document.getElementById('menu-learned').textContent = learnedCount+'/'+getTestableWordCount();
   document.getElementById('menu-mastered').textContent = mastered;
   renderEpicProfile('menu');
 }
@@ -1535,7 +1540,7 @@ function renderMenu(){
 function renderStats(){
   var p = loadProgress();
   var learnedCount = p.learned.length;
-  var pct = Math.round((learnedCount/VOCAB.length)*100);
+  var pct = Math.round((learnedCount/getTestableWordCount())*100);
   renderEpicProfile('stats');
   document.getElementById('stat-learned').textContent = learnedCount;
   document.getElementById('stat-total').textContent = VOCAB.length;
@@ -1646,12 +1651,18 @@ function startQuiz(){
 // past "box" darajali (yaxshi bilinmagan) so'zlar tasodifiy tarzda oldinroq chiqish
 // ehtimoli yuqoriroq bo'ladi, lekin baribir HAMMASI bir marta so'raladi.
 function buildWeightedQueue(pool){
-  var weighted = pool.map(function(w){
-    var box = getBox(w.ar);
-    return {w:w, key: Math.random() * Math.max(1, 6-box)};
-  });
-  weighted.sort(function(a,b){ return b.key - a.key; });
-  return weighted.map(function(x){ return x.w; });
+  var p = loadProgress();
+  var learned = p.learned || [];
+  // O'rganilmagan (learned'da yo'q) so'zlar BIRINCHI navbatda — shunda bir necha testda 100% ga yetiladi
+  var notLearned = pool.filter(function(w){ return learned.indexOf(w.ar)===-1; });
+  var already = pool.filter(function(w){ return learned.indexOf(w.ar)!==-1; });
+  function weightedSort(arr){
+    return arr.map(function(w){
+      var box = getBox(w.ar);
+      return {w:w, key: Math.random() * Math.max(1, 6-box)};
+    }).sort(function(a,b){ return b.key - a.key; }).map(function(x){ return x.w; });
+  }
+  return weightedSort(notLearned).concat(weightedSort(already));
 }
 function nextQuizQuestion(){
   if(quizState.idx >= quizState.total){
@@ -1942,7 +1953,7 @@ document.getElementById('flash-card').addEventListener('click', function(){
 function fkAdvance(know){
   var word = VOCAB[fkState.order[fkState.idx]];
   var box = getBox(word.ar);
-  if(know){ setBox(word.ar, box+1); if(!smartPath.active) addAchievementXP(3); fkState.knowCount++; }
+  if(know){ setBox(word.ar, box+1); fkState.knowCount++; } // XP endi sessiya oxirida (finishSession)
   else { setBox(word.ar, 1); fkState.dontKnowCount++; }
   fkState.idx++;
   if(fkState.idx >= fkState.order.length){
@@ -1992,6 +2003,7 @@ function finishSession(type, correct, total){
   // Test uchun XP: savol soniga qarab 5/8/10 (Flashcard/Gap o'z XP'sini oladi)
   if(type === 'test' && !smartPath.active){ awardSessionXP('quiz', quizXpByCount()); }
   if(type === 'gaptuzish' && !smartPath.active){ awardSessionXP('gap', gapXpByLevel()); }
+  if(type === 'flashkard' && !smartPath.active){ awardSessionXP('flashcard', 1); }
   document.getElementById('natija-name').textContent = 'Salom, '+currentName+'!';
   var xpNow = getAchievementXP();
   var earned = Math.max(xpNow - sessionXpBefore, 0);

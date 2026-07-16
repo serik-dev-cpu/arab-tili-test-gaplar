@@ -1077,13 +1077,13 @@ var BOLIM_NUM = 8; // Hadiqatul-Ilm yozuvlari uchun (core.js: addMistake)
 let quizState = null;
 function buildQuiz(count){
   const state = loadProgress();
-  const box = state.box || {};
-  const weight = w => Math.max(1, 6-(box[w.ar]||1));
-  let weighted = [];
-  ALL_WORDS.forEach(w=>{ const wt=weight(w); for(let i=0;i<wt;i++) weighted.push(w); });
+  const learned = state.learned || [];
   let sel = [];
   const seenAr = new Set();
-  shuffle(weighted).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  // 1-navbat: hali O'RGANILMAGAN so'zlar (learned'da yo'q) — shunda bir necha testda 100% ga yetiladi
+  shuffle(ALL_WORDS.filter(w=>learned.indexOf(w.ar)===-1)).forEach(w=>{
+    if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
+  // 2-navbat: agar joy qolsa — o'rganilganlarni ham (takror mustahkamlash)
   if(sel.length<count){
     shuffle(ALL_WORDS).forEach(w=>{ if(sel.length<count && !seenAr.has(w.ar)){ seenAr.add(w.ar); sel.push(w);} });
   }

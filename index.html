@@ -326,6 +326,16 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .shop-item-desc{font-size:12.5px; color:#8A93A6; line-height:1.5; margin-bottom:10px;}
 .shop-item-footer{display:flex; align-items:center; justify-content:space-between; gap:10px;}
 .shop-item-price{font-size:14px; font-weight:800; color:var(--gold2);}
+.shop-folder{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.78)); border:1px solid var(--gold-line); border-radius:18px; margin-bottom:14px; overflow:hidden; box-shadow:var(--shadow-soft);}
+.shop-folder-head{display:flex; align-items:center; gap:12px; padding:16px; cursor:pointer; user-select:none;}
+.shop-folder-icon{font-size:26px; flex-shrink:0;}
+.shop-folder-title{font-size:15px; font-weight:800; flex:1; min-width:0;}
+.shop-folder-count{font-size:11px; color:var(--muted); font-weight:700; background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:10px; padding:2px 8px; flex-shrink:0;}
+.shop-folder-chevron{font-size:16px; color:var(--gold2); flex-shrink:0; transition:transform .2s ease;}
+.shop-folder.open .shop-folder-chevron{transform:rotate(180deg);}
+.shop-folder-body{display:none; padding:0 14px 14px;}
+.shop-folder.open .shop-folder-body{display:block;}
+.shop-folder-body .shop-item:last-child{margin-bottom:0;}
 .shop-buy-row{display:flex; gap:8px;}
 .shop-buy-btn{padding:9px 14px; border-radius:12px; border:none; font-weight:700; font-size:12.5px; cursor:pointer; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; transition:transform .15s var(--ease), opacity .15s ease;}
 .shop-buy-btn:active{transform:scale(.95);}
@@ -492,96 +502,126 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="shop-wallet-note" id="shopWalletNote">Jami to'plangan: 0 XP (unvon uchun, kamaymaydi)</div>
     </div>
 
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🛡️</div><div class="shop-item-title">Kunlik himoya (Streak Freeze)</div></div>
-      <div class="shop-item-desc">Bir kun darsni o'tkazib yuborsangiz ham, kunlik zanjiringiz buzilmasligi uchun himoya faollashtiradi.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">150 XP</div><button class="shop-buy-btn" id="shopBtnFreeze" onclick="buyStreakFreeze()">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🎨</div><div class="shop-item-title">Premium Aura</div></div>
-      <div class="shop-item-desc">Ismingiz atrofida chiroyli, animatsiyali oltin porlash effekti yonadi.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">300 XP</div><button class="shop-buy-btn" id="shopBtnAura" onclick="buyPremiumAura()">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Arab maqollari (kolleksiya)</div></div>
-      <div class="shop-item-desc" id="shopBonusDesc">Har xariddan 3 tadan yangi maqol oching — arabcha matni, o'qilishi va chuqur ma'nosi bilan. Maksimum 5 marta (jami 15 ta maqol).</div>
-      <div class="shop-item-footer"><div class="shop-item-price" id="shopBonusPrice">150 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🖼️</div><div class="shop-item-title">Avatar ramkasi</div></div>
-      <div class="shop-item-desc">Rasmingiz atrofida bezakli chegara — bronza, kumush yoki oltin.</div>
-      <div class="shop-buy-row">
-        <button class="shop-buy-btn" id="shopBtnFrameBronze" onclick="buyAvatarFrame('bronze',200)">Bronza · 200 XP</button>
-        <button class="shop-buy-btn" id="shopBtnFrameSilver" onclick="buyAvatarFrame('silver',400)">Kumush · 400 XP</button>
-        <button class="shop-buy-btn" id="shopBtnFrameGold" onclick="buyAvatarFrame('gold',700)">Oltin · 700 XP</button>
+    <div class="shop-folder" id="shopFolderProtection">
+      <div class="shop-folder-head" onclick="toggleShopFolder('shopFolderProtection')">
+        <div class="shop-folder-icon">🛡️</div>
+        <div class="shop-folder-title">Kunlik yordamchilar</div>
+        <div class="shop-folder-count">2</div>
+        <i class="ti ti-chevron-down shop-folder-chevron"></i>
+      </div>
+      <div class="shop-folder-body">
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🛡️</div><div class="shop-item-title">Kunlik himoya (Streak Freeze)</div></div>
+          <div class="shop-item-desc">Bir kun darsni o'tkazib yuborsangiz ham, kunlik zanjiringiz buzilmasligi uchun himoya faollashtiradi.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">150 XP</div><button class="shop-buy-btn" id="shopBtnFreeze" onclick="buyStreakFreeze()">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🎁</div><div class="shop-item-title">Sirli quti</div></div>
+          <div class="shop-item-desc">100 XP to'lab, tasodifiy miqdorda XP yutib oling — omadingizni sinang!</div>
+          <div class="shop-item-footer"><div class="shop-item-price">100 XP</div><button class="shop-buy-btn" id="shopBtnMystery" onclick="buyMysteryBox()">Ochish</button></div>
+          <div class="mystery-result" id="mysteryResult"></div>
+        </div>
       </div>
     </div>
 
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🎁</div><div class="shop-item-title">Sirli quti</div></div>
-      <div class="shop-item-desc">100 XP to'lab, tasodifiy miqdorda XP yutib oling — omadingizni sinang!</div>
-      <div class="shop-item-footer"><div class="shop-item-price">100 XP</div><button class="shop-buy-btn" id="shopBtnMystery" onclick="buyMysteryBox()">Ochish</button></div>
-      <div class="mystery-result" id="mysteryResult"></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🌈</div><div class="shop-item-title">Mavzu rangi</div></div>
-      <div class="shop-item-desc">Ilova aksent rangini o'zgartiring.</div>
-      <div class="shop-buy-row">
-        <button class="shop-buy-btn" id="shopBtnThemeEmerald" onclick="buyTheme('emerald',250)">Zumrad · 250 XP</button>
-        <button class="shop-buy-btn" id="shopBtnThemeRuby" onclick="buyTheme('ruby',250)">Yoqut · 250 XP</button>
-        <button class="shop-buy-btn" id="shopBtnThemeGold" onclick="activateTheme('gold')">Standart oltin</button>
+    <div class="shop-folder" id="shopFolderAppearance">
+      <div class="shop-folder-head" onclick="toggleShopFolder('shopFolderAppearance')">
+        <div class="shop-folder-icon">🎨</div>
+        <div class="shop-folder-title">Ko'rinish va bezaklar</div>
+        <div class="shop-folder-count">4</div>
+        <i class="ti ti-chevron-down shop-folder-chevron"></i>
+      </div>
+      <div class="shop-folder-body">
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🎨</div><div class="shop-item-title">Premium Aura</div></div>
+          <div class="shop-item-desc">Ismingiz atrofida chiroyli, animatsiyali oltin porlash effekti yonadi.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">300 XP</div><button class="shop-buy-btn" id="shopBtnAura" onclick="buyPremiumAura()">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🖼️</div><div class="shop-item-title">Avatar ramkasi</div></div>
+          <div class="shop-item-desc">Rasmingiz atrofida bezakli chegara — bronza, kumush yoki oltin.</div>
+          <div class="shop-buy-row">
+            <button class="shop-buy-btn" id="shopBtnFrameBronze" onclick="buyAvatarFrame('bronze',200)">Bronza · 200 XP</button>
+            <button class="shop-buy-btn" id="shopBtnFrameSilver" onclick="buyAvatarFrame('silver',400)">Kumush · 400 XP</button>
+            <button class="shop-buy-btn" id="shopBtnFrameGold" onclick="buyAvatarFrame('gold',700)">Oltin · 700 XP</button>
+          </div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🌈</div><div class="shop-item-title">Mavzu rangi</div></div>
+          <div class="shop-item-desc">Ilova aksent rangini o'zgartiring.</div>
+          <div class="shop-buy-row">
+            <button class="shop-buy-btn" id="shopBtnThemeEmerald" onclick="buyTheme('emerald',250)">Zumrad · 250 XP</button>
+            <button class="shop-buy-btn" id="shopBtnThemeRuby" onclick="buyTheme('ruby',250)">Yoqut · 250 XP</button>
+            <button class="shop-buy-btn" id="shopBtnThemeGold" onclick="activateTheme('gold')">Standart oltin</button>
+          </div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">✨</div><div class="shop-item-title">G'alaba konfetti uslubi</div></div>
+          <div class="shop-item-desc">Dars yakunida yog'iladigan konfettining rangini tanlang.</div>
+          <div class="shop-buy-row">
+            <button class="shop-buy-btn" id="shopBtnConfettiSilver" onclick="buyConfetti('silver',200)">Kumush · 200 XP</button>
+            <button class="shop-buy-btn" id="shopBtnConfettiFire" onclick="buyConfetti('fire',200)">Olov · 200 XP</button>
+            <button class="shop-buy-btn" id="shopBtnConfettiDefault" onclick="activateConfetti('default')">Standart</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">✨</div><div class="shop-item-title">G'alaba konfetti uslubi</div></div>
-      <div class="shop-item-desc">Dars yakunida yog'iladigan konfettining rangini tanlang.</div>
-      <div class="shop-buy-row">
-        <button class="shop-buy-btn" id="shopBtnConfettiSilver" onclick="buyConfetti('silver',200)">Kumush · 200 XP</button>
-        <button class="shop-buy-btn" id="shopBtnConfettiFire" onclick="buyConfetti('fire',200)">Olov · 200 XP</button>
-        <button class="shop-buy-btn" id="shopBtnConfettiDefault" onclick="activateConfetti('default')">Standart</button>
+    <div class="shop-folder" id="shopFolderBonus">
+      <div class="shop-folder-head" onclick="toggleShopFolder('shopFolderBonus')">
+        <div class="shop-folder-icon">🔑</div>
+        <div class="shop-folder-title">Bonus material</div>
+        <div class="shop-folder-count">1</div>
+        <i class="ti ti-chevron-down shop-folder-chevron"></i>
+      </div>
+      <div class="shop-folder-body">
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🔑</div><div class="shop-item-title">Arab maqollari (kolleksiya)</div></div>
+          <div class="shop-item-desc" id="shopBonusDesc">Har xariddan 3 tadan yangi maqol oching — arabcha matni, o'qilishi va chuqur ma'nosi bilan. Maksimum 5 marta (jami 15 ta maqol).</div>
+          <div class="shop-item-footer"><div class="shop-item-price" id="shopBonusPrice">150 XP</div><button class="shop-buy-btn" id="shopBtnBonus" onclick="buyBonusLesson()">Sotib olish</button></div>
+        </div>
       </div>
     </div>
 
-    <div class="section-label"><span class="path-dot"></span>🎙️ Mutakallim — Arabcha ovoz</div>
-    <div style="font-size:12px; color:#8A93A6; margin:-4px 0 12px; line-height:1.5;">Har rejim uchun so'z va gaplarning to'g'ri arabcha talaffuzini eshiting. Har birini alohida sotib olasiz.</div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🃏</div><div class="shop-item-title">Flashcard ovozi</div></div>
-      <div class="shop-item-desc">Flashcard kartani ochganda so'zning arabcha talaffuzi avtomatik eshitiladi.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioFlashcard" onclick="buyAudio('flashcard', 400, 'shopBtnAudioFlashcard')">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🔀</div><div class="shop-item-title">Match Madness ovozi</div></div>
-      <div class="shop-item-desc">To'g'ri juftlikni topganingizda so'zning arabcha talaffuzi eshitiladi.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioMatch" onclick="buyAudio('match', 400, 'shopBtnAudioMatch')">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">📝</div><div class="shop-item-title">Test ovozi</div></div>
-      <div class="shop-item-desc">Testda to'g'ri javob tanlaganingizda arabcha talaffuz o'qib beriladi — quloq va xotira mustahkamlanadi.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">500 XP</div><button class="shop-buy-btn" id="shopBtnAudioTest" onclick="buyAudio('test', 500, 'shopBtnAudioTest')">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">🧩</div><div class="shop-item-title">Gap Tuzish ovozi</div></div>
-      <div class="shop-item-desc">Gapni tuzganingizdan so'ng butun jumlaning to'g'ri arabcha talaffuzini eshiting — eng foydali, eng to'liq.</div>
-      <div class="shop-item-footer"><div class="shop-item-price">1000 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 1000, 'shopBtnAudioGap')">Sotib olish</button></div>
-    </div>
-
-    <div class="shop-item">
-      <div class="shop-item-head"><div class="shop-item-icon">⚡</div><div class="shop-item-title">Tezlik sozlash</div></div>
-      <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.8x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
-      <div class="shop-item-footer">
-        <div class="confetti-btn-row" id="speedBtnRow">
-          <button class="shop-buy-btn" id="speedBtn08" onclick="setAudioSpeed(0.8)">Sekin 0.8x</button>
-          <button class="shop-buy-btn" id="speedBtn10" onclick="setAudioSpeed(1.0)">Oddiy 1.0x</button>
-          <button class="shop-buy-btn" id="speedBtn12" onclick="setAudioSpeed(1.2)">Tez 1.2x</button>
+    <div class="shop-folder" id="shopFolderMutakallim">
+      <div class="shop-folder-head" onclick="toggleShopFolder('shopFolderMutakallim')">
+        <div class="shop-folder-icon">🎙️</div>
+        <div class="shop-folder-title">Mutakallim — Arabcha ovoz</div>
+        <div class="shop-folder-count">5</div>
+        <i class="ti ti-chevron-down shop-folder-chevron"></i>
+      </div>
+      <div class="shop-folder-body">
+        <div style="font-size:12px; color:#8A93A6; margin:0 0 12px; line-height:1.5;">Har rejim uchun so'z va gaplarning to'g'ri arabcha talaffuzini eshiting. Har birini alohida sotib olasiz.</div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🃏</div><div class="shop-item-title">Flashcard ovozi</div></div>
+          <div class="shop-item-desc">Flashcard kartani ochganda so'zning arabcha talaffuzi avtomatik eshitiladi.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioFlashcard" onclick="buyAudio('flashcard', 400, 'shopBtnAudioFlashcard')">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🔀</div><div class="shop-item-title">Match Madness ovozi</div></div>
+          <div class="shop-item-desc">To'g'ri juftlikni topganingizda so'zning arabcha talaffuzi eshitiladi.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">400 XP</div><button class="shop-buy-btn" id="shopBtnAudioMatch" onclick="buyAudio('match', 400, 'shopBtnAudioMatch')">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">📝</div><div class="shop-item-title">Test ovozi</div></div>
+          <div class="shop-item-desc">Testda to'g'ri javob tanlaganingizda arabcha talaffuz o'qib beriladi — quloq va xotira mustahkamlanadi.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">500 XP</div><button class="shop-buy-btn" id="shopBtnAudioTest" onclick="buyAudio('test', 500, 'shopBtnAudioTest')">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">🧩</div><div class="shop-item-title">Gap Tuzish ovozi</div></div>
+          <div class="shop-item-desc">Gapni tuzganingizdan so'ng butun jumlaning to'g'ri arabcha talaffuzini eshiting — eng foydali, eng to'liq.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">1000 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 1000, 'shopBtnAudioGap')">Sotib olish</button></div>
+        </div>
+        <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">⚡</div><div class="shop-item-title">Tezlik sozlash</div></div>
+          <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.8x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
+          <div class="shop-item-footer">
+            <div class="confetti-btn-row" id="speedBtnRow">
+              <button class="shop-buy-btn" id="speedBtn08" onclick="setAudioSpeed(0.8)">Sekin 0.8x</button>
+              <button class="shop-buy-btn" id="speedBtn10" onclick="setAudioSpeed(1.0)">Oddiy 1.0x</button>
+              <button class="shop-buy-btn" id="speedBtn12" onclick="setAudioSpeed(1.2)">Tez 1.2x</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1099,6 +1139,11 @@ function finishMistakesQuiz(success){
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
   }
   mistakesQuizState = null;
+}
+
+function toggleShopFolder(id){
+  var el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
 }
 
 function toggleSpendHistory(){

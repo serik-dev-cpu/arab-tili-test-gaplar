@@ -613,6 +613,12 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
           <div class="shop-item-footer"><div class="shop-item-price">1000 XP</div><button class="shop-buy-btn" id="shopBtnAudioGap" onclick="buyAudio('gap', 1000, 'shopBtnAudioGap')">Sotib olish</button></div>
         </div>
         <div class="shop-item">
+          <div class="shop-item-head"><div class="shop-item-icon">📖</div><div class="shop-item-title">Lug'at avto-o'qish</div></div>
+          <div class="shop-item-desc">Lug'at bo'limida barcha so'zlarni birin-ketin, avtomatik tinglang — qo'l tegmasdan, ko'z va quloq bilan mustahkamlang.</div>
+          <div class="shop-item-footer"><div class="shop-item-price">1000 XP</div><button class="shop-buy-btn" id="shopBtnAudioLugat" onclick="buyAudio('lugat', 1000, 'shopBtnAudioLugat')">Sotib olish</button></div>
+        </div>
+
+        <div class="shop-item">
           <div class="shop-item-head"><div class="shop-item-icon">⚡</div><div class="shop-item-title">Tezlik sozlash</div></div>
           <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.8x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
           <div class="shop-item-footer">
@@ -1227,6 +1233,7 @@ function renderShop(){
   setBtn('shopBtnAudioMatch', getShopFlag('audio_match') || getShopFlag('audio_unlocked'), 400, wallet, 'Faol ✓');
   setBtn('shopBtnAudioTest', getShopFlag('audio_test') || getShopFlag('audio_unlocked'), 500, wallet, 'Faol ✓');
   setBtn('shopBtnAudioGap', getShopFlag('audio_gap') || getShopFlag('audio_unlocked'), 1000, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioLugat', getShopFlag('audio_lugat') || getShopFlag('audio_unlocked'), 1000, wallet, 'Faol ✓');
   updateSpeedButtons();
 }
 function setBtn(id, owned, cost, wallet, ownedLabel, alwaysClickable){
@@ -1449,7 +1456,7 @@ function activateConfetti(name){
 function buyAudio(mode, cost, btnId){
   var flagKey = 'audio_' + mode;
   if(getShopFlag(flagKey) || getShopFlag('audio_unlocked')) return;
-  var modeNames = {flashcard:'Flashcard', match:'Match Madness', test:'Test', gap:'Gap Tuzish'};
+  var modeNames = {flashcard:'Flashcard', match:'Match Madness', test:'Test', gap:'Gap Tuzish', lugat:"Lug'at"};
   if(!spendWalletXP(cost, "Mutakallim — " + (modeNames[mode]||mode) + " ovozi")){ shopToast("Mablag\u2018 yetarli emas \u2717", true); return; }
   setShopFlag(flagKey, true);
   shopToast((modeNames[mode]||mode) + " ovozi ochildi! 🎙️");

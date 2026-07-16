@@ -95,6 +95,19 @@ h1,h2,h3{font-weight:600; margin:0 0 8px; letter-spacing:-0.01em;}
 .word-card .ar-verb-line .audio-mini svg{width:11px; height:11px; display:block;}
 .word-card .ar-verb-line .audio-mini.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
 @keyframes audioPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,162,58,.4);}50%{box-shadow:0 0 0 6px rgba(212,162,58,0);}}
+.word-card.speaking{border-color:var(--gold); box-shadow:0 0 0 2px rgba(212,162,58,.35);}
+.lugat-auto-bar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:10px 0 4px; flex-wrap:wrap;}
+.lugat-auto-btns{display:flex; gap:8px; flex-wrap:wrap;}
+.lugat-auto-btn{display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1408; border:none; border-radius:14px; padding:10px 16px; font-weight:800; font-size:13px; cursor:pointer;}
+.lugat-auto-btn.playing{background:linear-gradient(135deg,#E8765C,#F0A188);}
+.lugat-pause-btn{display:none; align-items:center; gap:6px; background:rgba(212,162,58,.12); color:var(--gold2); border:1px solid var(--gold-line); border-radius:14px; padding:10px 14px; font-weight:800; font-size:13px; cursor:pointer;}
+.lugat-pause-btn.show{display:flex;}
+.lugat-speed-row{display:flex; gap:6px;}
+.lugat-speed-chip{font-size:11px; font-weight:700; padding:6px 10px; border-radius:12px; background:rgba(212,162,58,.08); border:1px solid var(--gold-line); color:var(--muted); cursor:pointer;}
+.lugat-speed-chip.active{background:rgba(212,162,58,.18); color:var(--gold2); border-color:var(--gold);}
+.lugat-scrolltop-btn{display:none; position:fixed; right:14px; bottom:74px; min-width:52px; height:52px; padding:0 18px; border-radius:26px; background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1408; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:800; box-shadow:0 4px 16px rgba(212,162,58,.4); z-index:99999; cursor:pointer; border:none;}
+.lugat-scrolltop-btn.show{display:flex;}
+.lugat-scrolltop-btn.paused{background:linear-gradient(135deg,#6FBF8B,#4E9E6E);}
 .audio-support-note{font-size:10px; color:var(--muted); text-align:center; margin-top:10px; display:none;}
 .audio-support-note.show{display:block;}
 @media (max-width:420px){
@@ -113,6 +126,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 <body>
 <div class="floating-menu-btn" onclick="location.href='index.html'">🏠 Bosh sahifa</div>
 <div class="floating-filter-btn" onclick="document.getElementById('searchInput').scrollIntoView({behavior:'smooth', block:'start'}); document.getElementById('searchInput').focus();">↑ Filtrlar</div>
+<button class="lugat-scrolltop-btn" id="lugat-scrolltop-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-float-icon"></i> <span id="lugat-float-text">Pauza</span></button>
 <div class="wrap">
   <div class="top-header">
     <div class="badge">Al-Manhajul A'lamiy A1</div>
@@ -142,6 +156,18 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="filter-section">
     <div class="filter-label">Bo'lim</div>
     <div class="filter-row" id="bolimFilterRow"><div class="filter-chip active" data-bolim="all" onclick="setBolimFilter('all')">Barcha bo'limlar</div><div class="filter-chip" data-bolim="1" onclick="setBolimFilter(1)">1-bo'lim</div><div class="filter-chip" data-bolim="2" onclick="setBolimFilter(2)">2-bo'lim</div><div class="filter-chip" data-bolim="3" onclick="setBolimFilter(3)">3-bo'lim</div><div class="filter-chip" data-bolim="4" onclick="setBolimFilter(4)">4-bo'lim</div><div class="filter-chip" data-bolim="5" onclick="setBolimFilter(5)">5-bo'lim</div><div class="filter-chip" data-bolim="6" onclick="setBolimFilter(6)">6-bo'lim</div><div class="filter-chip" data-bolim="7" onclick="setBolimFilter(7)">7-bo'lim</div><div class="filter-chip" data-bolim="8" onclick="setBolimFilter(8)">8-bo'lim</div><div class="filter-chip" data-bolim="9" onclick="setBolimFilter(9)">9-bo'lim</div><div class="filter-chip" data-bolim="10" onclick="setBolimFilter(10)">10-bo'lim</div><div class="filter-chip" data-bolim="11" onclick="setBolimFilter(11)">11-bo'lim</div><div class="filter-chip" data-bolim="12" onclick="setBolimFilter(12)">12-bo'lim</div></div>
+  </div>
+
+  <div class="lugat-auto-bar">
+    <div class="lugat-auto-btns">
+      <button class="lugat-auto-btn" id="lugat-auto-btn" onclick="toggleLugatAutoPlay()"><i class="ti ti-player-play" id="lugat-auto-btn-icon"></i> <span id="lugat-auto-btn-text">Avto-o'qish</span></button>
+      <button class="lugat-pause-btn" id="lugat-pause-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-pause-btn-icon"></i> <span id="lugat-pause-btn-text">Pauza</span></button>
+    </div>
+    <div class="lugat-speed-row" id="lugat-speed-row">
+      <span class="lugat-speed-chip" data-spd="0.8" onclick="setLugatAudioSpeed(0.8)">0.8x</span>
+      <span class="lugat-speed-chip" data-spd="1.0" onclick="setLugatAudioSpeed(1.0)">1.0x</span>
+      <span class="lugat-speed-chip" data-spd="1.2" onclick="setLugatAudioSpeed(1.2)">1.2x</span>
+    </div>
   </div>
 
   <div class="result-count"><span>Topildi: <b id="resultCount">0</b> ta so'z</span><span id="totalCount"></span></div>
@@ -242,6 +268,7 @@ function setBolimFilter(b){
 }
 
 function renderGrid(){
+  if(typeof lugatAutoState !== 'undefined' && lugatAutoState.playing) stopLugatAutoPlay();
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
   const qStripped = stripHarakat(q);
   let list = VOCAB;
@@ -274,7 +301,8 @@ function renderGrid(){
   }
   empty.style.display = 'none';
 
-  grid.innerHTML = list.map(w=>{
+  window._lugatVisibleList = list;
+  grid.innerHTML = list.map((w, _i)=>{
     let arHtml;
     if(w.ar2){
       arHtml = '<div class="ar-verb-line"><span class="ar-verb-label">Mozi</span><span class="ar">'+w.ar+'</span>'+
@@ -284,7 +312,7 @@ function renderGrid(){
     } else {
       arHtml = '<div class="ar">'+w.ar+'</div>';
     }
-    return '<div class="word-card">'+
+    return '<div class="word-card" data-idx="'+_i+'">'+
       '<div class="audio-btn" data-ar="'+escAttr(w.ar)+'">'+SPEAKER_SVG+'</div>'+
       '<div class="bolim-tag">'+w.bolim+'-bo\'lim</div>'+
       '<div class="icon-circle"><i class="ti ti-'+w.icon+'"></i></div>'+
@@ -293,6 +321,7 @@ function renderGrid(){
       '<div class="turi-badge">'+turiLabel(w.turi)+'</div>'+
     '</div>';
   }).join('');
+  updateLugatSpeedChips();
 }
 
 // O'z ichida joylashgan (inline) karnay-ovoz to'lqini belgisi — shrift(font)ga bog'liq emas, har doim ko'rinadi
@@ -324,18 +353,137 @@ if('speechSynthesis' in window){
   document.getElementById('audioNote').classList.add('show');
 }
 
-function speakArabic(text, btnEl){
+function speakArabic(text, btnEl, onEndCallback){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   document.querySelectorAll('.audio-btn.playing, .audio-mini.playing').forEach(el=>el.classList.remove('playing'));
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'ar-SA';
   if(arabicVoice) utter.voice = arabicVoice;
-  utter.rate = 0.8;
+  utter.rate = getAudioSpeedSafe();
   if(btnEl) btnEl.classList.add('playing');
-  utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
-  utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); };
+  utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };
+  utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };
   window.speechSynthesis.speak(utter);
+}
+
+// ═══ Tezlik va Avto-o'qish ═══
+function getAudioSpeedSafe(){
+  var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
+  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
+}
+function updateLugatSpeedChips(){
+  var cur = getAudioSpeedSafe();
+  document.querySelectorAll('.lugat-speed-chip').forEach(function(chip){
+    chip.classList.toggle('active', parseFloat(chip.getAttribute('data-spd')) === cur);
+  });
+}
+function setLugatAudioSpeed(spd){
+  localStorage.setItem('arabic_audio_speed', String(spd));
+  updateLugatSpeedChips();
+}
+var lugatAutoState = { playing:false, paused:false, idx:0, list:[] };
+function toggleLugatAutoPlay(){
+  if(lugatAutoState.playing){ stopLugatAutoPlay(); return; }
+  startLugatAutoPlay();
+}
+function startLugatAutoPlay(){
+  var list = window._lugatVisibleList || [];
+  if(!list.length) return;
+  lugatAutoState = { playing:true, paused:false, idx:0, list:list };
+  setLugatAutoButtons();
+  var st = document.getElementById('lugat-scrolltop-btn');
+  if(st) st.classList.add('show');
+  playLugatAutoNext();
+}
+function setLugatAutoButtons(){
+  var btn = document.getElementById('lugat-auto-btn');
+  var icon = document.getElementById('lugat-auto-btn-icon');
+  var txt = document.getElementById('lugat-auto-btn-text');
+  var pbtn = document.getElementById('lugat-pause-btn');
+  var picon = document.getElementById('lugat-pause-btn-icon');
+  var ptxt = document.getElementById('lugat-pause-btn-text');
+  var fbtn = document.getElementById('lugat-scrolltop-btn');
+  var ficon = document.getElementById('lugat-float-icon');
+  var ftxt = document.getElementById('lugat-float-text');
+  if(lugatAutoState.playing){
+    if(btn) btn.classList.add('playing');
+    if(icon) icon.className = 'ti ti-player-stop';
+    if(txt) txt.textContent = "To'xtatish";
+    if(pbtn) pbtn.classList.add('show');
+    if(lugatAutoState.paused){
+      if(picon) picon.className = 'ti ti-player-play';
+      if(ptxt) ptxt.textContent = "Davom";
+      if(ficon) ficon.className = 'ti ti-player-play';
+      if(ftxt) ftxt.textContent = "Davom";
+      if(fbtn) fbtn.classList.add('paused');
+    } else {
+      if(picon) picon.className = 'ti ti-player-pause';
+      if(ptxt) ptxt.textContent = "Pauza";
+      if(ficon) ficon.className = 'ti ti-player-pause';
+      if(ftxt) ftxt.textContent = "Pauza";
+      if(fbtn) fbtn.classList.remove('paused');
+    }
+  } else {
+    if(btn) btn.classList.remove('playing');
+    if(icon) icon.className = 'ti ti-player-play';
+    if(txt) txt.textContent = "Avto-o'qish";
+    if(pbtn) pbtn.classList.remove('show');
+  }
+}
+function pauseResumeLugat(){
+  if(!lugatAutoState.playing) return;
+  if(lugatAutoState.paused){
+    lugatAutoState.paused = false;
+    setLugatAutoButtons();
+    playLugatAutoNext();
+  } else {
+    lugatAutoState.paused = true;
+    if('speechSynthesis' in window) window.speechSynthesis.cancel();
+    setLugatAutoButtons();
+  }
+}
+function playLugatAutoNext(){
+  if(!lugatAutoState.playing || lugatAutoState.paused) return;
+  if(lugatAutoState.idx >= lugatAutoState.list.length){ stopLugatAutoPlay(); return; }
+  var w = lugatAutoState.list[lugatAutoState.idx];
+  var myIdx = lugatAutoState.idx;
+  highlightLugatCard(lugatAutoState.idx);
+  var advanced = false;
+  var advance = function(){
+    if(advanced) return;             // ikki marta chaqirilmasin (onend + fallback)
+    advanced = true;
+    if(!lugatAutoState.playing || lugatAutoState.paused) return;
+    if(lugatAutoState.idx !== myIdx) return; // holat o'zgargan bo'lsa (stop/filter) - to'xta
+    lugatAutoState.idx++;
+    setTimeout(playLugatAutoNext, 300);
+  };
+  speakArabic(w.ar, null, advance);
+  // Ehtiyot chorasi: ba'zi brauzerlarda onend ishlamay qolsa, taxminiy vaqtdan keyin o'zi o'tadi
+  var fallbackMs = Math.max(2500, w.ar.length * 260) / getAudioSpeedSafe();
+  setTimeout(advance, fallbackMs);
+}
+function highlightLugatCard(idx){
+  var cards = document.querySelectorAll('#wordGrid .word-card');
+  cards.forEach(function(c){ c.classList.remove('speaking'); });
+  var card = document.querySelector('#wordGrid .word-card[data-idx="'+idx+'"]');
+  if(card){
+    card.classList.add('speaking');
+    if(!lugatAutoState.paused){
+      var r = card.getBoundingClientRect();
+      var inView = r.top >= 60 && r.bottom <= window.innerHeight - 60;
+      if(!inView) card.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+}
+function stopLugatAutoPlay(){
+  lugatAutoState.playing = false;
+  lugatAutoState.paused = false;
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  document.querySelectorAll('#wordGrid .word-card.speaking').forEach(function(c){ c.classList.remove('speaking'); });
+  setLugatAutoButtons();
+  var st = document.getElementById('lugat-scrolltop-btn');
+  if(st) st.classList.remove('show');
 }
 
 document.getElementById('wordGrid').addEventListener('click', function(e){

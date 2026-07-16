@@ -90,6 +90,11 @@
   .lugat-speed-row{display:flex;gap:6px;}
   .lugat-speed-chip{font-size:11px;font-weight:700;padding:6px 10px;border-radius:12px;background:rgba(212,162,58,.08);border:1px solid var(--border);color:var(--muted);cursor:pointer;}
   .lugat-speed-chip.active{background:rgba(212,162,58,.18);color:var(--gold2);border-color:var(--gold2);}
+  .lugat-pause-btn{display:none;align-items:center;gap:6px;background:rgba(212,162,58,.12);color:var(--gold2);border:1px solid var(--border);border-radius:14px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer;}
+  .lugat-pause-btn.show{display:flex;}
+  .lugat-scrolltop-btn{display:none;position:fixed;right:16px;bottom:130px;min-width:52px;height:52px;padding:0 18px;border-radius:26px;background:linear-gradient(135deg,var(--gold2),var(--gold1));color:#1a1408;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;box-shadow:0 4px 16px rgba(212,162,58,.4);z-index:99998;cursor:pointer;border:none;}
+  .lugat-scrolltop-btn.show{display:flex;}
+  .lugat-scrolltop-btn.paused{background:linear-gradient(135deg,#6FBF8B,#4E9E6E);}
   .word-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(212,162,58,0.12);color:var(--gold2);}
   .word-main{min-width:0;}
   .word-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:28px;font-weight:700;color:var(--text);line-height:2.2;overflow-wrap:break-word;word-break:break-word;}
@@ -352,6 +357,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="cat-tabs" id="cat-tabs"></div>
   <div class="lugat-auto-bar">
     <button class="lugat-auto-btn" id="lugat-auto-btn" onclick="toggleLugatAutoPlay()"><i class="ti ti-player-play" id="lugat-auto-btn-icon"></i> <span id="lugat-auto-btn-text">Avto-o'qish</span></button>
+    <button class="lugat-pause-btn" id="lugat-pause-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-pause-btn-icon"></i> <span id="lugat-pause-btn-text">Pauza</span></button>
     <div class="lugat-speed-row" id="lugat-speed-row">
       <span class="lugat-speed-chip" data-spd="0.8" onclick="setLugatAudioSpeed(0.8)">0.8x</span>
       <span class="lugat-speed-chip" data-spd="1.0" onclick="setLugatAudioSpeed(1.0)">1.0x</span>
@@ -359,6 +365,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     </div>
   </div>
   <div class="word-grid" id="lugat-list"></div>
+  <button class="lugat-scrolltop-btn" id="lugat-scrolltop-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-float-icon"></i> <span id="lugat-float-text">Pauza</span></button>
 </div>
 
 <!-- ═══════════ TEST EKRANI ═══════════ -->
@@ -1625,7 +1632,7 @@ function renderLugatList(){
   updateLugatSpeedChips();
 }
 /* ═══ LUG'AT AVTO-O'QISH (Do'kondan sotib olinadi) ═══ */
-var lugatAutoState = { playing:false, idx:0, list:[] };
+var lugatAutoState = { playing:false, paused:false, idx:0, list:[] };
 function getAudioSpeedSafe(){
   var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
   return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
@@ -1648,41 +1655,99 @@ function toggleLugatAutoPlay(){
 function startLugatAutoPlay(){
   var list = (currentCat==='all') ? VOCAB : VOCAB.filter(function(w){return w.turi===currentCat;});
   if(!list.length) return;
-  lugatAutoState = { playing:true, idx:0, list:list };
+  lugatAutoState = { playing:true, paused:false, idx:0, list:list };
+  setLugatAutoButtons();
+  var st = document.getElementById('lugat-scrolltop-btn');
+  if(st) st.classList.add('show');
+  playLugatAutoNext();
+}
+function setLugatAutoButtons(){
   var btn = document.getElementById('lugat-auto-btn');
   var icon = document.getElementById('lugat-auto-btn-icon');
   var txt = document.getElementById('lugat-auto-btn-text');
-  if(btn) btn.classList.add('playing');
-  if(icon) icon.className = 'ti ti-player-stop';
-  if(txt) txt.textContent = "To'xtatish";
-  playLugatAutoNext();
+  var pbtn = document.getElementById('lugat-pause-btn');
+  var picon = document.getElementById('lugat-pause-btn-icon');
+  var ptxt = document.getElementById('lugat-pause-btn-text');
+  var fbtn = document.getElementById('lugat-scrolltop-btn');
+  var ficon = document.getElementById('lugat-float-icon');
+  var ftxt = document.getElementById('lugat-float-text');
+  if(lugatAutoState.playing){
+    if(btn) btn.classList.add('playing');
+    if(icon) icon.className = 'ti ti-player-stop';
+    if(txt) txt.textContent = "To'xtatish";
+    if(pbtn) pbtn.classList.add('show');
+    if(lugatAutoState.paused){
+      if(picon) picon.className = 'ti ti-player-play';
+      if(ptxt) ptxt.textContent = "Davom";
+      if(ficon) ficon.className = 'ti ti-player-play';
+      if(ftxt) ftxt.textContent = "Davom";
+      if(fbtn) fbtn.classList.add('paused');
+    } else {
+      if(picon) picon.className = 'ti ti-player-pause';
+      if(ptxt) ptxt.textContent = "Pauza";
+      if(ficon) ficon.className = 'ti ti-player-pause';
+      if(ftxt) ftxt.textContent = "Pauza";
+      if(fbtn) fbtn.classList.remove('paused');
+    }
+  } else {
+    if(btn) btn.classList.remove('playing');
+    if(icon) icon.className = 'ti ti-player-play';
+    if(txt) txt.textContent = "Avto-o'qish";
+    if(pbtn) pbtn.classList.remove('show');
+  }
+}
+function pauseResumeLugat(){
+  if(!lugatAutoState.playing) return;
+  if(lugatAutoState.paused){
+    lugatAutoState.paused = false;
+    setLugatAutoButtons();
+    playLugatAutoNext();
+  } else {
+    lugatAutoState.paused = true;
+    if('speechSynthesis' in window) window.speechSynthesis.cancel();
+    setLugatAutoButtons();
+  }
 }
 function playLugatAutoNext(){
-  if(!lugatAutoState.playing) return;
+  if(!lugatAutoState.playing || lugatAutoState.paused) return;
   if(lugatAutoState.idx >= lugatAutoState.list.length){ stopLugatAutoPlay(); return; }
   var w = lugatAutoState.list[lugatAutoState.idx];
+  var myIdx = lugatAutoState.idx;
   highlightLugatCard(lugatAutoState.idx);
-  speakArabic(w.ar, null, function(){
+  var advanced = false;
+  var advance = function(){
+    if(advanced) return;
+    advanced = true;
+    if(!lugatAutoState.playing || lugatAutoState.paused) return;
+    if(lugatAutoState.idx !== myIdx) return;
     lugatAutoState.idx++;
-    setTimeout(playLugatAutoNext, 350);
-  });
+    setTimeout(playLugatAutoNext, 300);
+  };
+  speakArabic(w.ar, null, advance);
+  var fallbackMs = Math.max(2500, w.ar.length * 260) / getAudioSpeedSafe();
+  setTimeout(advance, fallbackMs);
 }
 function highlightLugatCard(idx){
   var cards = document.querySelectorAll('#lugat-list .word-card');
   cards.forEach(function(c){ c.classList.remove('speaking'); });
   var card = cards[idx];
-  if(card){ card.classList.add('speaking'); card.scrollIntoView({behavior:'smooth', block:'center'}); }
+  if(card){
+    card.classList.add('speaking');
+    if(!lugatAutoState.paused){
+      var r = card.getBoundingClientRect();
+      var inView = r.top >= 60 && r.bottom <= window.innerHeight - 60;
+      if(!inView) card.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
 }
 function stopLugatAutoPlay(){
   lugatAutoState.playing = false;
+  lugatAutoState.paused = false;
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('#lugat-list .word-card.speaking').forEach(function(c){ c.classList.remove('speaking'); });
-  var btn = document.getElementById('lugat-auto-btn');
-  var icon = document.getElementById('lugat-auto-btn-icon');
-  var txt = document.getElementById('lugat-auto-btn-text');
-  if(btn) btn.classList.remove('playing');
-  if(icon) icon.className = 'ti ti-player-play';
-  if(txt) txt.textContent = "Avto-o'qish";
+  setLugatAutoButtons();
+  var st = document.getElementById('lugat-scrolltop-btn');
+  if(st) st.classList.remove('show');
 }
 
 // ═══ TEST (SRS QUIZ) ═══

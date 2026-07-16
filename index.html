@@ -73,6 +73,19 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   margin-top:8px;display:inline-block;color:#D4A23A;font-size:12px;font-weight:600;
   cursor:pointer;text-decoration:underline;text-underline-offset:2px;
 }
+.header-actions-row{
+  display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;
+}
+.header-actions-row .change-name-link{margin-top:0;}
+.home-alifbo-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,rgba(212,162,58,0.16),rgba(212,162,58,0.08));
+  border:1px solid rgba(212,162,58,0.4);border-radius:20px;
+  color:#F0C56B;font-size:12px;font-weight:700;padding:5px 14px;cursor:pointer;
+  transition:all .2s ease;font-family:inherit;
+}
+.home-alifbo-btn:hover{background:linear-gradient(135deg,rgba(212,162,58,0.26),rgba(212,162,58,0.14));}
+.home-alifbo-btn:active{transform:scale(0.96);}
 
 /* ═══ HERO — PREMIUM STAT BLOK ═══ */
 .hero-card{
@@ -98,8 +111,11 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   z-index:1;
 }
 .hero-info{flex:1;min-width:0;z-index:1}
-.hero-greet{font-size:15px;font-weight:700;color:#EDEFF5;margin-bottom:2px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-greet{font-size:17px;font-weight:800;color:#EDEFF5;margin-bottom:3px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.2px}
+.hero-xp-wallet{font-size:10.5px;font-weight:700;color:#9BA3B4;margin-left:3px;}
+.hero-xp-wallet::before{content:'·';margin-right:3px;color:#6B7280;}
+.stat-pill-xp{flex-direction:row;align-items:center;}
 .hero-sub{font-size:12px;color:#8A93A6}
 .epic-title{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#D4A23A;}
 .level-badge{display:inline-block; font-size:9.5px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg,var(--gold),var(--gold2)); padding:2px 7px; border-radius:8px; margin-left:5px; letter-spacing:0.5px; vertical-align:middle;}
@@ -369,7 +385,12 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="kicker">Al-Manhajul Al-A'lamiy</div>
     <div class="title">المنهج الألمعي</div>
     <div class="subtitle">A1 darajasi · 12 bo'limlik sayohat</div>
-    <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
+    <div class="header-actions-row">
+      <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
+      <button class="home-alifbo-btn" id="homeAlifboBtn" onclick="toggleHomeAlifbo()">
+        <i class="ti ti-language" style="font-size:13px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
+      </button>
+    </div>
   </div>
 
   <!-- ═══════════ PAPKA (TAB) TUGMALARI ═══════════ -->
@@ -405,7 +426,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       </div>
       <div class="hero-stats">
         <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
-        <div class="stat-pill"><i class="ti ti-star-filled"></i><span id="heroXp">0</span></div>
+        <div class="stat-pill stat-pill-xp"><i class="ti ti-star-filled"></i><span id="heroXp">0</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
       </div>
     </div>
 
@@ -653,7 +674,14 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
-<!-- ═══════════ QORA RO'YXAT MODAL ═══════════ -->
+<!-- ═══════════ STREAK JAZO OGOHLANTIRISH MODAL ═══════════ -->
+<div class="proverb-modal-bg" id="streakPenaltyModal">
+  <div class="proverb-card-modal" id="streakPenaltyCard">
+    <!-- JS orqali (showStreakPenaltyModal) to'ldiriladi -->
+  </div>
+</div>
+
+<!-- ═══════════ HADIQATUL-ILM MODAL ═══════════ -->
 <div class="proverb-modal-bg" id="mistakesModal">
   <div class="proverb-card-modal" id="mistakesModalCard">
     <!-- Bu ichki HTML JS orqali (renderMistakesModal) to'ldiriladi -->
@@ -689,6 +717,11 @@ function initHeroStats(name){
   if(avatarEl) avatarEl.textContent = initials || '?';
   if(greetEl) greetEl.textContent = 'Xush kelibsiz, ' + name + '!';
   if(xpEl) xpEl.textContent = xp;
+  var walletEl = document.getElementById('heroWalletXp');
+  if(walletEl){
+    var w = getWalletXP();
+    walletEl.textContent = w + ' qoldiq';
+  }
   if(streakEl) streakEl.textContent = streak;
   if(rankLabelEl){ var rank = getRank(xp); rankLabelEl.textContent = rank.label; }
 
@@ -970,11 +1003,34 @@ function answerMistakesQuestion(btnEl, entry){
   Array.from(wrap.children).forEach(function(b){ b.onclick = null; });
   var isCorrect = btnEl.textContent === entry.correct;
   if(isCorrect){
+    // To'g'ri javob — yashil fon + belgi
+    btnEl.style.background = 'linear-gradient(135deg,#2E7D52,#3FA76A)';
+    btnEl.style.color = '#FFFFFF';
     btnEl.style.borderColor = '#7ED8A0';
+    btnEl.textContent = '\u2705 ' + btnEl.textContent;
   } else {
+    // Xato javob — qizil fon + belgi, jon kamayadi
+    btnEl.style.background = 'linear-gradient(135deg,#8B3A2E,#B54A3A)';
+    btnEl.style.color = '#FFFFFF';
     btnEl.style.borderColor = '#E8765C';
+    btnEl.textContent = '\u274C ' + btnEl.textContent;
     st.lives--;
-    Array.from(wrap.children).forEach(function(b){ if(b.textContent === entry.correct) b.style.borderColor = '#7ED8A0'; });
+    // To'g'ri javobni yashil bilan ko'rsatamiz
+    Array.from(wrap.children).forEach(function(b){
+      if(b.textContent === entry.correct){
+        b.style.background = 'linear-gradient(135deg,#2E7D52,#3FA76A)';
+        b.style.color = '#FFFFFF';
+        b.style.borderColor = '#7ED8A0';
+        b.textContent = '\u2705 ' + b.textContent;
+      }
+    });
+  }
+  // Jon holatini yuqorida darhol yangilaymiz (kamayganini talaba ko'rsin)
+  var livesSpan = card.querySelector('span[style*="letter-spacing"]');
+  if(livesSpan){
+    var lh = '';
+    for(var li=0; li<MISTAKES_LIVES; li++){ lh += (li < st.lives) ? '\u2764\uFE0F' : '\uD83D\uDDA4'; }
+    livesSpan.innerHTML = lh;
   }
   var ra = document.getElementById('mistakesResultArea');
   if(st.lives <= 0){
@@ -1316,6 +1372,78 @@ function buyAudio(mode, cost, btnId){
   shopToast('Talaffuz ovozi ochildi!');
   refreshHeroAndShop();
 }
+// Kunlik kirmaganlik jazosi haqida ogohlantirish modali
+function showStreakPenaltyModal(p){
+  var card = document.getElementById('streakPenaltyCard');
+  if(!card) return;
+  var html = '';
+
+  if(p.type === 'freeze'){
+    // Streak Freeze himoyasi ishladi — jazo bo'lmadi
+    html =
+      '<div style="text-align:center; font-size:44px; margin-bottom:6px;">🛡️</div>' +
+      '<h3 style="text-align:center; margin-bottom:10px;">Himoya ishladi!</h3>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; line-height:1.7; margin-bottom:18px;">' +
+        'Bir kun kirmadingiz, lekin <b>Kunlik himoyangiz (Streak Freeze)</b> zanjiringizni saqlab qoldi. ' +
+        'Himoya sarflandi — bugundan yana muntazam kiring!' +
+      '</div>' +
+      '<button class="proverb-close-btn" onclick="closeStreakPenaltyModal()">Tushundim</button>';
+  } else {
+    var icon, title, detail;
+    if(p.type === 'burn'){
+      icon = '💥';
+      title = p.missedDays + ' kun kelmadingiz!';
+      detail = 'Afsuski, XP butunlay kuydi va unvoningiz eng boshiga qaytdi. ' +
+               'Xafa bo\u2018lmang — bilimingiz o\u2018zingizda qoldi, qaytadan tez ko\u2018tarilasiz!';
+    } else if(p.type === 'demote'){
+      icon = '⬇️';
+      title = p.missedDays + ' kun kelmadingiz';
+      detail = 'Unvoningiz bir pog\u2018ona pastga tushdi. Bugundan boshlab yana yuqoriga chiqishingiz mumkin!';
+    } else {
+      icon = '⏳';
+      title = p.missedDays + (p.missedDays===1 ? ' kun kelmadingiz' : ' kun kelmadingiz');
+      detail = 'Har kirmagan kun uchun 100 XP yechildi. Muntazam kirsangiz — hech narsa yo\u2018qotmaysiz!';
+    }
+    var rankChanged = (p.beforeRank !== p.afterRank);
+    html =
+      '<div style="text-align:center; font-size:44px; margin-bottom:6px;">' + icon + '</div>' +
+      '<h3 style="text-align:center; margin-bottom:8px;">' + title + '</h3>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; line-height:1.7; margin-bottom:14px;">' + detail + '</div>' +
+      '<div style="background:rgba(232,118,92,0.1); border:1px solid rgba(232,118,92,0.3); border-radius:12px; padding:12px 14px; margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">' +
+          '<span style="color:#9BA3B4;">XP:</span>' +
+          '<span style="color:#EDEFF5; font-weight:700;">' + p.beforeXP + ' → ' + p.afterXP + '</span>' +
+        '</div>' +
+        (rankChanged ?
+          '<div style="display:flex; justify-content:space-between; font-size:13px;">' +
+            '<span style="color:#9BA3B4;">Unvon:</span>' +
+            '<span style="color:#E8765C; font-weight:700;">' + p.beforeRank + ' → ' + p.afterRank + '</span>' +
+          '</div>' : '') +
+      '</div>' +
+      '<button class="proverb-close-btn" onclick="closeStreakPenaltyModal()">Qaytadan boshlayman!</button>';
+  }
+  card.innerHTML = html;
+  document.getElementById('streakPenaltyModal').classList.add('show');
+}
+function closeStreakPenaltyModal(){
+  document.getElementById('streakPenaltyModal').classList.remove('show');
+  refreshHeroAndShop();
+}
+
+// Bosh sahifadagi alifbo (Kirill/Lotin) tanlash tugmasi.
+// ALIFBO_KEY umumiy — bu tanlov bo'lim ichida ham qo'llanadi.
+function getHomeAlifbo(){ return localStorage.getItem(ALIFBO_KEY) || 'kr'; }
+function updateHomeAlifboLabel(){
+  var el = document.getElementById('homeAlifboLabel');
+  if(el) el.textContent = (getHomeAlifbo()==='lt') ? 'Lotin' : 'Кирилл';
+}
+function toggleHomeAlifbo(){
+  var cur = getHomeAlifbo();
+  localStorage.setItem(ALIFBO_KEY, cur==='lt' ? 'kr' : 'lt');
+  updateHomeAlifboLabel();
+  shopToast(getHomeAlifbo()==='lt' ? 'Lotin alifbosi tanlandi' : 'Кирилл алифбоси танланди');
+}
+
 function initNameGate(){
   var savedName = localStorage.getItem(SHARED_NAME_KEY) || '';
   var gate = document.getElementById('nameGate');
@@ -1340,11 +1468,15 @@ function initNameGate(){
   if(savedName){
     gate.style.display = 'none';
     app.style.display = 'block';
+    // Kunlik kirmaganlik jazosi — HERO ko'rsatilishidan OLDIN qo'llanadi
+    var penalty = applyStreakPenaltyIfNeeded();
     initHeroStats(savedName);
     renderShop();
     updateSpendHistoryCard();
     renderRankProgress();
     refreshMistakesCard();
+    updateHomeAlifboLabel();
+    if(penalty) showStreakPenaltyModal(penalty);
     return true;
   }
 

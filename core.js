@@ -119,6 +119,88 @@ function getRank(xp){
   return {label:'🌟 Navqiron', cls:'rank-bronze'};
 }
 
+// ─────────────── Rank chegaralari (pog'ona pastga tushirish uchun) ───────────────
+// getRank bilan bir xil chegaralar. Pog'ona pasaytirilganda XP shu chegaraga tushiriladi.
+var RANK_THRESHOLDS = [0, 501, 1501, 3501, 6001]; // Navqiron, Intiluvchi, Bilimdon, Lochin, Sulton
+
+// Joriy XP qaysi pog'onada ekanini indeks bilan qaytaradi (0..4)
+function getRankIndex(xp){
+  for(var i = RANK_THRESHOLDS.length - 1; i >= 0; i--){
+    if(xp >= RANK_THRESHOLDS[i]) return i;
+  }
+  return 0;
+}
+// Bir pog'ona pastga tushirilgan XP qiymatini qaytaradi (pastki pog'ona boshiga)
+function demoteOneRank(xp){
+  var idx = getRankIndex(xp);
+  if(idx <= 0) return 0; // Allaqachon eng pastda
+  return RANK_THRESHOLDS[idx - 1];
+}
+
+// ─────────────── Streak jazo tizimi (kunlik kirmaganlik uchun) ───────────────
+// GitHub Pages'da server yo'q — shuning uchun jazo talaba QAYTIB KIRGANDA,
+// kirmagan kunlar JAMLANIB, BIR MARTA qo'llanadi. Natija obyekt sifatida
+// qaytariladi — index.html uni ogohlantirish modali sifatida ko'rsatadi.
+//   1 kun kirmasa: -100 XP
+//   2 kun: -200 XP,  3 kun: -300 XP
+//   4 kun: 1 pog'ona pastga
+//   5+ kun: XP butunlay kuyadi (0) + pog'ona to'liq pastga
+// Streak Freeze (Do'kon) bo'lsa — aynan 1 kunlik uzilishni himoya qiladi (jazo yo'q).
+function applyStreakPenaltyIfNeeded(){
+  try{
+    var d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
+    var today = new Date();
+    var todayStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    if(!d.lastActiveDate) return null;          // Hali hech qachon kirmagan — jazo yo'q
+    if(d.lastActiveDate === todayStr) return null; // Bugun kirgan — jazo yo'q
+    var last = new Date(d.lastActiveDate + 'T00:00:00');
+    var todayMid = new Date(todayStr + 'T00:00:00');
+    var diffDays = Math.round((todayMid - last) / 86400000);
+    var missedDays = diffDays - 1; // Kecha kirmagan bo'lsa diffDays=2 => 1 kun kirmagan
+    if(missedDays <= 0) return null; // Kecha kirgan — jazo yo'q
+
+    // Streak Freeze aynan 1 kunlik uzilishni himoya qiladi
+    if(missedDays === 1 && d.streak_freeze){
+      d.streak_freeze = false;
+      localStorage.setItem(ACH_KEY, JSON.stringify(d));
+      return { type:'freeze', missedDays:1 };
+    }
+
+    var beforeXP = (d.total_xp !== undefined) ? (Number(d.total_xp)||0) : (Number(d.xp)||0);
+    var beforeRank = getRank(beforeXP).label;
+    var newXP = beforeXP;
+    var kind;
+
+    if(missedDays >= 5){
+      newXP = 0;
+      kind = 'burn'; // XP kuydi + pog'ona to'liq pastga
+    } else if(missedDays === 4){
+      newXP = demoteOneRank(beforeXP);
+      kind = 'demote'; // 1 pog'ona pastga
+    } else {
+      // 1,2,3 kun: har kuniga -100 XP
+      newXP = Math.max(0, beforeXP - missedDays * 100);
+      kind = 'xp'; // faqat XP yechildi
+    }
+
+    d.total_xp = newXP;
+    // Hamyon (wallet) total'dan oshib ketmasin
+    if(d.wallet_xp !== undefined && Number(d.wallet_xp) > newXP) d.wallet_xp = newXP;
+    d.streak = 0; // Zanjir uzildi
+    localStorage.setItem(ACH_KEY, JSON.stringify(d));
+
+    return {
+      type: kind,
+      missedDays: missedDays,
+      lostXP: beforeXP - newXP,
+      beforeXP: beforeXP,
+      afterXP: newXP,
+      beforeRank: beforeRank,
+      afterRank: getRank(newXP).label
+    };
+  }catch(e){ return null; }
+}
+
 // ─────────────── Kunlik Streak (o'qish uchun) ───────────────
 function getStreak(){
   try{ const d = JSON.parse(localStorage.getItem(ACH_KEY)||'{}'); return Number(d.streak)||0; }catch(e){ return 0; }

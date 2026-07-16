@@ -218,9 +218,9 @@ body{padding-bottom:130px;}
 .mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
 .mm-timer{font-size:15px; font-weight:700; color:var(--gold2); display:flex; align-items:center; gap:6px;}
 .mm-timer.warn{color:#E8765C;}
-.mm-extratime-offer{display:none; position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:9700; align-items:center; gap:10px; background:linear-gradient(160deg, rgba(38,42,54,0.97), rgba(20,22,29,0.98)); border:1px solid rgba(212,162,58,0.4); border-radius:16px; padding:10px 12px 10px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.5); font-size:13px; font-weight:700; color:#EDEFF5; white-space:nowrap; animation:fadeIn .25s ease;}
-.mm-extratime-btn{background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1408; border:none; border-radius:10px; padding:7px 12px; font-weight:800; font-size:13px; cursor:pointer;}
-.mm-extratime-close{color:#6B7280; cursor:pointer; padding:4px; font-size:15px;}
+.mm-extratime-offer{display:none; position:fixed; left:50%; bottom:38%; transform:translateX(-50%); z-index:9700; flex-direction:column; align-items:stretch; gap:12px; width:min(340px,86vw); background:linear-gradient(160deg, rgba(42,46,60,0.99), rgba(22,24,32,0.99)); border:2px solid rgba(212,162,58,0.55); border-radius:20px; padding:20px 22px; box-shadow:0 18px 50px rgba(0,0,0,0.65), 0 0 30px rgba(212,162,58,0.2); font-size:16px; font-weight:700; color:#EDEFF5; text-align:center; animation:extraPop .28s cubic-bezier(.34,1.56,.64,1);}
+.mm-extratime-btn{background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1408; border:none; border-radius:14px; padding:14px 18px; font-weight:800; font-size:16px; cursor:pointer; box-shadow:0 4px 14px rgba(212,162,58,0.35);}
+.mm-extratime-close{color:#8A93A6; cursor:pointer; padding:8px; font-size:14px; font-weight:700; text-align:center; border-radius:10px;} .mm-extratime-close:hover{color:#C7CCD8;} @keyframes extraPop{0%{opacity:0; transform:translateX(-50%) scale(0.8);}100%{opacity:1; transform:translateX(-50%) scale(1);}}
 .mm-combo{font-size:14px; font-weight:800; color:var(--gold); opacity:0; transition:opacity .2s var(--ease), transform .2s var(--ease);}
 .mm-combo.show{opacity:1;}
 .mm-combo.pulse{animation:mmComboPulse .35s var(--ease);}
@@ -339,6 +339,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
 .floating-home-btn{position:fixed; bottom:22px; right:16px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 18px rgba(212,162,58,0.45); cursor:pointer; z-index:9000; transition:transform .15s var(--ease);}
 .floating-home-btn:active{transform:scale(.92);}
+.stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
 </style>
 </head>
 <body>
@@ -371,7 +372,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="home-progress-bar" style="width:0%"></div></div>
   <div class="center-note" id="home-progress-text">0 / 103 so'z o'rganildi</div>
   <div class="stat-row">
-    <div class="stat-box"><div class="num" id="home-xp">0</div><div class="lbl">Umumiy XP</div></div>
+    <div class="stat-box"><div class="num" id="home-xp">0</div><span class="xp-wallet-sub" id="home-xp-wallet"></span><div class="lbl">Umumiy XP</div></div>
     <div class="stat-box"><div class="num" id="home-learned">0/0</div><div class="lbl">O'rganilgan</div></div>
     <div class="stat-box"><div class="num" id="home-mastered">0</div><div class="lbl">Mukammal (5-box)</div></div>
   </div>
@@ -561,9 +562,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="mm-col" id="mm-col-uz"></div>
   </div>
   <div class="mm-extratime-offer" id="mmExtraTimeOffer">
-    <span>⏸️ Vaqt to’xtatildi — +20 soniya olasizmi?</span>
-    <button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button>
-    <span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>
+    <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
+    <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+20 soniya</b> qo‘shib davom etasizmi?</div>
+    <button class="mm-extratime-btn" onclick="buyExtraTime()">Ha, +20 soniya (40 XP)</button>
+    <span class="mm-extratime-close" onclick="closeExtraTimeOffer()">Yo‘q, kerak emas</span>
   </div>
 </div>
 
@@ -837,6 +839,16 @@ function awardSessionXP(mode, fullXP){
   addAchievementXP(earned);
   return earned;
 }
+
+// ═══ Test XP: savol soniga qarab (TEZ=5, ODATIY=8, SEKIN=10) ═══
+function quizXpByCount(){
+  try{
+    if(typeof quizQuestionCount === 'undefined') return 8;
+    if(quizQuestionCount <= QUIZ_COUNT_TEZ) return 5;
+    if(quizQuestionCount >= QUIZ_COUNT_SEKIN) return 10;
+    return 8;
+  }catch(e){ return 8; }
+}
 function renderEpicProfile(prefix){
   var xp = getAchievementXP();
   var rank = getRank(xp);
@@ -940,6 +952,7 @@ function renderHome(){
   let mastered = 0;
   ALL_WORDS.forEach(function(w){ if((state.box[w.ar]||0) >= 5) mastered++; });
   document.getElementById('home-xp').textContent = getAchievementXP();
+  var _hw = document.getElementById('home-xp-wallet'); if(_hw) _hw.textContent = getWalletXP() + ' qoldiq';
   document.getElementById('home-learned').textContent = state.learned.length + '/' + totalItems;
   document.getElementById('home-mastered').textContent = mastered;
   renderEpicProfile('home');
@@ -1279,7 +1292,7 @@ function finishQuiz(){
   }
 
   var totalBefore = getAchievementXP();
-  var earnedXP = awardSessionXP('quiz', 4);
+  var earnedXP = awardSessionXP('quiz', quizXpByCount());
   var totalAfter = getAchievementXP();
   document.getElementById('result-correct').textContent = correctCount;
   document.getElementById('result-wrong').textContent = wrongCount;
@@ -1995,6 +2008,8 @@ function startMatchMadness(){
     document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
     if(mmState.timeLeft <= 5){
       document.getElementById('mm-timer').classList.add('warn');
+    }
+    if(mmState.timeLeft <= 2){
       offerExtraTime();
     }
     if(mmState.timeLeft <= 0){ finishMatchMadness(false); }
@@ -2032,7 +2047,7 @@ function closeExtraTimeOffer(){
   var box = document.getElementById('mmExtraTimeOffer');
   if(box){
     box.style.display = 'none';
-    box.innerHTML = '<span>⏸️ Vaqt to’xtatildi — +20 soniya olasizmi?</span><button class="mm-extratime-btn" onclick="buyExtraTime()">40 XP</button><span class="mm-extratime-close" onclick="closeExtraTimeOffer()"><i class="ti ti-x"></i></span>';
+    box.innerHTML = '<div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div><div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+20 soniya</b> qo‘shib davom etasizmi?</div><button class="mm-extratime-btn" onclick="buyExtraTime()">Ha, +20 soniya (40 XP)</button><span class="mm-extratime-close" onclick="closeExtraTimeOffer()">Yo‘q, kerak emas</span>';
   }
 }
 
@@ -2184,7 +2199,7 @@ function finishMatchMadness(completed){
 
   var pctNow = getCourseProgressPct(); // Match Madness umumiy progressga ta'sir qilmaydi
   var totalBefore = getAchievementXP();
-  var earnedXP = awardSessionXP('match', 2);
+  var earnedXP = awardSessionXP('match', Math.max(1, mmState.round));
   var totalAfter = getAchievementXP();
 
   var best = parseInt(localStorage.getItem('arabic_mm_best_7') || '0', 10);
@@ -2237,6 +2252,8 @@ function smartPathRunMatch(){
     document.getElementById('mm-timer-val').textContent = mmState.timeLeft;
     if(mmState.timeLeft <= 5){
       document.getElementById('mm-timer').classList.add('warn');
+    }
+    if(mmState.timeLeft <= 2){
       offerExtraTime();
     }
     if(mmState.timeLeft <= 0){ finishMatchMadness(false); }

@@ -189,7 +189,6 @@
   .result-xp{font-size:32px;font-weight:800;color:var(--gold2);margin:10px 0;}
   .result-stats{display:flex;gap:12px;margin-top:16px;}
   .floating-menu-btn{position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4);cursor:pointer;}
-  .name-badge{position:fixed;bottom:74px;left:14px;z-index:99999;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:var(--gold2);font-size:12px;font-weight:700;padding:8px 14px;border-radius:20px;cursor:pointer;}
 
 /* ═══════════════ Match Madness (so'z moslashtirish o'yini) ═══════════════ */
 .mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
@@ -275,6 +274,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 .rankup-new-rank{font-size:20px; font-weight:800; margin:0 0 20px; padding:10px 20px; border-radius:14px; display:inline-block;}
 .rankup-new-rank.rank-sultan{animation:sultanGlow 1.5s ease-in-out infinite;}
 .floating-home-btn{position:fixed; bottom:22px; right:16px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--gold1),var(--gold2)); color:#0B0E14; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 18px rgba(212,162,58,0.45); cursor:pointer; z-index:9000; transition:transform .15s var(--ease);}
+.turbo-status-badge{position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:99998; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap;}
 .floating-home-btn:active{transform:scale(.92);}
 .stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
 </style>
@@ -294,7 +294,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="menu-hero-ar" id="menu-bolim-ar"></div>
     <div class="menu-hero-uz" id="menu-bolim-uz"></div>
   </div>
-  <div class="epic-profile" id="epic-profile-menu">
+  <div class="epic-profile" id="epic-profile-menu" style="cursor:pointer" title="Ismni o'zgartirish">
     <div class="epic-avatar" id="epic-avatar-menu">?</div>
     <div class="epic-info">
       <div class="epic-name" id="epic-name-menu">...</div>
@@ -311,6 +311,11 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
       <div class="stat-box"><div class="num" id="menu-learned">0/0</div><div class="lbl">O'rganilgan</div></div>
       <div class="stat-box"><div class="num" id="menu-mastered">0</div><div class="lbl">Mukammal (5-box)</div></div>
     </div>
+    <!-- 4-TOPSHIRIQ: Turbo Dars endi progress bilan BIR JOYDA, eng tepada —
+         talaba pastga tushmasdan darrov qancha Turbo qolganini ko'radi va boshlaydi. -->
+    <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
+      <i class="ti ti-bolt" style="color:#F0C56B;"></i><div class="mc-title">🔥 Turbo Dars</div><div class="mc-sub" style="color:#6FBF8B;">Flashkard → Match → Gap → Test — bitta zanjirда</div>
+    </div>
   </div>
   <div class="menu-grid">
     <div class="menu-card" data-nav="lugat"><i class="ti ti-book-2"></i><div class="mc-title">Lug'at</div><div class="mc-sub" id="mc-lugat-sub"></div></div>
@@ -318,13 +323,12 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="menu-card" data-nav="test-setup"><i class="ti ti-target-arrow"></i><div class="mc-title">Test</div><div class="mc-sub">Tezlikka qarab, 4 variant</div></div>
     <div class="menu-card" data-nav="gaptuzish"><i class="ti ti-arrows-shuffle"></i><div class="mc-title">Gap tuzish</div><div class="mc-sub">60 ta mashq</div></div>
     <div class="menu-card" data-nav="grammatika"><i class="ti ti-school"></i><div class="mc-title">Grammatika</div><div class="mc-sub" id="mc-gram-sub"></div></div>
-    <div class="menu-card" data-nav="stats"><i class="ti ti-chart-bar"></i><div class="mc-title">Natijalar</div><div class="mc-sub">Progress</div></div>
+    <div class="menu-card" data-nav="match-setup"><i class="ti ti-bolt"></i><div class="mc-title">Match Madness ⚡</div><div class="mc-sub">Tezkor o'yin</div></div>
   </div>
-  <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
-    <i class="ti ti-bolt" style="color:#F0C56B;"></i><div class="mc-title">🔥 Turbo Dars</div><div class="mc-sub" style="color:#6FBF8B;">Flashkard → Match → Gap → Test — bitta zanjirда</div>
-  </div>
-  <div class="menu-card" data-nav="match-setup" style="margin-top:14px; background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.10)); border-color:rgba(212,162,58,0.4);">
-    <i class="ti ti-bolt" style="color:var(--gold2);"></i><div class="mc-title">Match Madness ⚡</div><div class="mc-sub">Tezkor so'z moslashtirish o'yini</div>
+  <!-- 5-TOPSHIRIQ: Natijalar (kamroq tekshiriladigan, "hisobot" xarakterli bo'lim)
+       endi eng pastda — Match Madness esa bilim mashqi sifatida asosiy panelga ko'chirildi. -->
+  <div class="menu-card" data-nav="stats" style="margin-top:14px;">
+    <i class="ti ti-chart-bar"></i><div class="mc-title">Natijalar</div><div class="mc-sub">Progress</div>
   </div>
 </div>
 
@@ -579,8 +583,9 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
+<div class="turbo-status-badge" id="turboStatusBadge" style="display:none;">🔥 Turbo: <span id="turboStatusCount">0/0</span></div>
+<div class="floating-menu-btn" id="floating-bolimlar-btn" style="bottom:74px;">📚 Bo'limlar</div>
 <div class="floating-menu-btn" id="floating-menu-btn">🏠 Bosh sahifa</div>
-<div class="name-badge" id="name-badge" title="Ismni o'zgartirish">👤 <span id="name-badge-text">...</span></div>
 
 <script src="core.js"></script>
 <script>
@@ -1521,6 +1526,17 @@ function showScreen(name, push){
   if(push !== false){ history.pushState({screen:name, bolim:currentBolim}, '', '#b'+(currentBolim||'')+'-'+name); }
   window.scrollTo(0,0);
   renderScreen(name);
+  updateTurboStatusBadge();
+}
+// 4-TOPSHIRIQ: Turbo o'ynalayotgan paytda (Flashkard→Match→Gap→Test zanjiri davomida)
+// qancha sifatli Turbo qolgani doim ko'rinib tursin — ekran tepasida suzuvchi belgi.
+function updateTurboStatusBadge(){
+  var badge = document.getElementById('turboStatusBadge');
+  if(!badge) return;
+  if(!smartPath.active){ badge.style.display = 'none'; return; }
+  var gd = getGatingInfo();
+  document.getElementById('turboStatusCount').textContent = gd.turboGood + '/' + gd.turboNeeded;
+  badge.style.display = 'block';
 }
 window.addEventListener('popstate', function(e){
   var name = (e.state && e.state.screen) ? e.state.screen : 'menu';
@@ -1559,15 +1575,20 @@ document.querySelectorAll('[data-nav]').forEach(function(el){
 });
 document.getElementById('natija-menu-btn').addEventListener('click', function(){ showScreen('menu'); });
 document.getElementById('floating-menu-btn').addEventListener('click', function(){ location.href='index.html'; });
+// Bo'lim ichidan boshqa bo'limga o'tish uchun to'g'ridan-to'g'ri O'quv yo'li (Bo'limlar) tabiga olib boradi —
+// endi Bosh sahifaga qaytib, qayta bo'lim tanlash shart emas.
+document.getElementById('floating-bolimlar-btn').addEventListener('click', function(){ location.href='index.html#bolimlar'; });
 
-// ═══ ISM BADGE ═══
-function refreshNameBadge(){ document.getElementById('name-badge-text').textContent = currentName; }
-document.getElementById('name-badge').addEventListener('click', function(){
+// ═══ ISM O'ZGARTIRISH — endi pastdagi ortiqcha "Serik" belgisi o'rniga,
+// tepadagi chiroyli profil kartasi (ism turgan joy) bosilganda ochiladi ═══
+function refreshNameBadge(){ /* orqaga moslik uchun bo'sh qoldirilgan — endi renderEpicProfile ism yangilaydi */ }
+document.getElementById('epic-profile-menu').addEventListener('click', function(){
   var yangi = prompt('Ismingizni kiriting:', currentName);
   if(yangi && yangi.trim()){
     currentName = yangi.trim();
     localStorage.setItem(SHARED_NAME_KEY, currentName);
-    refreshNameBadge();
+    renderEpicProfile('menu');
+    renderEpicProfile('stats');
   }
 });
 
@@ -1863,7 +1884,7 @@ function quizTimeUp(){
     b.classList.add('disabled');
     if(b.getAttribute('data-correct')==='true') b.classList.add('correct');
   });
-  setBox(word.ar, 1);
+  if(smartPath.active){ setBox(word.ar, 1); }
   var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
   var correctIsArabic = !quizState.currentArToUz;
   recordQuizMistake(word, correctText, correctIsArabic);
@@ -1946,15 +1967,17 @@ function handleQuizAnswer(btn){
   var box = getBox(word.ar);
   if(isCorrect){
     playCorrect();
-    quizState.correct++; setBox(word.ar, box+1); markLearned(word.ar);
+    quizState.correct++; markLearned(word.ar);
+    // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
+    // Oddiy Test rejimida faqat XP beriladi, foiz o'zgarmaydi.
+    if(smartPath.active){ setBox(word.ar, box+1); }
     // XP endi test oxirida (finishSession) beriladi — savol soniga qarab
     // Test ovozi (Mutakallim): to'g'ri javobda so'zning arabcha talaffuzi o'qiladi
     if(hasAudioFor('test') && word.ar){ setTimeout(function(){ speakArabic(word.ar); }, 150); }
     setTimeout(function(){ nextQuizQuestion(); }, 1000);
   } else {
     playWrong();
-    if(smartPath.active) smartPath.hadAnyError = true;
-    setBox(word.ar, 1);
+    if(smartPath.active){ smartPath.hadAnyError = true; setBox(word.ar, 1); }
     var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
     var correctIsArabic = !quizState.currentArToUz;
     recordQuizMistake(word, correctText, correctIsArabic);
@@ -2048,10 +2071,21 @@ function renderGapCurrent(){
   gtState.selected = [];
   document.getElementById('gt-uz-text').textContent = dtxt(sentence.uz);
   var words = sentence.ar.split(' ');
+  // Takroriy plitkalarni oldini olamiz: jumlada bor so'zni distraktor sifatida qo'shmaymiz
+  // va distraktorlar bir-birini takrorlamasligini ta'minlaymiz.
+  var wordSet = {};
+  words.forEach(function(w){ wordSet[stripPunctForTile(w)] = true; });
   var extra = [];
+  var extraSet = {};
   var shuffledDistractors = DISTRACTOR_WORDS.slice().sort(function(){return Math.random()-0.5;});
   var numExtra = Math.min(2, Math.floor(words.length/3)+1);
-  for(var i=0;i<numExtra;i++) extra.push(shuffledDistractors[i]);
+  for(var i=0;i<shuffledDistractors.length && extra.length<numExtra;i++){
+    var d = shuffledDistractors[i];
+    var dDisp = stripPunctForTile(d);
+    if(wordSet[dDisp] || extraSet[dDisp]) continue; // jumlada bor yoki allaqachon qo'shilgan bo'lsa - o'tkazamiz
+    extraSet[dDisp] = true;
+    extra.push(d);
+  }
   var poolWords = words.concat(extra).sort(function(){return Math.random()-0.5;});
   gtState.pool = poolWords.map(function(w, i){ return {word:w, display:stripPunctForTile(w), uid:i, used:false}; });
   var fontSize = words.length<=5 ? '30px' : (words.length<=8 ? '25px' : '21px');
@@ -2188,8 +2222,10 @@ document.getElementById('flash-card').addEventListener('click', function(){
 function fkAdvance(know){
   var word = VOCAB[fkState.order[fkState.idx]];
   var box = getBox(word.ar);
-  if(know){ setBox(word.ar, box+1); fkState.knowCount++; } // XP endi sessiya oxirida (finishSession)
-  else { setBox(word.ar, 1); fkState.dontKnowCount++; }
+  // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
+  // Oddiy Flashkard rejimida faqat XP beriladi, foiz o'zgarmaydi.
+  if(know){ if(smartPath.active){ setBox(word.ar, box+1); } fkState.knowCount++; } // XP endi sessiya oxirida (finishSession)
+  else { if(smartPath.active){ setBox(word.ar, 1); } fkState.dontKnowCount++; }
   fkState.idx++;
   if(fkState.idx >= fkState.order.length){
     if(smartPath.active){

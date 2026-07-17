@@ -400,6 +400,13 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="stat-box"><div class="num" id="home-mastered">0</div><div class="lbl">Mukammal (5-box)</div></div>
   </div>
 
+  <!-- 4-TOPSHIRIQ: Turbo Dars endi progress bilan bir joyda, eng tepada. -->
+  <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
+    <i class="ti ti-bolt" style="color:#F0C56B;"></i>
+    <div class="t">🔥 Turbo Dars <span style="font-size:11px; font-weight:600; color:#6FBF8B;">(keyingi bo'lim ochish yo'li)</span></div>
+    <div class="s">Flashkard → Match → Gap → Test — barchasi bitta zanjirда</div>
+  </div>
+
   <div class="menu-grid">
     <div class="menu-card" onclick="goScreen('lugat')">
       <i class="ti ti-book-2"></i>
@@ -426,21 +433,17 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="t">Grammatika</div>
       <div class="s">4 ta mavzu: gap, inkor, moziy, kelasi zamon</div>
     </div>
-    <div class="menu-card" onclick="goScreen('stats')">
-      <i class="ti ti-chart-bar"></i>
-      <div class="t">Natijalar</div>
-      <div class="s">Progress</div>
+    <div class="menu-card" onclick="goScreen('match-setup')">
+      <i class="ti ti-bolt"></i>
+      <div class="t">Match Madness ⚡</div>
+      <div class="s">Tezkor o'yin</div>
     </div>
   </div>
-  <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
-    <i class="ti ti-bolt" style="color:#F0C56B;"></i>
-    <div class="t">🔥 Turbo Dars <span style="font-size:11px; font-weight:600; color:#6FBF8B;">(keyingi bo'lim ochish yo'li)</span></div>
-    <div class="s">Flashkard → Match → Gap → Test — barchasi bitta zanjirда</div>
-  </div>
-  <div class="menu-card" onclick="goScreen('match-setup')" style="margin-top:14px; background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.10)); border-color:rgba(212,162,58,0.4);">
-    <i class="ti ti-bolt" style="color:var(--gold2);"></i>
-    <div class="t">Match Madness ⚡</div>
-    <div class="s">Tezkor so'z moslashtirish o'yini</div>
+  <!-- 5-TOPSHIRIQ: Natijalar (hisobot) endi eng pastda. -->
+  <div class="menu-card" onclick="goScreen('stats')" style="margin-top:14px;">
+    <i class="ti ti-chart-bar"></i>
+    <div class="t">Natijalar</div>
+    <div class="s">Progress</div>
   </div>
 </div>
 
@@ -807,6 +810,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
+<div class="turbo-status-badge" id="turboStatusBadge" style="display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99998;background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92));color:#1a1408;font-weight:800;font-size:13px;padding:7px 16px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,0.4);white-space:nowrap;">🔥 Turbo: <span id="turboStatusCount">0/0</span></div>
+<a href="index.html#bolimlar" onclick="event.preventDefault();location.replace('index.html#bolimlar')" style="position:fixed;bottom:74px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">📚 Bo'limlar</a>
 <a href="index.html" onclick="event.preventDefault();location.replace('index.html')" style="position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">🏠 Bosh sahifa</a>
 
 <script src="core.js"></script>
@@ -1030,6 +1035,17 @@ function goScreen(name, push){
     }
   }
   window.scrollTo(0,0);
+  updateTurboStatusBadge();
+}
+// 4-TOPSHIRIQ: Turbo o'ynalayotgan paytda qancha sifatli Turbo qolgani doim ekran tepasida ko'rinsin.
+function updateTurboStatusBadge(){
+  var badge = document.getElementById('turboStatusBadge');
+  if(!badge) return;
+  if(!smartPath.active){ badge.style.display = 'none'; return; }
+  var gd = getGatingInfo();
+  var el = document.getElementById('turboStatusCount');
+  if(el) el.textContent = gd.turboGood + '/' + gd.turboNeeded;
+  badge.style.display = 'block';
 }
 window.addEventListener('popstate', function(e){
   if(e.state && e.state.screen){
@@ -1308,8 +1324,9 @@ function answerFlashcard(knew){
   const state = loadProgress();
   const newBox = {...(state.box||{})};
   const curBox = newBox[w.ar]||1;
-  newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1;
-  state.box = newBox;
+  // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
+  // Oddiy Flashkard rejimida bosilganda faqat XP beriladi, foiz o'zgarmaydi.
+  if(smartPath.active){ newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1; state.box = newBox; }
   if(knew){
     fcState.know++;
   } else {
@@ -1525,13 +1542,13 @@ function finishQuiz(){
   let correctCount=0;
   quizState.results.forEach(r=>{
     const curBox = newBox[r.word.ar]||1;
-    newBox[r.word.ar] = r.correct ? Math.min(5,curBox+1) : 1;
+    if(smartPath.active){ newBox[r.word.ar] = r.correct ? Math.min(5,curBox+1) : 1; } // faqat Turboda box o'zgaradi
     if(r.correct){
       correctCount++;
       if(state.learned.indexOf(r.word.ar)===-1) state.learned.push(r.word.ar);
     }
   });
-  state.box = newBox;
+  if(smartPath.active){ state.box = newBox; }
   saveProgress(state);
   // GATING: Test 70%+ natija bilan yechilsa "test_done" belgisi qo'yiladi
   try{
@@ -1612,7 +1629,14 @@ function renderGapCurrent(){
 
   var shuffledDistractors = GT_DISTRACTOR_WORDS.slice().sort(function(){return Math.random()-0.5;});
   var numExtra = Math.min(2, Math.floor(item.words.length/3)+1);
-  var extra = shuffledDistractors.slice(0, numExtra);
+  // Takroriy plitkalarni oldini olamiz: jumlada bor so'z distraktor sifatida qo'shilmaydi.
+  var _wordSet = {}; item.words.forEach(function(w){ _wordSet[w] = true; });
+  var extra = [];
+  for(var _i=0; _i<shuffledDistractors.length && extra.length<numExtra; _i++){
+    var _d = shuffledDistractors[_i];
+    if(_wordSet[_d] || extra.indexOf(_d) !== -1) continue;
+    extra.push(_d);
+  }
   var poolWords = item.words.concat(extra).sort(function(){return Math.random()-0.5;});
   gapState.pool = poolWords.map(function(w,i){ return {word:w, uid:i, used:false}; });
 

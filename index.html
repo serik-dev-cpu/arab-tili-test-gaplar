@@ -162,6 +162,20 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .summary-sub{font-size:13px;color:#9BA3B4;line-height:1.5}
 .summary-sub b{color:#EDEFF5;font-weight:700}
 
+/* ═══ 1-TOPSHIRIQ: birlashtirilgan profil + natija kartasi (mobil formatga mos) ═══ */
+.hero-card-merged{gap:12px;padding:16px 16px;margin-bottom:6px;}
+.hero-ring-wrap{position:relative;flex-shrink:0;width:64px;height:64px;z-index:1}
+.hero-ring-wrap .summary-ring-svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.hero-ring-wrap .summary-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#F0C56B}
+.summary-sub-line{font-size:12.5px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 14px;}
+.summary-sub-line b{color:#EDEFF5;font-weight:700}
+@media (max-width:360px){
+  .hero-greet{font-size:15px}
+  .hero-ring-wrap{width:56px;height:56px}
+  .hero-ring-wrap .summary-ring-pct{font-size:13px}
+  .stat-pill{padding:5px 9px;font-size:12px}
+}
+
 .section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
 .section-label .path-dot{width:6px;height:6px;border-radius:50%;background:#D4A23A}
 
@@ -436,8 +450,9 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
   <!-- ═══════════ TAB: BOSH SAHIFA ═══════════ -->
   <div class="tab-content active" id="tab-home">
-    <!-- ═══ HERO — ISM, XP, STREAK ═══ -->
-    <div class="hero-card">
+    <!-- ═══ PROFIL + NATIJA BITTA KARTADA (Duolingo/Busuu uslubi) ═══ -->
+    <!-- 1-TOPSHIRIQ: umumiy natija (foiz halqasi) endi ism yonida, bitta chiroyli kartada. -->
+    <div class="hero-card hero-card-merged">
       <div class="hero-avatar" id="heroAvatar">?</div>
       <div class="hero-info">
         <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
@@ -447,11 +462,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
           <div class="stat-pill stat-pill-xp"><i class="ti ti-star-filled"></i><span id="heroXp">0</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
         </div>
       </div>
-    </div>
-
-    <!-- ═══ UMUMIY NATIJA ═══ -->
-    <div class="summary-card">
-      <div class="summary-ring-wrap">
+      <div class="hero-ring-wrap">
         <svg class="summary-ring-svg" viewBox="0 0 84 84">
           <defs>
             <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -464,11 +475,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         </svg>
         <div class="summary-ring-pct" id="summaryPct">0%</div>
       </div>
-      <div class="summary-info">
-        <div class="summary-label">Umumiy o'zlashtirish</div>
-        <div class="summary-sub" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
-      </div>
     </div>
+    <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
 
     <div class="quick-links-row">
       <div class="quick-link-btn quick-link-full" onclick="switchTab('bolimlar')"><i class="ti ti-books"></i><span>Bo'limlar — O'quv yo'li</span></div>
@@ -478,9 +486,9 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="reward-card unlocked" id="mistakesCard" onclick="openMistakesModal()" style="cursor:pointer; display:none;">
       <div class="reward-icon-wrap"><i class="ti ti-notebook"></i></div>
       <div class="reward-info">
-        <div class="reward-title">🌿 Hadiqatul-Ilm <span style="font-family:'Noto Naskh Arabic','Amiri',serif; color:#F0C56B; font-size:15px;">حَدِيقَةُ الْعِلْمِ</span></div>
-        <div style="font-size:11px; color:#8A93A6; font-style:italic; margin:2px 0 3px;">«Takrorlash — ilmning onasi»</div>
-        <div class="reward-desc" id="mistakesCardDesc">0 ta kurtak</div>
+        <div class="reward-title">🌿 Xato daftari <span style="font-family:'Noto Naskh Arabic','Amiri',serif; color:#F0C56B; font-size:15px;">حَدِيقَةُ الْعِلْمِ</span></div>
+        <div style="font-size:11px; color:#8A93A6; font-style:italic; margin:2px 0 3px;">Xato qilingan so'zlarni takrorlab mustahkamlang</div>
+        <div class="reward-desc" id="mistakesCardDesc">0 ta so'z</div>
       </div>
     </div>
   </div>
@@ -1003,7 +1011,7 @@ function refreshMistakesCard(){
   if(!card) return;
   if(list.length === 0){ card.style.display = 'none'; return; }
   card.style.display = 'flex';
-  if(desc) desc.textContent = list.length + " ta kurtak \u2014 Hadiqani parvarish qilish: " + getMistakeClearPrice() + ' XP';
+  if(desc) desc.textContent = list.length + " ta xato so'z \u2014 takrorlab mustahkamlash: " + getMistakeClearPrice() + ' XP';
 }
 
 function openMistakesModal(){
@@ -1027,7 +1035,7 @@ function renderMistakesListHTML(list){
     var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:16px; line-height:2.0; direction:rtl;" : "font-size:12px;";
     var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:15px; line-height:2.0; direction:rtl;" : "font-size:12px;";
     rows += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.06);">' +
-      '<span style="color:#EDEFF5; ' + qStyle + '">\uD83C\uDF31 ' + q + '</span>' +
+      '<span style="color:#EDEFF5; ' + qStyle + '">\uD83D\uDCDD ' + q + '</span>' +
       '<span style="color:#7ED8A0; ' + cStyle + '">' + c + '</span>' +
     '</div>';
   }
@@ -1042,21 +1050,21 @@ function renderMistakesLanding(){
   if(!card) return;
   if(list.length === 0){
     card.innerHTML =
-      '<h3 style="text-align:center; margin-bottom:2px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+      '<h3 style="text-align:center; margin-bottom:2px;">\uD83D\uDCD3 Xato daftari</h3>' +
       '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:6px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
-      '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin:10px 0 18px;">Hozircha kurtaklar yo\'q \u2014 bog\'ingiz to\'liq gullagan!</div>' +
+      '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin:10px 0 18px;">Hozircha xato so\'z yo\'q \u2014 baraka topshaysiz!</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
     return;
   }
   var canAfford = wallet >= price;
   card.innerHTML =
-    '<h3 style="text-align:center; margin-bottom:2px;">\uD83C\uDF3F Hadiqatul-Ilm</h3>' +
+    '<h3 style="text-align:center; margin-bottom:2px;">\uD83D\uDCD3 Xato daftari</h3>' +
     '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:4px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
-    '<div style="text-align:center; font-size:11px; color:#8A93A6; font-style:italic; margin-bottom:8px;">\u00ABTakrorlash \u2014 ilmning onasi\u00BB</div>' +
-    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta kurtak yig'ilgan" + '</div>' +
+    '<div style="text-align:center; font-size:11px; color:#8A93A6; font-style:italic; margin-bottom:8px;">Test va mashqlarda xato qilgan so\'zlaringiz shu yerga yig\'iladi</div>' +
+    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta xato so'z to'plangan" + '</div>' +
     renderMistakesListHTML(list) +
-    '<div style="font-size:13px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Parvarish mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 kurtaklar gullaydi va Hadiqadan chiqadi. Jon tugasa, kurtaklar joyida qoladi.</div>' +
-    '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Parvarish qilish \u2014 ' + price + ' XP</button>' +
+    '<div style="font-size:13px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Takrorlash mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 bu so\'zlar daftardan o\'chiriladi. Jon tugasa, so\'zlar daftarda qoladi.</div>' +
+    '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Takrorlashni boshlash \u2014 ' + price + ' XP</button>' +
     (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:12px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +
     '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
 }
@@ -1064,7 +1072,7 @@ function startMistakesQuiz(){
   var list = getMistakes();
   if(list.length === 0) return;
   var price = getMistakeClearPrice();
-  if(!spendWalletXP(price, "Hadiqatul-Ilm parvarish mashqi")){ renderMistakesLanding(); return; }
+  if(!spendWalletXP(price, "Xato daftari takrorlash mashqi")){ renderMistakesLanding(); return; }
   refreshHeroAndShop();
   var indices = shuffleArr(list.map(function(_, i){ return i; })).slice(0, Math.min(MISTAKES_QUIZ_SIZE, list.length));
   mistakesQuizState = { indices: indices, idx: 0, lives: MISTAKES_LIVES, failed: false };
@@ -1139,7 +1147,7 @@ function answerMistakesQuestion(btnEl, entry){
   }
   var ra = document.getElementById('mistakesResultArea');
   if(st.lives <= 0){
-    ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:13px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 kurtaklar Hadiqada qoladi</div>' +
+    ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:13px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 so\'zlar daftarda qoladi</div>' +
       '<button class="proverb-close-btn" onclick="finishMistakesQuiz(false)">Tugatish</button>';
     return;
   }
@@ -1162,12 +1170,12 @@ function finishMistakesQuiz(success){
     card.innerHTML =
       '<div style="text-align:center; font-size:40px; margin-bottom:6px;">\uD83C\uDF89</div>' +
       '<h3 style="text-align:center; margin-bottom:8px;">Tabriklaymiz!</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">' + st.indices.length + " ta kurtak gulladi va Hadiqadan chiqarildi." + '</div>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">' + st.indices.length + " ta so'z mustahkamlandi va daftardan o'chirildi." + '</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
   } else {
     card.innerHTML =
       '<h3 style="text-align:center; margin-bottom:8px;">\uD83D\uDC94 Mashq tugadi</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">Jonlar tugadi, lekin xavotir olmang \u2014 kurtaklar Hadiqada joyida qoldi. Yana urinib ko\'ring!</div>' +
+      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">Jonlar tugadi, lekin xavotir olmang \u2014 so\'zlar daftarda joyida qoldi. Yana urinib ko\'ring!</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
   }
   mistakesQuizState = null;
@@ -2009,6 +2017,9 @@ function spawnConfetti(){
 if(initNameGate()){
   initRoadmap();
   maybeShowGatingChoice();
+  // Bo'lim ichidan "Bo'limlar ro'yxati" tugmasi bilan kelinganda (index.html#bolimlar)
+  // to'g'ridan-to'g'ri O'quv yo'li tabini ochamiz — talaba Bosh sahifani qayta bosishi shart emas.
+  if(location.hash === '#bolimlar'){ switchTab('bolimlar'); }
 }
 </script>
 

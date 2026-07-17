@@ -1663,6 +1663,16 @@ function getLearnedCount(key){
     return (d.learned || []).length;
   }catch(e){ return 0; }
 }
+// Bo'lim faylining o'zi hisoblab qo'ygan (box-asosidagi) foizni o'qiydi — ikkala joyda
+// (roadmap va bo'lim ichida) BIR XIL raqam ko'rinishi uchun yagona manba shu.
+// Agar hali hech qachon hisoblanmagan bo'lsa (juda eski saqlanma), eski learned/total ga qaytadi.
+function getStoredCoursePct(key, learnedCount, total){
+  try{
+    var d = JSON.parse(localStorage.getItem(key) || '{}');
+    if(typeof d.course_pct === 'number') return Math.max(0, Math.min(100, d.course_pct));
+  }catch(e){}
+  return total ? Math.min(100, Math.round(learnedCount / total * 100)) : 0;
+}
 
 /* ═══════════════ GATING: bosqichma-bosqich bo'lim ochilishi ═══════════════ */
 // N-bo'lim ochiq bo'lishi uchun (N-1)-bo'lim Testi bir marta yechilgan bo'lishi kerak.
@@ -1898,7 +1908,10 @@ function initRoadmap(){
     }
 
     var learned = getLearnedCount(item.key);
-    var pct = item.total ? Math.min(100, Math.round(learned / item.total * 100)) : 0;
+    // MUHIM: endi bo'lim ICHIDAGI foiz bilan bir xil son ko'rsatiladi (box-asosida).
+    // Bo'lim fayli getCourseProgressPct() hisoblab, natijani course_pct sifatida saqlaydi;
+    // shu yerda O'SHA saqlangan qiymatni o'qiymiz — ikki joyda foiz farq qilmaydi.
+    var pct = getStoredCoursePct(item.key, learned, item.total);
     totalLearned += Math.min(learned, item.total);
     totalWords += item.total;
     if(learned > 0) anyStarted = true;

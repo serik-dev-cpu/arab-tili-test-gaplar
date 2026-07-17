@@ -619,6 +619,13 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="progress-bar-outer"><div class="progress-bar-inner" id="vc-course-fill-qr" style="width:0%; transition:width 1s ease;"></div></div>
     <div class="victory-course-label" id="vc-course-label-qr">Bo'lim progressi: 0%</div>
   </div>
+  <!-- 2-TOPSHIRIQ: Turbo yetarli sonda yechilib, keyingi bo'lim ENDI OCHILGANDA aniq tabrik ko'rinadi. -->
+  <div id="unlockBanner" style="display:none; margin:14px 0; padding:14px 16px; border-radius:16px; background:linear-gradient(135deg, rgba(111,191,139,0.18), rgba(212,162,58,0.12)); border:1px solid rgba(111,191,139,0.4); text-align:center;">
+    <div style="font-size:28px; margin-bottom:4px;">🎉</div>
+    <div style="font-weight:800; color:#7ED8A0; font-size:15px; margin-bottom:4px;">Yangi bo'lim ochildi!</div>
+    <div id="unlockBannerSub" style="font-size:12.5px; color:#C7CCD8; margin-bottom:10px;"></div>
+    <button class="premium-btn-primary" id="unlockBannerBtn" style="width:100%;">Keyingi bo'limga o'tish →</button>
+  </div>
   <div class="victory-actions" id="vc-actions-qr">
     <button class="premium-btn-primary" id="qr-retry-btn" onclick="goScreen('quiz-setup')">Yana test</button>
     <button class="premium-btn-secondary" onclick="shareResult()">🚀 Natijani ulashish</button>
@@ -1051,6 +1058,7 @@ function goScreen(name, push){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById('screen-'+name);
   if(el) el.classList.add('active');
+  if(name === 'quiz-result'){ var _ub = document.getElementById('unlockBanner'); if(_ub) _ub.style.display = 'none'; }
   var fhb = document.getElementById('floatingHomeBtn');
   if(fhb) fhb.style.display = (name === 'home') ? 'none' : 'flex';
   if(push !== false){
@@ -1948,15 +1956,19 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   var totalAfter = getAchievementXP();
   // GATING: Turbo Dars natijasiga qarab (sifatli takror tizimi)
   //   turbo_count — umumiy urinishlar; turbo_good — 60%+ (sanaladigan); turbo_perfect — 90%+
+  var justUnlockedNext = false;
   try{
     var _tp = examTotal > 0 ? (examCorrect / examTotal * 100) : 0;
     var _dt = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    var _goodBefore = Number(_dt.turbo_good) || 0;
     _dt.turbo_count = (Number(_dt.turbo_count) || 0) + 1;
     if(_tp >= 60) _dt.turbo_good = (Number(_dt.turbo_good) || 0) + 1;
     if(_tp >= 90) _dt.turbo_perfect = (Number(_dt.turbo_perfect) || 0) + 1;
     var _rtp = Math.round(_tp);
     if(_rtp > (Number(_dt.turbo_best_pct) || 0)) _dt.turbo_best_pct = _rtp;
     localStorage.setItem(LS_KEY, JSON.stringify(_dt));
+    var _goodAfter = Number(_dt.turbo_good) || 0;
+    if(_goodBefore < TURBO_NEEDED_LOCAL && _goodAfter >= TURBO_NEEDED_LOCAL) justUnlockedNext = true;
   }catch(e){}
 
   document.getElementById('result-correct').textContent = examCorrect;
@@ -1967,6 +1979,16 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ startSmartPath(); }; }
 
   goScreen('quiz-result');
+  if(justUnlockedNext){
+    var ub = document.getElementById('unlockBanner');
+    if(ub){
+      // 12-bo'lim OXIRGI bo'lim — endi keyingi raqamli bo'lim emas, Yakuniy Imtihon ochiladi.
+      document.getElementById('unlockBannerSub').textContent = "Barcha 12 ta bo'lim tugadi — Yakuniy Imtihon endi ochiq!";
+      document.getElementById('unlockBannerBtn').textContent = 'Bosh sahifaga o\u2019tish \u2192';
+      document.getElementById('unlockBannerBtn').onclick = function(){ location.href = 'index.html'; };
+      ub.style.display = 'block';
+    }
+  }
   runVictoryCelebration({
     xpElId:'qr-xp', courseFillElId:'vc-course-fill-qr', courseLabelElId:'vc-course-label-qr',
     actionsElId:'vc-actions-qr', hintElId:'vc-hint-qr',
@@ -2615,7 +2637,11 @@ function getCourseProgressPct(){
   if(totalItems === 0) return 0;
   var sum = 0;
   items.forEach(function(id){ sum += Math.min(5, Number(box[id]) || 0); });
-  return Math.min(100, Math.round((sum / (totalItems * 5)) * 100));
+  var pct = Math.min(100, Math.round((sum / (totalItems * 5)) * 100));
+  // MUHIM: index.html'dagi Bo'limlar (roadmap) kartasi ANIQ SHU foizni ko'rsatishi uchun
+  // natijani localStorage'ga yozib qo'yamiz — endi ikkala joyda BIR XIL raqam chiqadi.
+  if(state.course_pct !== pct){ state.course_pct = pct; saveProgress(state); }
+  return pct;
 }
 
 function vcCreateConfetti(container){

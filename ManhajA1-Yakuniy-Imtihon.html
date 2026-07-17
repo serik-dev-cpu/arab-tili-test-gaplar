@@ -100,6 +100,17 @@ h1,h2,h3{font-weight:600; margin:0 0 8px; letter-spacing:-0.01em;}
 .opt-btn.correct{border-color:var(--green); background:rgba(76,175,125,.12); color:var(--green);}
 .opt-btn.wrong{border-color:var(--red); background:rgba(232,118,92,.12); color:var(--red);}
 .opt-btn.disabled-opt{pointer-events:none;}
+/* Ovoz (bepul) — savol kartochkasi va variantlar uchun */
+.q-audio-btn{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); color:var(--gold2); font-size:18px; cursor:pointer; margin-top:4px;}
+.q-audio-btn.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
+.opt-btn{position:relative;}
+.opt-audio-mini{position:absolute; top:50%; left:10px; transform:translateY(-50%); width:28px; height:28px; border-radius:50%; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); color:var(--gold2); font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.opt-audio-mini.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
+@keyframes audioPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,162,58,.4);}50%{box-shadow:0 0 0 6px rgba(212,162,58,0);}}
+.exam-spd-chips{display:flex; align-items:center; justify-content:center; gap:6px; margin:10px 0 4px; flex-wrap:wrap;}
+.exam-spd-chips .spd-label{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:4px; margin-right:2px;}
+.exam-spd-chip{font-size:11px; font-weight:700; padding:5px 10px; border-radius:12px; background:rgba(212,162,58,.08); border:1px solid var(--gold-line); color:var(--muted); cursor:pointer;}
+.exam-spd-chip.active{background:rgba(212,162,58,.18); color:var(--gold2); border-color:var(--gold);}
 
 .next-btn{
   display:block; width:100%; text-align:center; padding:15px; border-radius:14px; border:none;
@@ -285,6 +296,12 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="exam-progress-label" id="examProgressLabel">1 / 96</div>
     </div>
     <div class="exam-bolim-tag" id="examBolimTag">1-bo'lim</div>
+    <div class="exam-spd-chips" id="examSpdChips">
+      <span class="spd-label"><i class="ti ti-bolt"></i> Tezlik:</span>
+      <span class="exam-spd-chip" data-spd="0.8" onclick="setExamAudioSpeed(0.8)">0.8x</span>
+      <span class="exam-spd-chip" data-spd="1.0" onclick="setExamAudioSpeed(1.0)">1.0x</span>
+      <span class="exam-spd-chip" data-spd="1.2" onclick="setExamAudioSpeed(1.2)">1.2x</span>
+    </div>
     <div class="q-card" id="qCard"></div>
     <div class="opt-list" id="optList"></div>
     <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Keyingi savol <i class="ti ti-arrow-right"></i></button>
@@ -404,20 +421,18 @@ function bolimProgress(n){
 
 function renderDashboard(){
   let sumPct = 0;
-  let allUnlocked = true;
   for(let n=1; n<=12; n++){
     const p = bolimProgress(n);
     sumPct += p.pct;
-    const unlocked = p.pct >= PASS_THRESHOLD;
-    if(!unlocked) allUnlocked = false;
     document.getElementById('bp-bar-'+n).style.width = Math.min(p.pct,100)+'%';
     document.getElementById('bp-pct-'+n).textContent = p.pct+'%';
     const lockEl = document.getElementById('bp-lock-'+n);
-    if(unlocked){
+    // Har bo'lim yonidagi belgi: 80%+ bo'lsa ✓, aks holda foiz halqasi (endi qulf emas — umumiy natija muhim)
+    if(p.pct >= PASS_THRESHOLD){
       lockEl.innerHTML = '<i class="ti ti-check"></i>';
       lockEl.classList.add('ok');
     } else {
-      lockEl.innerHTML = '<i class="ti ti-lock"></i>';
+      lockEl.innerHTML = '<i class="ti ti-circle-dashed"></i>';
       lockEl.classList.remove('ok');
     }
   }
@@ -425,13 +440,15 @@ function renderDashboard(){
   document.getElementById('overall-pct').textContent = overallPct+'%';
   const statusEl = document.getElementById('overall-status');
   const startBtn = document.getElementById('startExamBtn');
+  // OCHILISH SHARTI: UMUMIY o'rtacha natija 80%+ (har bo'lim alohida emas)
+  const allUnlocked = overallPct >= PASS_THRESHOLD;
   if(allUnlocked){
     statusEl.className = 'status unlocked';
     statusEl.innerHTML = '<i class="ti ti-lock-open"></i> Imtihon ochildi!';
     startBtn.classList.remove('disabled');
   } else {
     statusEl.className = 'status locked';
-    statusEl.innerHTML = '<i class="ti ti-lock"></i> Imtihon hali qulflangan';
+    statusEl.innerHTML = '<i class="ti ti-lock"></i> Umumiy ' + PASS_THRESHOLD + '% kerak (hozir ' + overallPct + '%)';
     startBtn.classList.add('disabled');
   }
 
@@ -445,10 +462,11 @@ function renderDashboard(){
 }
 
 function tryStartExam(){
-  for(let n=1;n<=12;n++){
-    if(bolimProgress(n).pct < PASS_THRESHOLD){
-      return; // hali qulflangan, hech narsa qilmaydi
-    }
+  var sumPct = 0;
+  for(let n=1;n<=12;n++){ sumPct += bolimProgress(n).pct; }
+  var overallPct = Math.round(sumPct/12);
+  if(overallPct < PASS_THRESHOLD){
+    return; // hali qulflangan (umumiy natija 80% dan past)
   }
   startExam();
 }
@@ -537,24 +555,33 @@ function renderQuestion(){
 
   if(q.kind === 'vocab'){
     if(q.dir === 'ar2uz'){
-      qCard.innerHTML = '<div class="q-ar ar">'+q.ar+'</div><div class="q-sub">Bu so\'zning o\'zbekcha tarjimasini tanlang</div>';
+      qCard.innerHTML = '<div class="q-ar ar">'+q.ar+'</div>'+
+        '<button class="q-audio-btn" onclick="examSpeak(\''+escJs(q.ar)+'\', this, event)"><i class="ti ti-volume"></i></button>'+
+        '<div class="q-sub">Bu so\'zning o\'zbekcha tarjimasini tanlang</div>';
     } else {
       qCard.innerHTML = '<div class="q-uz">'+dtxt(q.uz)+'</div><div class="q-sub">Bu so\'zning arabchasini tanlang</div>';
     }
     optList.innerHTML = q.options.map(function(opt){
       const isArOpt = (q.dir === 'uz2ar');
       const displayVal = isArOpt ? opt : dtxt(opt);
-      return '<div class="opt-btn'+(isArOpt?' ar':'')+'" data-val="'+escAttr(opt)+'">'+displayVal+'</div>';
+      var mini = isArOpt ? '<span class="opt-audio-mini" onclick="examSpeak(\''+escJs(opt)+'\', this, event)"><i class="ti ti-volume"></i></span>' : '';
+      return '<div class="opt-btn'+(isArOpt?' ar':'')+'" data-val="'+escAttr(opt)+'">'+mini+displayVal+'</div>';
     }).join('');
   } else {
     let promptHtml = q.promptIsArabic ? '<div class="q-ar ar">'+q.prompt+'</div>' : '<div class="q-uz">'+dtxt(q.prompt)+'</div>';
+    if(q.promptIsArabic){
+      promptHtml += '<button class="q-audio-btn" onclick="examSpeak(\''+escJs(q.prompt)+'\', this, event)"><i class="ti ti-volume"></i></button>';
+    }
     if(q.subQuestion) promptHtml += '<div class="q-sub">'+dtxt(q.subQuestion)+'</div>';
     qCard.innerHTML = promptHtml;
     optList.innerHTML = q.options.map(function(opt){
       const displayVal = q.optionsAreArabic ? opt : dtxt(opt);
-      return '<div class="opt-btn'+(q.optionsAreArabic?' ar':'')+'" data-val="'+escAttr(opt)+'">'+displayVal+'</div>';
+      var mini = q.optionsAreArabic ? '<span class="opt-audio-mini" onclick="examSpeak(\''+escJs(opt)+'\', this, event)"><i class="ti ti-volume"></i></span>' : '';
+      return '<div class="opt-btn'+(q.optionsAreArabic?' ar':'')+'" data-val="'+escAttr(opt)+'">'+mini+displayVal+'</div>';
     }).join('');
   }
+
+  updateExamSpeedChips();
 
   document.querySelectorAll('#optList .opt-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ selectOption(btn, q); });
@@ -563,6 +590,62 @@ function renderQuestion(){
 
 function escAttr(s){
   return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// Arab matnini onclick=\"...('...')\" ichiga xavfsiz joylash uchun
+function escJs(s){
+  return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/\n/g,' ');
+}
+
+/* ═══════════════ OVOZ (bepul) + TEZLIK ═══════════════ */
+var arabicVoice = null, arabicVoiceMale = null, arabicVoiceFemale = null;
+function loadArabicVoice(){
+  if(!('speechSynthesis' in window)) return;
+  var voices = window.speechSynthesis.getVoices();
+  var arVoices = voices.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('ar') === 0; });
+  if(arVoices.length){
+    arabicVoice = arVoices[0];
+    arVoices.forEach(function(v){
+      var n = (v.name||'').toLowerCase();
+      if(!arabicVoiceMale && /male|male|majed|maged|tarik|hamza/.test(n)) arabicVoiceMale = v;
+      if(!arabicVoiceFemale && /female|femal|laila|salma|hoda|amira/.test(n)) arabicVoiceFemale = v;
+    });
+  }
+}
+if('speechSynthesis' in window){
+  loadArabicVoice();
+  window.speechSynthesis.onvoiceschanged = loadArabicVoice;
+}
+function getAudioSpeedSafe(){
+  var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
+  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
+}
+function updateExamSpeedChips(){
+  var cur = getAudioSpeedSafe();
+  document.querySelectorAll('.exam-spd-chip').forEach(function(chip){
+    chip.classList.toggle('active', parseFloat(chip.getAttribute('data-spd')) === cur);
+  });
+}
+function setExamAudioSpeed(spd){
+  localStorage.setItem('arabic_audio_speed', String(spd));
+  updateExamSpeedChips();
+}
+function speakArabic(text, btnEl){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.q-audio-btn.playing, .opt-audio-mini.playing').forEach(function(el){ el.classList.remove('playing'); });
+  var utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ar-SA';
+  if(arabicVoice) utter.voice = arabicVoice;
+  utter.rate = getAudioSpeedSafe();
+  if(btnEl) btnEl.classList.add('playing');
+  utter.onend = function(){ if(btnEl) btnEl.classList.remove('playing'); };
+  utter.onerror = function(){ if(btnEl) btnEl.classList.remove('playing'); };
+  window.speechSynthesis.speak(utter);
+}
+// onclick uchun global yordamchi (event.stopPropagation bilan)
+function examSpeak(text, el, ev){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  speakArabic(text, el);
 }
 
 function selectOption(btnEl, q){

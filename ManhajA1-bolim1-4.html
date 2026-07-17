@@ -95,6 +95,11 @@
   .lugat-scrolltop-btn{display:none;position:fixed;right:16px;bottom:130px;min-width:52px;height:52px;padding:0 18px;border-radius:26px;background:linear-gradient(135deg,var(--gold2),var(--gold1));color:#1a1408;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;box-shadow:0 4px 16px rgba(212,162,58,.4);z-index:99998;cursor:pointer;border:none;}
   .lugat-scrolltop-btn.show{display:flex;}
   .lugat-scrolltop-btn.paused{background:linear-gradient(135deg,#6FBF8B,#4E9E6E);}
+  .spd-chips{display:none;align-items:center;justify-content:center;gap:6px;margin:8px 0 10px;flex-wrap:wrap;}
+  .spd-chips.show{display:flex;}
+  .spd-chips .spd-label{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-right:2px;}
+  .spd-chips .lugat-speed-chip{font-size:11px;font-weight:700;padding:5px 10px;border-radius:12px;background:rgba(212,162,58,.08);border:1px solid var(--border);color:var(--muted);cursor:pointer;}
+  .spd-chips .lugat-speed-chip.active{background:rgba(212,162,58,.18);color:var(--gold2);border-color:var(--gold2);}
   .word-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(212,162,58,0.12);color:var(--gold2);}
   .word-main{min-width:0;}
   .word-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:28px;font-weight:700;color:var(--text);line-height:2.2;overflow-wrap:break-word;word-break:break-word;}
@@ -401,6 +406,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="top-title">Test</div>
     <div class="topbar-actions"><button class="toggle-alifbo" id="alifbo-btn-test">Кирилл</button></div>
   </div>
+  <div class="spd-chips" id="spd-chips-test"></div>
   <div class="quiz-progress" id="quiz-progress">1 / 15</div>
   <div class="quiz-timer-wrap"><i class="ti ti-clock"></i> <span id="quiz-timer">20</span>s</div>
   <div class="quiz-card"><div class="qword" id="quiz-question">...</div></div>
@@ -415,6 +421,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="top-title">Gap tuzish</div>
     <div class="topbar-actions"><button class="toggle-alifbo" id="alifbo-btn-gt">Кирилл</button></div>
   </div>
+  <div class="spd-chips" id="spd-chips-gap"></div>
   <div class="level-tabs">
     <div class="level-tab active" data-level="oson">Oson</div>
     <div class="level-tab" data-level="ortacha">O'rtacha</div>
@@ -439,6 +446,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="top-title">Flashkard</div>
     <div class="topbar-actions"><button class="toggle-alifbo" id="alifbo-btn-fk">Кирилл</button></div>
   </div>
+  <div class="spd-chips" id="spd-chips-flashcard"></div>
   <div class="quiz-progress" id="fk-progress">1 / 50</div>
   <div class="flash-wrap">
     <div class="flash-card" id="flash-card">
@@ -511,6 +519,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <span class="mm-timer" id="mm-timer"><i class="ti ti-clock"></i> <span id="mm-timer-val">40</span>s</span>
   </div>
   <div class="mm-progress" id="mm-progress">0 / 0 juft</div>
+  <div class="spd-chips" id="spd-chips-match"></div>
   <div class="mm-board">
     <div class="mm-col" id="mm-col-ar"></div>
     <div class="mm-col" id="mm-col-uz"></div>
@@ -1514,11 +1523,12 @@ function renderScreen(name){
   if(name==='menu') renderMenu();
   else if(name==='lugat') renderLugat();
   else if(name==='test-setup') renderTestSetup();
-  else if(name==='test') startQuiz();
-  else if(name==='gaptuzish') startGapTuzish();
-  else if(name==='flashkard') startFlashkard();
+  else if(name==='test'){ startQuiz(); renderSpeedChipsFor('test'); }
+  else if(name==='gaptuzish'){ startGapTuzish(); renderSpeedChipsFor('gap'); }
+  else if(name==='flashkard'){ startFlashkard(); renderSpeedChipsFor('flashcard'); }
   else if(name==='grammatika') BOLIM_META[currentBolim].gram();
   else if(name==='stats') renderStats();
+  else if(name==='match') renderSpeedChipsFor('match');
   else if(name==='match-setup'){
     var mb = document.getElementById('mm-best');
     if(mb) mb.textContent = localStorage.getItem('arabic_mm_best_14') || '0';
@@ -1645,6 +1655,27 @@ function updateLugatSpeedChips(){
 }
 function setLugatAudioSpeed(spd){
   localStorage.setItem('arabic_audio_speed', String(spd));
+  updateLugatSpeedChips();
+  syncAllSpeedChips();
+}
+// Har bir ovoz ekranidagi kichik tezlik qatorini chizadi — FAQAT o'sha rejim ovozi sotib olingan bo'lsa ko'rinadi
+function renderSpeedChipsFor(mode){
+  var box = document.getElementById('spd-chips-' + mode);
+  if(!box) return;
+  if(!hasAudioFor(mode)){ box.classList.remove('show'); box.innerHTML = ''; return; }
+  var cur = getAudioSpeedSafe();
+  var chips = [0.8, 1.0, 1.2].map(function(s){
+    var active = (s === cur) ? ' active' : '';
+    return '<span class="lugat-speed-chip'+active+'" data-spd="'+s+'" onclick="setLugatAudioSpeed('+s+')">'+s.toFixed(1)+'x</span>';
+  }).join('');
+  box.innerHTML = '<span class="spd-label"><i class="ti ti-bolt"></i> Tezlik:</span>' + chips;
+  box.classList.add('show');
+}
+function syncAllSpeedChips(){
+  ['flashcard','test','gap','match'].forEach(function(m){
+    var box = document.getElementById('spd-chips-' + m);
+    if(box && box.classList.contains('show')) renderSpeedChipsFor(m);
+  });
   updateLugatSpeedChips();
 }
 function toggleLugatAutoPlay(){
@@ -2166,6 +2197,10 @@ var sessionPctBefore = 0;
 function finishSession(type, correct, total){
   // Test uchun XP: savol soniga qarab 5/8/10 (Flashcard/Gap o'z XP'sini oladi)
   if(type === 'test' && !smartPath.active){ awardSessionXP('quiz', quizXpByCount()); }
+  // GATING: Test bir marta oxirigacha yechildi — keyingi bo'lim ochilishi uchun belgi
+  if(type === 'test' && currentBolim){
+    try{ var _k='arabic_uz_'+currentBolim+'bolim_v1'; var _d=JSON.parse(localStorage.getItem(_k))||{}; _d.test_done=true; localStorage.setItem(_k, JSON.stringify(_d)); }catch(e){}
+  }
   if(type === 'gaptuzish' && !smartPath.active){ awardSessionXP('gap', gapXpByLevel()); }
   if(type === 'flashkard' && !smartPath.active){ awardSessionXP('flashcard', 1); }
   document.getElementById('natija-name').textContent = 'Salom, '+currentName+'!';

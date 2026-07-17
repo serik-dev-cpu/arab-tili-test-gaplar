@@ -1794,6 +1794,8 @@ function finishQuiz(){
   });
   state.box = newBox;
   saveProgress(state);
+  // GATING: Test bir marta oxirigacha yechildi — keyingi bo'lim ochilishi uchun belgi
+  try{ var _d = JSON.parse(localStorage.getItem(LS_KEY)) || {}; _d.test_done = true; localStorage.setItem(LS_KEY, JSON.stringify(_d)); }catch(e){}
   var pctAfter = getCourseProgressPct();
   const total = quizState.results.length;
   const wrongCount = total - correctCount;

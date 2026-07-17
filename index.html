@@ -372,6 +372,9 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .entry-option.turbo{background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.08)); border-color:rgba(212,162,58,0.4);}
 .entry-option.turbo .entry-option-title{color:#F0C56B;}
 .entry-cancel{width:100%; text-align:center; padding:10px; font-size:13px; color:#8A93A6; cursor:pointer; margin-top:2px;}
+.gating-btn{display:block; width:100%; text-align:center; border:none; border-radius:14px; padding:13px 16px; font-size:14px; font-weight:800; cursor:pointer; margin-bottom:10px;}
+.gating-btn.primary{background:linear-gradient(135deg,#F0C56B,#D4A23A); color:#1a1408;}
+.gating-btn.ghost{background:rgba(255,255,255,0.05); color:#C7CCD8; border:1px solid rgba(255,255,255,0.1);}
 </style>
 </head>
 <body>
@@ -742,7 +745,25 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
-<!-- ═══════════ MAQOLLAR MODAL (Bonus dars) ═══════════ -->
+<!-- ═══════════ GATING: QULFLANGAN BO'LIM MODAL ═══════════ -->
+<div class="entry-modal-bg" id="gatingLockedModal">
+  <div class="entry-modal-card" style="text-align:center;">
+    <div id="gatingLockedBody"><!-- JS to'ldiradi --></div>
+    <div class="entry-cancel" onclick="closeGatingLockedModal()">Yopish</div>
+  </div>
+</div>
+
+<!-- ═══════════ GATING: ESKI TALABA TAKLIFI MODAL ═══════════ -->
+<div class="entry-modal-bg" id="gatingChoiceModal">
+  <div class="entry-modal-card" style="text-align:center;">
+    <div style="font-size:44px; margin-bottom:8px;">🎉</div>
+    <div style="font-size:19px; font-weight:800; color:#F0C56B; margin-bottom:12px;">Platforma yangilandi!</div>
+    <div style="font-size:14px; color:#C7CCD8; line-height:1.65; margin-bottom:8px;">Endi bo'limlar <b style="color:#EDEFF5;">bosqichma-bosqich</b> ochiladi — har bo'lim Testini yakunlaganingizda keyingisi ochiladi. Bu tartibli o'rganishga va hech narsani o'tkazib yubormaslikka yordam beradi.</div>
+    <div style="font-size:13px; color:#8A93A6; line-height:1.6; margin-bottom:18px;">Butun progressingiz saqlanadi. O'zingizga qulay tartibni tanlang:</div>
+    <button class="gating-btn primary" onclick="chooseGating(true)">✨ Yangi tartibni yoqish <span style="font-weight:600;font-size:12px;">(tavsiya etiladi)</span></button>
+    <button class="gating-btn ghost" onclick="chooseGating(false)">Hozircha hammasi ochiq qolsin</button>
+  </div>
+</div>
 <div class="proverb-modal-bg" id="proverbModal">
   <div class="proverb-card-modal">
     <h3 style="text-align:center; margin-bottom:6px;">🔑 Arab maqollari</h3>
@@ -1630,6 +1651,64 @@ function getLearnedCount(key){
   }catch(e){ return 0; }
 }
 
+/* ═══════════════ GATING: bosqichma-bosqich bo'lim ochilishi ═══════════════ */
+// N-bo'lim ochiq bo'lishi uchun (N-1)-bo'lim Testi bir marta yechilgan bo'lishi kerak.
+// 1-bo'lim doim ochiq. Eski talabalar "optout" qilsa — hammasi ochiq qoladi.
+function getBolimKey(num){
+  var b = BOLIMLAR.filter(function(x){ return x.num === num; })[0];
+  return b ? b.key : ('arabic_uz_' + num + 'bolim_v1');
+}
+function isTestDone(num){
+  try{ var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); return !!d.test_done; }catch(e){ return false; }
+}
+function isGatingOff(){
+  return localStorage.getItem('arabic_gating_optout') === '1';
+}
+function isBolimUnlocked(num){
+  if(num <= 1) return true;            // 1-bo'lim doim ochiq
+  if(isGatingOff()) return true;       // Eski talaba "hammasi ochiq" tanlagan
+  return isTestDone(num - 1);          // Oldingi bo'lim testi yechilganmi
+}
+// Eski talaba aniqlash: kamida bitta bo'limda progress bor, lekin hali gating tanlovi qilmagan
+function shouldOfferGatingChoice(){
+  if(localStorage.getItem('arabic_gating_choice_made') === '1') return false;
+  var anyProgress = false;
+  BOLIMLAR.forEach(function(b){
+    if(getLearnedCount(b.key) > 0 || isTestDone(b.num)) anyProgress = true;
+  });
+  return anyProgress;
+}
+// Eski talaba tanlovi: true = yangi tartib (gating yoqiladi), false = hammasi ochiq (optout)
+function chooseGating(useGating){
+  localStorage.setItem('arabic_gating_choice_made', '1');
+  if(useGating){
+    localStorage.removeItem('arabic_gating_optout');
+    // ORQAGA MOSLIK: allaqachon boshlangan bo'limlarni "yechilgan" deb belgilaymiz,
+    // shunda mavjud talabaning progressi qulflanib qolmaydi — u to'xtagan joyidan davom etadi.
+    BOLIMLAR.forEach(function(b){
+      if(getLearnedCount(b.key) > 0 && !isTestDone(b.num)){
+        try{
+          var d = JSON.parse(localStorage.getItem(b.key) || '{}');
+          d.test_done = true;
+          localStorage.setItem(b.key, JSON.stringify(d));
+        }catch(e){}
+      }
+    });
+  } else {
+    localStorage.setItem('arabic_gating_optout', '1');
+  }
+  var m = document.getElementById('gatingChoiceModal');
+  if(m) m.classList.remove('show');
+  initRoadmap(); // qulf holatini yangilash
+}
+// Kerak bo'lsa, eski talaba taklifini ko'rsatadi (yangi talabalarga ko'rsatilmaydi)
+function maybeShowGatingChoice(){
+  if(shouldOfferGatingChoice()){
+    var m = document.getElementById('gatingChoiceModal');
+    if(m) m.classList.add('show');
+  }
+}
+
 function animateRing(circleEl, pct, circumference){
   var offset = circumference - (circumference * Math.min(100,Math.max(0,pct)) / 100);
   circleEl.style.strokeDasharray = circumference;
@@ -1646,7 +1725,7 @@ function buildCard(item, isLocked, pct){
     : (pct >= 100 ? '<i class="ti ti-check"></i>' : item.num);
 
   var pctLine = isLocked
-    ? item.phrase
+    ? (item.phrase || ((item.num-1) + '-bo\'lim testini yeching'))
     : (pct >= 100 ? "O'zlashtirildi" : pct + '%');
 
   var bar = (!isLocked && pct > 0 && pct < 100)
@@ -1660,9 +1739,44 @@ function buildCard(item, isLocked, pct){
     bar;
 
   var href = item.href || ('ManhajA1-bolim' + item.num + '.html');
-  var clickAttr = isLocked ? '' : ' onclick="openEntryModal(' + item.num + ', \'' + href.replace(/'/g,"\\'") + '\', \'' + (item.desc||'').replace(/'/g,"\\'") + '\')"';
+  var clickAttr;
+  if(item.gatingLocked){
+    // Gating bilan qulflangan — bosilganda tushuntirish modali
+    clickAttr = ' onclick="openGatingLockedModal(' + item.num + ')"';
+  } else if(isLocked){
+    clickAttr = '';
+  } else {
+    clickAttr = ' onclick="openEntryModal(' + item.num + ', \'' + href.replace(/'/g,"\\'") + '\', \'' + (item.desc||'').replace(/'/g,"\\'") + '\')"';
+  }
 
   return '<div class="g-card ' + state + '"' + clickAttr + ' data-bolim="' + item.num + '">' + inner + '</div>';
+}
+// Gating bilan qulflangan bo'limga bosilganda — qaysi bo'limni tugatish kerakligini ko'rsatadi
+function openGatingLockedModal(num){
+  var prev = num - 1;
+  var prevData = BOLIMLAR.filter(function(x){ return x.num === prev; })[0];
+  var prevDesc = prevData ? prevData.desc : '';
+  var modal = document.getElementById('gatingLockedModal');
+  var body = document.getElementById('gatingLockedBody');
+  if(body){
+    body.innerHTML =
+      '<div style="font-size:44px;margin-bottom:10px;">🔒</div>' +
+      '<div style="font-size:18px;font-weight:800;color:#F0C56B;margin-bottom:10px;">' + num + "-bo'lim hali qulflangan</div>" +
+      '<div style="font-size:14px;color:#9BA3B4;line-height:1.6;margin-bottom:18px;">Buni ochish uchun avval <b style="color:#EDEFF5;">' + prev + '-bo\'lim' + (prevDesc ? ' — ' + prevDesc : '') + '</b> Testini bir marta yakunlang. Test barcha so\'z va grammatikani o\'z ichiga oladi.</div>' +
+      '<button class="gating-btn primary" onclick="gotoBolim(' + prev + ')">' + prev + "-bo'limga o'tish →</button>";
+  }
+  if(modal) modal.classList.add('show');
+}
+function closeGatingLockedModal(){
+  var m = document.getElementById('gatingLockedModal');
+  if(m) m.classList.remove('show');
+}
+function gotoBolim(num){
+  var b = BOLIMLAR.filter(function(x){ return x.num === num; })[0];
+  if(!b) return;
+  var href = b.href || ('ManhajA1-bolim' + num + '.html');
+  closeGatingLockedModal();
+  openEntryModal(num, href, b.desc || '');
 }
 
 /* ═══ Kirish tanlovi: Oddiy yo'l yoki 🔥 Turbo Dars ═══ */
@@ -1721,7 +1835,10 @@ function initRoadmap(){
     if(learned > 0) anyStarted = true;
     if(pct < 80){ allAbove80 = false; below80Count++; }
 
-    cardsHtml += buildCard(item, false, pct);
+    // GATING: bu bo'lim gating tufayli qulflanganmi?
+    var gatedLock = !isBolimUnlocked(num);
+    item.gatingLocked = gatedLock;
+    cardsHtml += buildCard(item, gatedLock, pct);
   });
 
   document.getElementById('roadRows').innerHTML = cardsHtml;
@@ -1829,6 +1946,7 @@ function spawnConfetti(){
 
 if(initNameGate()){
   initRoadmap();
+  maybeShowGatingChoice();
 }
 </script>
 

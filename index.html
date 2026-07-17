@@ -34,12 +34,19 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 /* ═══════════════ PAPKA (TAB) NAVIGATSIYASI ═══════════════ */
 .tab-bar{position:sticky; top:0; z-index:500; display:flex; gap:4px; justify-content:space-between; overflow-x:auto; padding:10px 2px 12px; margin:0 -16px 18px; padding-left:16px; padding-right:16px; background:linear-gradient(180deg, rgba(11,14,20,0.97) 75%, rgba(11,14,20,0)); scrollbar-width:none;}
 .tab-bar::-webkit-scrollbar{display:none;}
-.tab-btn{flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 2px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:transform .15s var(--ease), background .15s ease, border-color .15s ease; white-space:nowrap; min-width:0;}
+.tab-btn{flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 3px; border-radius:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:transform .15s var(--ease), background .15s ease, border-color .15s ease; white-space:nowrap; min-width:0;}
 .tab-btn:active{transform:scale(.95);}
-.tab-btn .tab-icon{font-size:18px; line-height:1;}
-.tab-btn .tab-label{font-size:9px; font-weight:700; color:#8A93A6; letter-spacing:0.1px; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+.tab-btn .tab-icon{font-size:22px; line-height:1;}
+.tab-btn .tab-label{font-size:10px; font-weight:700; color:#8A93A6; letter-spacing:0.1px; overflow:hidden; text-overflow:ellipsis; max-width:100%; text-align:center; line-height:1.15;}
+.tab-btn .tab-sub{font-size:8px; font-weight:600; color:#6B7280;}
 .tab-btn.active{background:linear-gradient(135deg, rgba(212,162,58,0.22), rgba(240,197,107,0.12)); border-color:rgba(212,162,58,0.45);}
 .tab-btn.active .tab-label{color:#F0C56B;}
+.tab-btn.tab-bozor{background:linear-gradient(135deg, rgba(236,64,122,0.18), rgba(255,64,129,0.10)); border-color:rgba(255,64,129,0.45); animation:bozorNeon 2s ease-in-out infinite;}
+.tab-btn.tab-bozor .tab-label{color:#FF6EC7; font-size:13px;}
+.tab-btn.tab-bozor .tab-sub{color:#FFB3DE;}
+.tab-btn.tab-bozor .tab-icon{filter:drop-shadow(0 0 4px rgba(255,64,129,0.6));}
+.tab-btn.tab-bozor.active{background:linear-gradient(135deg, rgba(236,64,122,0.32), rgba(255,64,129,0.18)); border-color:rgba(255,64,129,0.7);}
+@keyframes bozorNeon{0%,100%{box-shadow:0 0 6px rgba(255,64,129,0.3);}50%{box-shadow:0 0 16px rgba(255,64,129,0.6);}}
 .tab-btn .tab-dot{width:6px; height:6px; border-radius:50%; background:#E8765C; position:absolute; margin-left:16px; margin-top:-4px; display:none;}
 .tab-btn.has-alert .tab-dot{display:block;}
 .tab-content{display:none;}
@@ -49,6 +56,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .quick-link-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; font-size:12px; font-weight:700; color:#D4A23A; transition:transform .15s var(--ease);}
 .quick-link-btn:active{transform:scale(.96);}
 .quick-link-btn i{font-size:22px;}
+.quick-link-full{flex-direction:row !important; gap:10px !important; padding:18px 12px !important; font-size:15px !important; background:linear-gradient(135deg, rgba(212,162,58,0.14), rgba(240,197,107,0.06)) !important; border-color:rgba(212,162,58,0.35) !important; color:#F0C56B !important;}
+.quick-link-full i{font-size:24px !important;}
 .tab-info-note{font-size:12px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
 /* ═══════════════ UNVON DARAJASI (Duolingo uslubida) ═══════════════ */
 .rank-progress-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); border:1px solid var(--gold-line, rgba(212,162,58,0.2)); border-radius:20px; padding:18px 16px; margin-bottom:8px;}
@@ -411,11 +420,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="tab-btn active" data-tab="home" onclick="switchTab('home')">
       <span class="tab-icon">🏠</span><span class="tab-label">Bosh</span>
     </div>
-    <div class="tab-btn" data-tab="bolimlar" onclick="switchTab('bolimlar')">
-      <span class="tab-icon">📚</span><span class="tab-label">Bo'limlar</span>
-    </div>
-    <div class="tab-btn" data-tab="bozor" onclick="switchTab('bozor')">
-      <span class="tab-icon">🛍️</span><span class="tab-label">Bozor</span>
+    <div class="tab-btn tab-bozor" data-tab="bozor" onclick="switchTab('bozor')">
+      <span class="tab-icon">🛍️</span><span class="tab-label">السوق<br><span class="tab-sub">Bozor</span></span>
     </div>
     <div class="tab-btn" data-tab="imtihon" onclick="switchTab('imtihon')">
       <span class="tab-icon">📝</span><span class="tab-label">Imtihon</span>
@@ -465,8 +471,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     </div>
 
     <div class="quick-links-row">
-      <div class="quick-link-btn" onclick="switchTab('bolimlar')"><i class="ti ti-books"></i><span>Bo'limlar</span></div>
-      <div class="quick-link-btn" onclick="switchTab('bozor')"><i class="ti ti-shopping-bag"></i><span>Bozor</span></div>
+      <div class="quick-link-btn quick-link-full" onclick="switchTab('bolimlar')"><i class="ti ti-books"></i><span>Bo'limlar — O'quv yo'li</span></div>
     </div>
 
     <!-- ═══ HADIQATUL-ILM — markazlashtirilgan xato so'zlar (bilim bog'i) ═══ -->
@@ -1661,61 +1666,58 @@ function getBolimKey(num){
 function isTestDone(num){
   try{ var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); return !!d.test_done; }catch(e){ return false; }
 }
-// Keyingi bo'lim ochilishi uchun kerakli Turbo Dars soni (bir joyda o'zgartiriladi)
-var REQUIRED_TURBO = 5;
+// Har bo'lim uchun kerakli Turbo soni — so'z soniga qarab (kichik bo'lim 5, katta bo'lim 8).
+// Bo'lim raqami: kerakli sifatli Turbo soni.
+var TURBO_NEEDED = {1:5, 2:5, 3:5, 4:8, 5:8, 6:8, 7:8, 8:5, 9:5, 10:5, 11:8, 12:8};
+function getTurboNeeded(num){ return TURBO_NEEDED[num] || 5; }
 function getTurboCount(num){
-  try{ var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); return Number(d.turbo_count) || 0; }catch(e){ return 0; }
+  // Faqat SIFATLI (60%+) Turbolar sanaladi — turbo_good hisoblagichi
+  try{ var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); return Number(d.turbo_good) || 0; }catch(e){ return 0; }
 }
-// Bo'lim TO'LIQ yakunlanganmi: Test 70%+ (test_done) VA Turbo Dars kamida REQUIRED_TURBO marta
+// Bo'lim TO'LIQ yakunlanganmi: sifatli Turbo soni kerakli songa yetganmi
 function isBolimComplete(num){
-  try{
-    var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}');
-    return !!d.test_done && (Number(d.turbo_count) || 0) >= REQUIRED_TURBO;
-  }catch(e){ return false; }
+  return getTurboCount(num) >= getTurboNeeded(num);
 }
-// Bo'limда nima qolganini qaytaradi (chiroyli xabar uchun): test holati + turbo qolgan soni + test foizi
+// Bo'lim holati (chiroyli xabar uchun)
 function getBolimStatus(num){
   var d = {};
   try{ d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); }catch(e){}
-  var turbo = Number(d.turbo_count) || 0;
+  var good = Number(d.turbo_good) || 0;
+  var needed = getTurboNeeded(num);
   return {
-    testDone: !!d.test_done,
-    testPct: Number(d.test_best_pct) || 0,
-    turboDone: turbo,
-    turboNeeded: REQUIRED_TURBO,
-    turboLeft: Math.max(0, REQUIRED_TURBO - turbo)
+    turboGood: good,                          // sifatli (60%+) Turbolar
+    turboTotal: Number(d.turbo_count) || 0,   // umumiy urinishlar (sifatsizlar ham)
+    turboNeeded: needed,
+    turboLeft: Math.max(0, needed - good),
+    bestPct: Number(d.turbo_best_pct) || 0,   // eng yaxshi Turbo natijasi
+    perfect: (Number(d.turbo_perfect) || 0)   // 90%+ mukammal Turbolar soni
   };
 }
 function isGatingOff(){
-  return localStorage.getItem('arabic_gating_optout') === '1';
+  return false; // GATING HAR DOIM YOQILGAN — barcha talaba (eski ham) Turbodan qayta o'tadi.
+                // Eski versiyada test bosib ko'tarilgan foizlar hisobga olinmaydi.
 }
 function isBolimUnlocked(num){
   if(num <= 1) return true;            // 1-bo'lim doim ochiq
-  if(isGatingOff()) return true;       // Eski talaba "hammasi ochiq" tanlagan
-  return isBolimComplete(num - 1);     // Oldingi bo'lim TO'LIQ (test 70% + 5 Turbo) yakunlanganmi
+  return isBolimComplete(num - 1);     // Oldingi bo'lim sifatli Turbolar bilan tugatilganmi
 }
-// Eski talaba aniqlash: kamida bitta bo'limda progress bor, lekin hali gating tanlovi qilmagan
 function shouldOfferGatingChoice(){
-  if(localStorage.getItem('arabic_gating_choice_made') === '1') return false;
-  var anyProgress = false;
-  BOLIMLAR.forEach(function(b){
-    if(getLearnedCount(b.key) > 0 || isBolimComplete(b.num)) anyProgress = true;
-  });
-  return anyProgress;
+  return false; // Eski talaba taklifi o'chirilgan — hamma bir xil Turbo yo'lidan o'tadi
 }
 // Eski talaba tanlovi: true = yangi tartib (gating yoqiladi), false = hammasi ochiq (optout)
 function chooseGating(useGating){
   localStorage.setItem('arabic_gating_choice_made', '1');
   if(useGating){
     localStorage.removeItem('arabic_gating_optout');
-    // ORQAGA MOSLIK: allaqachon boshlangan bo'limlarni "to'liq yakunlangan" deb belgilaymiz,
+    // ORQAGA MOSLIK: allaqachon boshlangan bo'limlarni "yakunlangan" deb belgilaymiz,
     // shunda mavjud talabaning progressi qulflanib qolmaydi — u to'xtagan joyidan davom etadi.
     BOLIMLAR.forEach(function(b){
       if(getLearnedCount(b.key) > 0 && !isBolimComplete(b.num)){
         try{
           var d = JSON.parse(localStorage.getItem(b.key) || '{}');
-          d.test_done = true;
-          d.turbo_count = Math.max(Number(d.turbo_count)||0, REQUIRED_TURBO);
+          var need = getTurboNeeded(b.num);
+          d.turbo_good = Math.max(Number(d.turbo_good)||0, need);
+          d.turbo_count = Math.max(Number(d.turbo_count)||0, need);
           localStorage.setItem(b.key, JSON.stringify(d));
         }catch(e){}
       }
@@ -1783,38 +1785,43 @@ function openGatingLockedModal(num){
   var prevData = BOLIMLAR.filter(function(x){ return x.num === prev; })[0];
   var prevDesc = prevData ? prevData.desc : '';
   var st = getBolimStatus(prev);
-
   var body = document.getElementById('gatingLockedBody');
-  var html = '';
 
-  if(!st.testDone){
-    // Test hali 70% bo'lmagan — avval testni yechishга undash
-    html =
-      '<div style="font-size:46px;margin-bottom:8px;">📝</div>' +
-      '<div style="font-size:18px;font-weight:800;color:#F0C56B;margin-bottom:10px;">Yana bir qadam qoldi!</div>' +
-      '<div style="font-size:14px;color:#C7CCD8;line-height:1.65;margin-bottom:16px;">' + num + "-bo'limни ochish uchun avval <b style=\"color:#EDEFF5;\">" + prev + '-bo\'lim' + (prevDesc ? ' — ' + prevDesc : '') + '</b> Testini <b style="color:#F0C56B;">70%+</b> natija bilan yeching.</div>' +
-      '<div style="font-size:13px;color:#8A93A6;line-height:1.6;margin-bottom:18px;">Test — bilimingizni sinaydi. Undan so\'ng Turbo mashqlar bilan mustahkamlaysiz. 💪</div>';
-  } else {
-    // Test o'tган, endi Turbo mashqларни undash — ILHOMLANTIRUVCHI
-    var doneBars = '';
-    for(var i=0;i<st.turboNeeded;i++){
-      var filled = i < st.turboDone;
-      doneBars += '<span style="display:inline-block; width:26px; height:8px; border-radius:4px; margin:0 2px; background:'+(filled?'linear-gradient(135deg,#F0C56B,#D4A23A)':'rgba(255,255,255,0.1)')+';"></span>';
-    }
-    var pctText = st.testPct > 0 ? (' Testni <b style="color:#6FBF8B;">'+st.testPct+'%</b> bajardingiz!') : ' Testni muvaffaqiyatli yakunladingiz!';
-    html =
-      '<div style="font-size:46px;margin-bottom:8px;">🌟</div>' +
-      '<div style="font-size:19px;font-weight:800;color:#F0C56B;margin-bottom:10px;">Ofarin!' + '</div>' +
-      '<div style="font-size:14px;color:#C7CCD8;line-height:1.65;margin-bottom:14px;">' + prev + '-bo\'lim.' + pctText + ' Endi bilimingizни <b style="color:#EDEFF5;">toshdek mustahkam</b> qilish vaqti keldi.</div>' +
-      '<div style="background:rgba(212,162,58,0.08); border:1px solid rgba(212,162,58,0.2); border-radius:14px; padding:14px; margin-bottom:16px;">' +
-        '<div style="font-size:13px;color:#9BA3B4;margin-bottom:8px;">🔥 Turbo Dars: <b style="color:#F0C56B;">' + st.turboDone + ' / ' + st.turboNeeded + '</b> marta</div>' +
-        '<div style="margin-bottom:6px;">' + doneBars + '</div>' +
-      '</div>' +
-      '<div style="font-size:14px;color:#C7CCD8;line-height:1.65;margin-bottom:18px;">Yana <b style="color:#F0C56B;">' + st.turboLeft + ' marta</b> Turbo rejimда yakunlang — gap tuzish, lug\'at boyligi va jumla tuzilishларини puxta egallaysiz. Shunda <b style="color:#EDEFF5;">' + num + "-bo'lim ochiladi!</b></div>" +
-      '<div style="font-size:12px;color:#6FBF8B;font-style:italic;margin-bottom:16px;">Har takror — bilimingizни mustahkamlaydi va sizni ustaga aylantiradi. 📚</div>';
+  // Turbo progress chiziqlari (sifatli/good asosida)
+  var bars = '';
+  for(var i=0;i<st.turboNeeded;i++){
+    var filled = i < st.turboGood;
+    bars += '<span style="display:inline-block; width:22px; height:9px; border-radius:5px; margin:0 2px; background:'+(filled?'linear-gradient(135deg,#F0C56B,#D4A23A)':'rgba(255,255,255,0.1)')+';"></span>';
   }
 
-  html += '<button class="gating-btn primary" onclick="gotoBolim(' + prev + ')">' + prev + "-bo'limga o'tish →</button>";
+  var head, sub, tip;
+  if(st.turboGood === 0 && st.turboTotal === 0){
+    // Hali boshlamagan
+    head = '🚀 ' + prev + "-bo'limни boshlaymizmi?";
+    sub = 'Bu bo\'limни ochish uchun <b style="color:#F0C56B;">🔥 Turbo rejimда ' + st.turboNeeded + ' marta</b> yakunlang. Turbo — Flashcard, Test, Gap tuzish va Match, hammasini bitta zanjirда o\'z ichiga oladi.';
+    tip = 'Har Turbo — barcha so\'z va grammatikани takrorlaydi. 💪';
+  } else if(st.turboTotal > st.turboGood && st.turboGood < st.turboNeeded){
+    // Urinyapti, lekin ba'zi Turbolar sifatsiz (60% dan past)
+    head = '💡 Yaxshi harakat!';
+    sub = 'Siz <b style="color:#EDEFF5;">' + st.turboTotal + ' marta</b> Turbo o\'tdingiz, ulardan <b style="color:#6FBF8B;">' + st.turboGood + ' tasi</b> sifatli (60%+) sanaldi. Eng yaxshi natijangiz: <b style="color:#F0C56B;">' + st.bestPct + '%</b>.';
+    tip = 'Har Turboда kamida <b style="color:#F0C56B;">60% to\'g\'ri</b> javob bering — shunda takror sanaladi. Shoshilmang, o\'ylab javob bering. 🎯';
+  } else {
+    // Yaxshi ketyapti, oz qoldi
+    head = '🌟 Ajoyib ketyapsiz!';
+    sub = 'Sifatli Turbo: <b style="color:#6FBF8B;">' + st.turboGood + ' / ' + st.turboNeeded + '</b>. Eng yaxshingiz: <b style="color:#F0C56B;">' + st.bestPct + '%</b>.' + (st.perfect > 0 ? ' 🏆 <b style="color:#F0C56B;">' + st.perfect + ' marta mukammal (90%+)!</b>' : '');
+    tip = 'Yana <b style="color:#F0C56B;">' + st.turboLeft + ' ta sifatli Turbo</b> — va ' + num + '-bo\'lim ochiladi! 📚';
+  }
+
+  var html =
+    '<div style="font-size:46px;margin-bottom:8px;">' + (st.turboGood >= st.turboNeeded ? '🎉' : '🔥') + '</div>' +
+    '<div style="font-size:19px;font-weight:800;color:#F0C56B;margin-bottom:10px;">' + head + '</div>' +
+    '<div style="font-size:14px;color:#C7CCD8;line-height:1.65;margin-bottom:14px;">' + sub + '</div>' +
+    '<div style="background:rgba(212,162,58,0.08); border:1px solid rgba(212,162,58,0.2); border-radius:14px; padding:14px; margin-bottom:14px;">' +
+      '<div style="font-size:13px;color:#9BA3B4;margin-bottom:8px;">🔥 Sifatli Turbo: <b style="color:#F0C56B;">' + st.turboGood + ' / ' + st.turboNeeded + '</b></div>' +
+      '<div>' + bars + '</div>' +
+    '</div>' +
+    '<div style="font-size:13px;color:#6FBF8B;font-style:italic;line-height:1.6;margin-bottom:18px;">' + tip + '</div>' +
+    '<button class="gating-btn primary" onclick="gotoBolim(' + prev + ')">' + prev + "-bo'lim Turbo rejimiga o'tish →</button>";
 
   if(body) body.innerHTML = html;
   var modal = document.getElementById('gatingLockedModal');
@@ -1869,7 +1876,7 @@ function initRoadmap(){
   var nums = Object.keys(byNum).map(Number).sort(function(a,b){ return a-b; });
 
   var totalLearned = 0, totalWords = 0, anyStarted = false;
-  var allAbove80 = true, below80Count = 0;
+  var allComplete = true, incompleteCount = 0;  // hamma bo'lim Turbo bilan tugatilganmi
   var cardsHtml = '';
 
   nums.forEach(function(num){
@@ -1878,6 +1885,7 @@ function initRoadmap(){
 
     if(entry.locked){
       cardsHtml += buildCard(item, true, 0);
+      allComplete = false; incompleteCount++;
       return;
     }
 
@@ -1886,7 +1894,8 @@ function initRoadmap(){
     totalLearned += Math.min(learned, item.total);
     totalWords += item.total;
     if(learned > 0) anyStarted = true;
-    if(pct < 80){ allAbove80 = false; below80Count++; }
+    // Imtihon/Lug'at ochilishi: bo'lim Turbo bilan TO'LIQ tugatilganmi (gating bilan izchil)
+    if(!isBolimComplete(num)){ allComplete = false; incompleteCount++; }
 
     // GATING: bu bo'lim gating tufayli qulflanganmi?
     var gatedLock = !isBolimUnlocked(num);
@@ -1911,8 +1920,8 @@ function initRoadmap(){
       : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
   }
 
-  updateExamCard(allAbove80, below80Count);
-  updateLugatCard(allAbove80, below80Count);
+  updateExamCard(allComplete, incompleteCount);
+  updateLugatCard(allComplete, incompleteCount);
   var examPassed = false;
   try{
     var examData = JSON.parse(localStorage.getItem('arabic_final_exam_v1') || '{}');
@@ -1943,7 +1952,7 @@ function goToGolibCard(){
   switchTab('golib');
 }
 
-function updateExamCard(unlocked, below80Count){
+function updateExamCard(unlocked, incompleteCount){
   var card = document.getElementById('examCard');
   var desc = document.getElementById('examDesc');
   if(!card) return;
@@ -1956,11 +1965,11 @@ function updateExamCard(unlocked, below80Count){
   } else {
     card.classList.add('locked');
     card.classList.remove('unlocked');
-    desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
+    desc.textContent = incompleteCount + " ta bo'lim hali to'liq tugatilmadi";
     card.onclick = null;
   }
 }
-function updateLugatCard(unlocked, below80Count){
+function updateLugatCard(unlocked, incompleteCount){
   var card = document.getElementById('lugatCard');
   var desc = document.getElementById('lugatDesc');
   if(!card) return;
@@ -1973,7 +1982,7 @@ function updateLugatCard(unlocked, below80Count){
   } else {
     card.classList.add('locked');
     card.classList.remove('unlocked');
-    desc.textContent = below80Count + " ta bo'lim hali 80% ga yetmadi";
+    desc.textContent = incompleteCount + " ta bo'lim hali to'liq tugatilmadi";
     card.onclick = null;
   }
 }

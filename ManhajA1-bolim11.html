@@ -93,6 +93,9 @@ p{line-height:1.6;}
 .menu-card i{font-size:30px; color:var(--gold); display:block; margin-bottom:10px;}
 .menu-card .t{font-size:14px; font-weight:600; color:var(--text); letter-spacing:-0.01em;}
 .menu-card .s{font-size:11px; color:var(--muted); margin-top:4px; line-height:1.4;}
+.turbo-menu-card{background:linear-gradient(135deg, rgba(236,64,122,0.16), rgba(240,197,107,0.10)) !important; border-color:rgba(255,64,129,0.4) !important; animation:turboMenuGlow 2.2s ease-in-out infinite;}
+.turbo-menu-card i{color:#F0C56B !important;}
+@keyframes turboMenuGlow{0%,100%{box-shadow:0 0 8px rgba(255,64,129,0.2);}50%{box-shadow:0 0 18px rgba(255,64,129,0.45);}}
 
 .time-choice-row{display:flex; gap:10px; margin-top:12px;}
 .time-choice{flex:1; background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:14px 8px; text-align:center; cursor:pointer; transition:transform .12s ease, border-color .12s ease;}
@@ -476,6 +479,11 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="t">Natijalar</div>
       <div class="s">Progress</div>
     </div>
+  </div>
+  <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
+    <i class="ti ti-bolt" style="color:#F0C56B;"></i>
+    <div class="t">🔥 Turbo Dars <span style="font-size:11px; font-weight:600; color:#6FBF8B;">(keyingi bo'lim ochish yo'li)</span></div>
+    <div class="s">Flashkard → Match → Gap → Test — barchasi bitta zanjirда</div>
   </div>
   <div class="menu-card" onclick="goScreen('match-setup')" style="margin-top:14px; background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.10)); border-color:rgba(212,162,58,0.4);">
     <i class="ti ti-bolt" style="color:var(--gold2);"></i>
@@ -1281,9 +1289,18 @@ function applyActiveTheme(){
 function renderHome(){
   const state = loadProgress();
   const totalItems = ALL_WORDS.length + GRAMMAR_ITEMS.length;
-  const pct = Math.round((state.learned.length / totalItems) * 100);
+  const pct = getCourseProgressPct();
   document.getElementById('home-progress-bar').style.width = pct+'%';
-  document.getElementById('home-progress-text').textContent = state.learned.length + ' / ' + totalItems + ' o\'zlashtirildi';
+  // 7-TOPSHIRIQ: bo'lim progressigacha qancha takror/foiz qolgani ko'rinsin
+  var gd = getGatingInfo();
+  var progLbl = document.getElementById('home-progress-text');
+  if(progLbl){
+    if(gd.done){
+      progLbl.innerHTML = pct + '% o\'zlashtirildi · <span style="color:#6FBF8B;font-weight:800;">✓ Bo\'lim tugatildi!</span>';
+    } else {
+      progLbl.innerHTML = pct + '% · 🔥 Turbo: <b style="color:#F0C56B;">' + gd.turboGood + '/' + gd.turboNeeded + '</b> · yana <b style="color:#F0C56B;">' + gd.turboLeft + '</b> sifatli takror kerak';
+    }
+  }
   let mastered = 0;
   ALL_WORDS.forEach(function(w){ if((state.box[w.ar]||0) >= 5) mastered++; });
   document.getElementById('home-xp').textContent = getAchievementXP();
@@ -1292,6 +1309,13 @@ function renderHome(){
   document.getElementById('home-mastered').textContent = mastered;
   renderEpicProfile('home');
   renderSmartPathIndicator();
+}
+// Bu bo'limning gating holati (Turbo qolgan soni) — LS_KEY dan o'qiydi
+function getGatingInfo(){
+  var need = TURBO_NEEDED_LOCAL;
+  var good = 0;
+  try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
+  return { turboGood: good, turboNeeded: need, turboLeft: Math.max(0, need - good), done: good >= need };
 }
 
 // ═══ Aqlli Yo'l: mikro-dars indikatori (ALL_WORDS 5 tadan bo'linadi) ═══
@@ -1592,6 +1616,7 @@ function answerFlashcard(knew){
 
 /* ---------------- Test (SRS quiz) ---------------- */
 var BOLIM_NUM = 11; // Hadiqatul-Ilm yozuvlari uchun (core.js: addMistake)
+var TURBO_NEEDED_LOCAL = 8; // Bu bo'lim uchun kerakli sifatli Turbo soni (so'z soniga qarab)
 let quizState = null;
 // Tezlikka qarab savollar sonini hisoblash: Tez=eng kam, Odatiy=o'rtacha, Sekin=eng ko'p (barchasi)
 const QUIZ_TOTAL_ITEMS = ALL_WORDS.length + GRAMMAR_ITEMS.length;
@@ -1708,7 +1733,19 @@ function renderQuizQuestion(){
       wordEl.textContent = dtxt(q.uz);
       wordEl.className = 'ar-big uz-question';
     }
-    let distractors = shuffle(ALL_WORDS.filter(w=>w.ar!==q.ar)).slice(0,3);
+    // 5-TUZATISH: variantlar KO'RSATILADIGAN qiymat bo'yicha noyob bo'lsin
+    // (ar2uz'da o'zbekcha tarjima, uz2ar'da arabcha — takroriy variant chiqmasligi uchun)
+    var correctShown = dir === 'ar2uz' ? dtxt(q.uz) : q.ar;
+    var seenVals = {};
+    seenVals[correctShown] = true;
+    var distractors = [];
+    var pool = shuffle(ALL_WORDS.filter(w=>w.ar!==q.ar));
+    for(var di=0; di<pool.length && distractors.length<3; di++){
+      var shown = dir === 'ar2uz' ? dtxt(pool[di].uz) : pool[di].ar;
+      if(seenVals[shown]) continue;   // bir xil ko'rinishdagi variant o'tkazib yuboriladi
+      seenVals[shown] = true;
+      distractors.push(pool[di]);
+    }
     let options = shuffle([q, ...distractors]);
     options.forEach(o=>{
       const btn = document.createElement('button');
@@ -1905,10 +1942,18 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   }
   var earnedXP = baseEarned + perfectBonus;
   var totalAfter = getAchievementXP();
-  // GATING: Turbo Dars to'liq yakunlandi — hisoblagichni oshiramiz (keyingi bo'lim ochilishi uchun)
+  // GATING: Turbo Dars natijasiga qarab hisoblanadi (sifatli takror tizimi)
+  //   turbo_count  — umumiy urinishlar
+  //   turbo_good   — 60%+ to'g'ri (SANALADIGAN takror — shu keyingi bo'lim ochadi)
+  //   turbo_perfect— 90%+ (mukammal, a'lochilar uchun)
   try{
+    var _tp = examTotal > 0 ? (examCorrect / examTotal * 100) : 0;
     var _dt = JSON.parse(localStorage.getItem(LS_KEY)) || {};
     _dt.turbo_count = (Number(_dt.turbo_count) || 0) + 1;
+    if(_tp >= 60) _dt.turbo_good = (Number(_dt.turbo_good) || 0) + 1;      // sifatli takror sanaladi
+    if(_tp >= 90) _dt.turbo_perfect = (Number(_dt.turbo_perfect) || 0) + 1; // mukammal
+    var _rtp = Math.round(_tp);
+    if(_rtp > (Number(_dt.turbo_best_pct) || 0)) _dt.turbo_best_pct = _rtp; // eng yaxshi natija
     localStorage.setItem(LS_KEY, JSON.stringify(_dt));
   }catch(e){}
 
@@ -2557,9 +2602,17 @@ function playRankUp(){
 var vcState = null;
 
 function getCourseProgressPct(){
+  // Progress = barcha so'z/grammatika box yig'indisi / (jami × 5) × 100
+  // Har to'g'ri javob box'ni +1 qiladi (max 5) — foiz SEKIN va uzluksiz ko'tariladi.
+  // Shu bilan oddiy rejim ham, Turbo ham har to'g'ri javobda foizni oshiradi.
   var state = loadProgress();
-  var totalItems = ALL_WORDS.length + GRAMMAR_ITEMS.length;
-  return totalItems > 0 ? Math.round((state.learned.length/totalItems)*100) : 0;
+  var box = state.box || {};
+  var items = ALL_WORDS.map(function(w){ return w.ar; }).concat(GRAMMAR_ITEMS.map(function(g){ return g.id || g.ar || g.q; }));
+  var totalItems = items.length;
+  if(totalItems === 0) return 0;
+  var sum = 0;
+  items.forEach(function(id){ sum += Math.min(5, Number(box[id]) || 0); });
+  return Math.min(100, Math.round((sum / (totalItems * 5)) * 100));
 }
 
 function vcCreateConfetti(container){

@@ -362,6 +362,15 @@ const BOLIM_TITLES = {"1": "Salomlashish va tanishish", "2": "Oila va oila a'zol
 
 const EXAM_KEY = 'arabic_final_exam_v1';
 const PASS_THRESHOLD = 80;
+// DEV/USTOZ kirishi: ?dev=ustoz bilan ochilsa, imtihon qulfini chetlab o'tadi (faqat tekshirish uchun).
+// Oddiy talabalar (parametrsiz) uchun imtihon odatдагidek umumiy 80% talab qiladi.
+function isDevAccess(){
+  try{
+    var q = window.location.search || '';
+    if(/[?&]dev=ustoz\b/.test(q)) { try{ sessionStorage.setItem('exam_dev_access','1'); }catch(e){} return true; }
+    return sessionStorage.getItem('exam_dev_access') === '1';
+  }catch(e){ return false; }
+}
 
 let currentName = localStorage.getItem(SHARED_NAME_KEY) || "";
 if(!currentName){ location.replace('index.html'); }
@@ -440,11 +449,13 @@ function renderDashboard(){
   document.getElementById('overall-pct').textContent = overallPct+'%';
   const statusEl = document.getElementById('overall-status');
   const startBtn = document.getElementById('startExamBtn');
-  // OCHILISH SHARTI: UMUMIY o'rtacha natija 80%+ (har bo'lim alohida emas)
-  const allUnlocked = overallPct >= PASS_THRESHOLD;
+  // OCHILISH SHARTI: UMUMIY o'rtacha natija 80%+ (yoki ustoz DEV kirishi)
+  const allUnlocked = (overallPct >= PASS_THRESHOLD) || isDevAccess();
   if(allUnlocked){
     statusEl.className = 'status unlocked';
-    statusEl.innerHTML = '<i class="ti ti-lock-open"></i> Imtihon ochildi!';
+    statusEl.innerHTML = isDevAccess()
+      ? '<i class="ti ti-lock-open"></i> Imtihon ochildi! (ustoz kirishi)'
+      : '<i class="ti ti-lock-open"></i> Imtihon ochildi!';
     startBtn.classList.remove('disabled');
   } else {
     statusEl.className = 'status locked';
@@ -462,6 +473,7 @@ function renderDashboard(){
 }
 
 function tryStartExam(){
+  if(isDevAccess()){ startExam(); return; }  // ustoz kirishi — qulfni chetlab o'tadi
   var sumPct = 0;
   for(let n=1;n<=12;n++){ sumPct += bolimProgress(n).pct; }
   var overallPct = Math.round(sumPct/12);

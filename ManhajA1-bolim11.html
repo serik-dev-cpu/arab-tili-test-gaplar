@@ -1582,6 +1582,8 @@ function answerFlashcard(knew){
       return;
     }
     awardSessionXP('flashcard', 1);
+    // GATING: Flashcard bir marta yakunlandi
+    try{ var _d = JSON.parse(localStorage.getItem(LS_KEY)) || {}; _d.fc_done = true; localStorage.setItem(LS_KEY, JSON.stringify(_d)); }catch(e){}
     document.getElementById('fc-result-know').textContent = fcState.know;
     document.getElementById('fc-result-dontknow').textContent = fcState.dontknow;
     goScreen('flashcard-result');
@@ -1794,8 +1796,15 @@ function finishQuiz(){
   });
   state.box = newBox;
   saveProgress(state);
-  // GATING: Test bir marta oxirigacha yechildi — keyingi bo'lim ochilishi uchun belgi
-  try{ var _d = JSON.parse(localStorage.getItem(LS_KEY)) || {}; _d.test_done = true; localStorage.setItem(LS_KEY, JSON.stringify(_d)); }catch(e){}
+  // GATING: Test 70%+ natija bilan yechilsa "test_done" belgisi qo'yiladi
+  try{
+    var _pct = quizState.results.length ? (correctCount / quizState.results.length * 100) : 0;
+    var _d = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    if(_pct >= 70) _d.test_done = true;
+    var _rpct = Math.round(_pct);
+    if(_rpct > (Number(_d.test_best_pct) || 0)) _d.test_best_pct = _rpct; // eng yaxshi foizni saqlaymiz
+    localStorage.setItem(LS_KEY, JSON.stringify(_d));
+  }catch(e){}
   var pctAfter = getCourseProgressPct();
   const total = quizState.results.length;
   const wrongCount = total - correctCount;
@@ -1896,6 +1905,12 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   }
   var earnedXP = baseEarned + perfectBonus;
   var totalAfter = getAchievementXP();
+  // GATING: Turbo Dars to'liq yakunlandi — hisoblagichni oshiramiz (keyingi bo'lim ochilishi uchun)
+  try{
+    var _dt = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    _dt.turbo_count = (Number(_dt.turbo_count) || 0) + 1;
+    localStorage.setItem(LS_KEY, JSON.stringify(_dt));
+  }catch(e){}
 
   document.getElementById('result-correct').textContent = examCorrect;
   document.getElementById('result-wrong').textContent = examTotal - examCorrect;
@@ -2064,6 +2079,8 @@ function advanceGapQuestion(){
       return;
     }
     var pctNow = getCourseProgressPct(); // Gap tuzish umumiy progressga ta'sir qilmaydi
+    // GATING: Gap tuzish bir marta yakunlandi
+    try{ var _dg = JSON.parse(localStorage.getItem(LS_KEY)) || {}; _dg.gap_done = true; localStorage.setItem(LS_KEY, JSON.stringify(_dg)); }catch(e){}
     var totalBefore = getAchievementXP();
     var earnedXP = awardSessionXP('gap', gapXpByLevel());
     var totalAfter = getAchievementXP();
@@ -2364,6 +2381,10 @@ function finishMatchMadness(completed){
   }
 
   var pctNow = getCourseProgressPct(); // Match Madness umumiy progressga ta'sir qilmaydi
+  // GATING: Match Madness bir marta to'liq yakunlandi (barcha raundlar)
+  if(completed){
+    try{ var _dm = JSON.parse(localStorage.getItem(LS_KEY)) || {}; _dm.match_done = true; localStorage.setItem(LS_KEY, JSON.stringify(_dm)); }catch(e){}
+  }
   var totalBefore = getAchievementXP();
   var earnedXP = awardSessionXP('match', Math.max(1, mmState.round));
   var totalAfter = getAchievementXP();

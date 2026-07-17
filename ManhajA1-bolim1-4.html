@@ -2197,9 +2197,21 @@ var sessionPctBefore = 0;
 function finishSession(type, correct, total){
   // Test uchun XP: savol soniga qarab 5/8/10 (Flashcard/Gap o'z XP'sini oladi)
   if(type === 'test' && !smartPath.active){ awardSessionXP('quiz', quizXpByCount()); }
-  // GATING: Test bir marta oxirigacha yechildi — keyingi bo'lim ochilishi uchun belgi
-  if(type === 'test' && currentBolim){
-    try{ var _k='arabic_uz_'+currentBolim+'bolim_v1'; var _d=JSON.parse(localStorage.getItem(_k))||{}; _d.test_done=true; localStorage.setItem(_k, JSON.stringify(_d)); }catch(e){}
+  // GATING: rejim yakunlash bayroqlari (currentBolim bo'yicha)
+  if(currentBolim){
+    try{
+      var _k='arabic_uz_'+currentBolim+'bolim_v1';
+      var _d=JSON.parse(localStorage.getItem(_k))||{};
+      if(type === 'test'){
+        var _p = total ? (correct/total*100) : 0;
+        if(_p >= 70) _d.test_done = true;   // Test 70%+ bilan
+        var _rp = Math.round(_p);
+        if(_rp > (Number(_d.test_best_pct) || 0)) _d.test_best_pct = _rp;
+      }
+      if(type === 'flashkard') _d.fc_done = true;
+      if(type === 'gaptuzish') _d.gap_done = true;
+      localStorage.setItem(_k, JSON.stringify(_d));
+    }catch(e){}
   }
   if(type === 'gaptuzish' && !smartPath.active){ awardSessionXP('gap', gapXpByLevel()); }
   if(type === 'flashkard' && !smartPath.active){ awardSessionXP('flashcard', 1); }
@@ -2893,6 +2905,10 @@ function finishMatchMadness(completed){
   }
 
   var pctNow = getCourseProgressPct(); // Match Madness umumiy progressga ta'sir qilmaydi
+  // GATING: Match to'liq yakunlanса (barcha raund) — currentBolim bo'yicha
+  if(completed && currentBolim){
+    try{ var _km='arabic_uz_'+currentBolim+'bolim_v1'; var _dm=JSON.parse(localStorage.getItem(_km))||{}; _dm.match_done=true; localStorage.setItem(_km, JSON.stringify(_dm)); }catch(e){}
+  }
   var totalBefore = getAchievementXP();
   var earnedXP = awardSessionXP('match', Math.max(1, mmState.round));
   var totalAfter = getAchievementXP();
@@ -3000,13 +3016,10 @@ function finishSmartPath(examCorrect, examTotal){
   }
   var earnedXP = baseEarned + perfectBonus;
   var totalAfter = getAchievementXP();
-
-  document.getElementById('natija-name').textContent = 'Salom, '+currentName+'!';
-  document.getElementById('natija-correct').textContent = examCorrect;
-  document.getElementById('natija-total').textContent = examTotal;
-  document.getElementById('natija-correct-lbl').textContent = 'To\u2019g\u2018ri';
-  document.getElementById('natija-total-lbl').textContent = 'Jami';
-  document.getElementById('natija-detail').textContent = '🔥 Turbo Dars tugadi!';
+  // GATING: Turbo Dars to'liq yakunlandi — currentBolim hisoblagichini oshiramiz
+  if(currentBolim){
+    try{ var _kt='arabic_uz_'+currentBolim+'bolim_v1'; var _dt=JSON.parse(localStorage.getItem(_kt))||{}; _dt.turbo_count=(Number(_dt.turbo_count)||0)+1; localStorage.setItem(_kt, JSON.stringify(_dt)); }catch(e){}
+  }
   document.getElementById('natija-again-btn').onclick = function(){ startSmartPath(); };
   showScreen('natija');
   runVictoryCelebration({

@@ -188,7 +188,7 @@ p{line-height:1.6;}
 .gt-listen-btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); color:var(--gold2); font-size:12.5px; font-weight:700; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease);}
 .gt-listen-btn:active{transform:scale(.95);}
 .gt-listen-btn.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
-.gt-actions{display:flex; gap:10px;}
+.gt-actions{display:flex; gap:10px;position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 65%, rgba(11,14,20,0));padding:14px 16px 10px;margin:10px -16px -60px;z-index:20;}
 
 .back-row{margin-bottom:6px;}
 .back-link{color:var(--muted); font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;}
@@ -361,21 +361,17 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .fc-card .uz-reveal{font-size:18px; color:var(--text); margin-top:14px; display:none;}
 .fc-card.flipped .uz-reveal{display:block; animation:popIn .3s var(--ease);}
 .fc-hint{text-align:center; color:var(--muted); font-size:12px; margin-top:10px;}
-.fc-btn-row{display:flex; gap:10px; margin-top:16px;}
+.fc-btn-row{display:flex; gap:10px; margin-top:16px;position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 65%, rgba(11,14,20,0));padding:14px 16px 10px;margin-left:-16px;margin-right:-16px;margin-bottom:-60px;z-index:20;}
 .fc-btn{flex:1; padding:16px; border-radius:14px; border:none; font-weight:700; font-size:15px; cursor:pointer; transition:transform .15s var(--ease); box-shadow:var(--shadow-soft);}
 .fc-btn:active{transform:scale(.97);}
 .fc-btn-know{background:linear-gradient(135deg,#6FBF8B,#8FD9A8); color:#0B0E14;}
 .fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
-.floating-home-btn{position:fixed; bottom:22px; right:16px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 18px rgba(212,162,58,0.45); cursor:pointer; z-index:9000; transition:transform .15s var(--ease);}
-.floating-home-btn:active{transform:scale(.92);}
+.turbo-status-badge{display:inline-flex; align-items:center; gap:6px; margin:0 auto 14px; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap; width:fit-content;}
 .stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
 </style>
 </head>
 <body>
 
-<div class="floating-home-btn" id="floatingHomeBtn" onclick="goScreen('home')" style="display:none;">
-  <i class="ti ti-home"></i>
-</div>
 
 <!-- ================= EKRAN: Bosh menyu ================= -->
 <div class="screen active" id="screen-home">
@@ -387,6 +383,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="badge">6-bo'lim</div>
     <div class="ar-title ar">الأَمَاكِنُ وَالْجَوُّ</div>
     <h1>Joylar va ob-havo</h1>
+  </div>
+  <div style="display:flex; gap:8px; margin-bottom:14px;">
+    <div onclick="location.href='index.html'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-home"></i> Bosh sahifa</div>
+    <div onclick="location.href='index.html#bolimlar'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-books"></i> Bo'limlar</div>
   </div>
 
   <div class="epic-profile" id="epic-profile-home">
@@ -560,6 +560,12 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div id="quiz-options"></div>
   </div>
   <div id="quiz-result-area"></div>
+  <div class="mm-extratime-offer" id="quizExtraTimeOffer">
+    <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
+    <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div>
+    <button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button>
+    <span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()">Yo‘q, kerak emas</span>
+  </div>
 </div>
 
 
@@ -680,7 +686,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <button class="premium-btn-secondary" style="flex:1; margin-top:0;" id="gt-clear-btn">Tozalash</button>
     <button class="premium-btn-primary" style="flex:2; margin-top:0;" id="gt-check-btn">Tekshirish</button>
   </div>
-  <button class="premium-btn-primary" id="gt-next-btn" style="width:100%; margin-top:10px; display:none;" onclick="advanceGapQuestion()">Keyingi →</button>
+  <button class="premium-btn-primary" id="gt-next-btn" style="width:100%; margin-top:10px; display:none; position:sticky; bottom:0; z-index:20;" onclick="advanceGapQuestion()">Keyingi →</button>
 </div>
 
 <!-- ================= EKRAN: Grammatika ================= -->
@@ -796,9 +802,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
-<div class="turbo-status-badge" id="turboStatusBadge" style="display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99998;background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92));color:#1a1408;font-weight:800;font-size:13px;padding:7px 16px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,0.4);white-space:nowrap;">🔥 Turbo: <span id="turboStatusCount">0/0</span></div>
-<a href="index.html#bolimlar" onclick="event.preventDefault();location.replace('index.html#bolimlar')" style="position:fixed;bottom:74px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">📚 Bo'limlar</a>
-<a href="index.html" onclick="event.preventDefault();location.replace('index.html')" style="position:fixed;bottom:24px;left:14px;z-index:99999;display:flex;align-items:center;gap:6px;background:rgba(11,14,20,0.85);backdrop-filter:blur(8px);border:1px solid rgba(212,162,58,0.35);color:#D4A23A;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:700;padding:8px 14px 8px 10px;border-radius:20px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.4)">🏠 Bosh sahifa</a>
+<div class="turbo-status-badge" id="turboStatusBadge" style="display:none;">🔥 Turbo: <span id="turboStatusCount">0/0</span></div>
 
 <script src="core.js"></script>
 <script>
@@ -987,8 +991,8 @@ function goScreen(name, push){
   const el = document.getElementById('screen-'+name);
   if(el) el.classList.add('active');
   if(name === 'quiz-result'){ var _ub = document.getElementById('unlockBanner'); if(_ub) _ub.style.display = 'none'; }
-  var fhb = document.getElementById('floatingHomeBtn');
-  if(fhb) fhb.style.display = (name === 'home') ? 'none' : 'flex';
+  // Eslatma: alohida suzuvchi "🏠" tugmasi olib tashlandi — har ekranda yuqorida
+  // "‹ Menyu" tugmasi bor, shuning uchun dublikat tugma kerak emas edi.
   if(push !== false){
     history.pushState({screen:name}, '', '#'+name);
   }
@@ -1031,7 +1035,16 @@ function updateTurboStatusBadge(){
   var gd = getGatingInfo();
   var el = document.getElementById('turboStatusCount');
   if(el) el.textContent = gd.turboGood + '/' + gd.turboNeeded;
-  badge.style.display = 'block';
+  // MUHIM UX TUZATISH: badge endi FIXED overlay emas — hozirgi faol ekranning
+  // header'i (top-header yoki back-row) ostiga in-flow qilib ko'chiriladi.
+  var activeScreen = document.querySelector('.screen.active');
+  if(activeScreen){
+    var header = activeScreen.querySelector('.top-header') || activeScreen.querySelector('.back-row');
+    if(header && header.nextElementSibling !== badge){
+      header.insertAdjacentElement('afterend', badge);
+    }
+  }
+  badge.style.display = 'flex';
 }
 window.addEventListener('popstate', function(e){
   if(e.state && e.state.screen){
@@ -1378,22 +1391,69 @@ function selectQuizTime(t, el){
   var qtl = document.getElementById('quiz-total-label');
   if(qtl) qtl.textContent = quizQuestionCount + ' ta';
 }
+var quizTimerState2 = { left:0 };
+var quizExtraState = { offered:false, used:false, offerOpen:false };
 function startQuizTimer(){
   clearInterval(window.__quizTimerInt);
-  var timeLeft = quizState.timePerQ;
+  quizTimerState2.left = quizState.timePerQ;
+  quizExtraState = { offered:false, used:false, offerOpen:false };
   var timerEl = document.getElementById('quiz-timer');
   var wrapEl = document.querySelector('.quiz-timer-wrap');
-  timerEl.textContent = timeLeft;
+  timerEl.textContent = quizTimerState2.left;
   if(wrapEl) wrapEl.classList.remove('warn');
   window.__quizTimerInt = setInterval(function(){
-    timeLeft--;
-    timerEl.textContent = timeLeft;
-    if(timeLeft <= 5 && wrapEl) wrapEl.classList.add('warn');
-    if(timeLeft <= 0){
+    if(quizExtraState.offerOpen) return;
+    quizTimerState2.left--;
+    timerEl.textContent = quizTimerState2.left;
+    if(quizTimerState2.left <= 5 && wrapEl) wrapEl.classList.add('warn');
+    if(quizTimerState2.left <= 2 && !quizExtraState.offered && !quizExtraState.used){
+      offerQuizExtraTime();
+    }
+    if(quizTimerState2.left <= 0){
       clearInterval(window.__quizTimerInt);
       quizTimeUp();
     }
   }, 1000);
+}
+function offerQuizExtraTime(){
+  quizExtraState.offered = true;
+  quizExtraState.offerOpen = true;
+  var box = document.getElementById('quizExtraTimeOffer');
+  if(box) box.style.display = 'flex';
+}
+function buyQuizExtraTime(){
+  if(!spendWalletXP(30, "Test +10 soniya")){
+    var box = document.getElementById('quizExtraTimeOffer');
+    if(box) box.innerHTML = '<span>Hamyonda XP yetarli emas ✗</span>';
+    setTimeout(function(){ closeQuizExtraTimeOffer(); }, 1400);
+    return;
+  }
+  quizTimerState2.left += 10;
+  quizExtraState.used = true;
+  quizExtraState.offerOpen = false;
+  var timerEl = document.getElementById('quiz-timer');
+  if(timerEl) timerEl.textContent = quizTimerState2.left;
+  var wrapEl = document.querySelector('.quiz-timer-wrap');
+  if(wrapEl) wrapEl.classList.remove('warn');
+  closeQuizExtraTimeOfferBox();
+}
+function closeQuizExtraTimeOfferBox(){
+  var box = document.getElementById('quizExtraTimeOffer');
+  if(box){
+    box.style.display = 'none';
+    box.innerHTML = '<div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div><div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div><button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button><span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()">Yo‘q, kerak emas</span>';
+  }
+}
+function closeQuizExtraTimeOffer(){
+  quizExtraState.offerOpen = false;
+  closeQuizExtraTimeOfferBox();
+  if(smartPath.active){
+    clearInterval(window.__quizTimerInt);
+    startSmartPath();
+  } else {
+    clearInterval(window.__quizTimerInt);
+    quizTimeUp();
+  }
 }
 // Test endi ikki turdagi savolni birlashtiradi: 'word' (lug'at) va 'grammar' (grammatika).
 // Ikkalasi ham bitta umumiy SRS box tizimida (qid orqali) kuzatiladi va natija — bitta umumiy foiz.
@@ -1468,7 +1528,7 @@ function renderQuizQuestion(){
   const opWrap = document.getElementById('quiz-options');
   document.getElementById('quiz-progress-bar').style.width = Math.round((quizState.idx/quizState.items.length)*100)+'%';
   opWrap.innerHTML = '';
-  document.getElementById('quiz-result-area').innerHTML = '';
+  { var _ra = document.getElementById('quiz-result-area'); _ra.innerHTML=''; _ra.style.cssText=''; }
 
   if(item.kind === 'word'){
     const q = item.data;
@@ -1543,6 +1603,7 @@ function answerQuiz(item, btnEl, wrap, correctText, correctIsArabic){
 }
 function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
   const ra = document.getElementById('quiz-result-area');
+  ra.style.cssText = 'position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 75%, rgba(11,14,20,0));padding:14px 16px 14px;margin:10px -16px -60px;z-index:20;';
   const title = timeUp ? '⏰ Vaqt tugadi' : '❌ Xato';
   ra.innerHTML = '<div class="gt-result no">'+
     '<div class="title" style="color:#E8765C">'+title+'</div>'+
@@ -1551,8 +1612,10 @@ function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
     '</div>';
   const nextBtn = document.createElement('button');
   nextBtn.className = 'premium-btn-primary';
+  nextBtn.style.marginTop = '10px';
+  nextBtn.style.width = '100%';
   nextBtn.textContent = (quizState.idx < quizState.items.length-1) ? 'Keyingi →' : 'Yakunlash';
-  nextBtn.onclick = advanceQuiz;
+  nextBtn.onclick = function(){ ra.style.cssText = ''; advanceQuiz(); };
   ra.appendChild(nextBtn);
 }
 function advanceQuiz(){

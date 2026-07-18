@@ -161,7 +161,7 @@
   .gt-listen-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;background:rgba(212,162,58,.14);border:1px solid var(--gold-line);color:var(--gold2);font-size:12.5px;font-weight:700;cursor:pointer;transition:transform .15s var(--ease), background .15s var(--ease);}
   .gt-listen-btn:active{transform:scale(.95);}
   .gt-listen-btn.playing{background:var(--gold1);color:#0B0E14;animation:audioPulse 1s ease-in-out infinite;}
-  .gt-actions{display:flex;gap:10px;}
+  .gt-actions{display:flex;gap:10px;position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 65%, rgba(11,14,20,0));padding:14px 0 10px;margin:10px -16px -24px;padding-left:16px;padding-right:16px;z-index:20;}
   .flash-wrap{perspective:1200px;margin-bottom:20px;}
   .flash-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--gold-line);border-radius:22px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;cursor:pointer;position:relative;text-align:center;gap:10px;box-shadow:var(--shadow-deep);transition:transform .15s var(--ease);}
   .flash-card:active{transform:scale(.99);}
@@ -173,7 +173,7 @@
   .flash-card.flipped .flash-uz{display:block;animation:popIn .3s var(--ease);}
   .flash-card.flipped .flash-ar,.flash-card.flipped .flash-ar2{opacity:0.35;}
   .flash-hint{font-size:11px;color:var(--muted);margin-top:6px;}
-  .flash-btns{display:flex;gap:10px;}
+  .flash-btns{display:flex;gap:10px;position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 65%, rgba(11,14,20,0));padding:14px 0 10px;margin:10px -16px -24px;padding-left:16px;padding-right:16px;z-index:20;}
   .btn-know{flex:1;background:rgba(63,191,127,0.15);border:1px solid var(--green);color:var(--green);}
   .btn-dontknow{flex:1;background:rgba(224,86,107,0.15);border:1px solid var(--red);color:var(--red);}
   .gram-block{background:linear-gradient(160deg, rgba(38,42,54,0.5), rgba(26,29,38,0.72));border:1px solid var(--gold-line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow-soft);}
@@ -281,16 +281,12 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 .rankup-new-rank{font-size:20px; font-weight:800; margin:0 0 20px; padding:10px 20px; border-radius:14px; display:inline-block;}
 .rankup-new-rank.rank-sultan{animation:sultanGlow 1.5s ease-in-out infinite;}
 .floating-home-btn{position:fixed; bottom:22px; right:16px; width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,var(--gold1),var(--gold2)); color:#0B0E14; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 18px rgba(212,162,58,0.45); cursor:pointer; z-index:9000; transition:transform .15s var(--ease);}
-.turbo-status-badge{position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:99998; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap;}
+.turbo-status-badge{display:inline-flex; align-items:center; gap:6px; margin:0 auto 14px; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap; width:fit-content;}
 .floating-home-btn:active{transform:scale(.92);}
 .stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
 </style>
 </head>
 <body>
-
-<div class="floating-home-btn" id="floatingHomeBtn" onclick="showScreen('menu')" style="display:none;">
-  <i class="ti ti-home"></i>
-</div>
 
 <!-- ═══════════ BO'LIM TANLASH EKRANI ═══════════ -->
 <!-- ═══════════ BO'LIM MENYUSI ═══════════ -->
@@ -300,6 +296,10 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="bolim-badge" id="menu-bolim-badge">Bo'lim</div>
     <div class="menu-hero-ar" id="menu-bolim-ar"></div>
     <div class="menu-hero-uz" id="menu-bolim-uz"></div>
+  </div>
+  <div class="quick-nav-row" style="display:flex; gap:8px; margin-bottom:14px;">
+    <div class="quick-nav-btn" onclick="location.href='index.html'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-home"></i> Bosh sahifa</div>
+    <div class="quick-nav-btn" onclick="location.href='index.html#bolimlar'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-books"></i> Bo'limlar</div>
   </div>
   <div class="epic-profile" id="epic-profile-menu" style="cursor:pointer" title="Ismni o'zgartirish">
     <div class="epic-avatar" id="epic-avatar-menu">?</div>
@@ -431,6 +431,12 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="quiz-options-label">Javobni tanlang:</div>
   <div class="quiz-options" id="quiz-options"></div>
   <div id="quiz-result-area"></div>
+  <div class="mm-extratime-offer" id="quizExtraTimeOffer">
+    <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
+    <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div>
+    <button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button>
+    <span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()" id="quizExtraTimeCloseLabel">Yo‘q, kerak emas</span>
+  </div>
 </div>
 
 <!-- ═══════════ GAP TUZISH EKRANI ═══════════ -->
@@ -454,8 +460,8 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="gt-actions">
     <button class="btn btn-outline btn-block" id="gt-clear-btn">Tozalash</button>
     <button class="btn btn-gold btn-block" id="gt-check-btn">Tekshirish</button>
+    <button class="btn btn-gold btn-block" id="gt-next-btn" style="display:none;">Keyingi →</button>
   </div>
-  <button class="btn btn-ghost btn-block" id="gt-next-btn" style="margin-top:10px;display:none;">Keyingi →</button>
 </div>
 
 <!-- ═══════════ FLASHKARD EKRANI ═══════════ -->
@@ -608,9 +614,13 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
+<!-- MUHIM UX TUZATISH: pastdagi 2 ta suzuvchi tugma (Bosh sahifa/Bo'limlar) OLIB TASHLANDI —
+     ular content ustiga tushib, javob/natija matnlarini bekitib qo'yayotgan edi (Duolingo
+     uslubida: faqat bitta chiqish nuqtasi bo'lishi kerak). Ularning vazifasi endi bo'lim
+     menyusi ekranidagi kichik, oddiy (fixed bo'lmagan) tugmalar orqali bajariladi.
+     Turbo belgisi endi FIXED emas — JS orqali har ekranning header'i ostiga in-flow
+     qilib joylashtiriladi, shuning uchun hech qachon hech narsani bekitmaydi. -->
 <div class="turbo-status-badge" id="turboStatusBadge" style="display:none;">🔥 Turbo: <span id="turboStatusCount">0/0</span></div>
-<div class="floating-menu-btn" id="floating-bolimlar-btn" style="bottom:74px;">📚 Bo'limlar</div>
-<div class="floating-menu-btn" id="floating-menu-btn">🏠 Bosh sahifa</div>
 
 <script src="core.js"></script>
 <script>
@@ -1550,8 +1560,8 @@ function showScreen(name, push){
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   var target = document.getElementById('screen-'+name);
   if(target) target.classList.add('active');
-  var fhb = document.getElementById('floatingHomeBtn');
-  if(fhb) fhb.style.display = (name === 'menu') ? 'none' : 'flex';
+  // Eslatma: alohida suzuvchi "🏠" tugmasi olib tashlandi — har ekranda yuqorida
+  // "‹ Menyu" tugmasi bor, shuning uchun dublikat tugma kerak emas edi.
   if(push !== false){ history.pushState({screen:name, bolim:currentBolim}, '', '#b'+(currentBolim||'')+'-'+name); }
   window.scrollTo(0,0);
   renderScreen(name);
@@ -1565,7 +1575,18 @@ function updateTurboStatusBadge(){
   if(!smartPath.active){ badge.style.display = 'none'; return; }
   var gd = getGatingInfo();
   document.getElementById('turboStatusCount').textContent = gd.turboGood + '/' + gd.turboNeeded;
-  badge.style.display = 'block';
+  // MUHIM UX TUZATISH: badge endi FIXED overlay emas — har safar shu funksiya
+  // chaqirilganda, u HOZIRGI faol ekranning header'i ostiga jismonan ko'chiriladi
+  // (in-flow), shuning uchun hech qachon savol/variant matnini bekitmaydi.
+  var activeScreen = document.querySelector('.screen.active');
+  if(activeScreen){
+    var header = activeScreen.querySelector('.top-header');
+    if(header && header.nextElementSibling !== badge){
+      header.insertAdjacentElement('afterend', badge);
+    }
+  }
+  badge.style.display = 'flex';
+  badge.style.margin = '0 auto 14px';
 }
 window.addEventListener('popstate', function(e){
   var name = (e.state && e.state.screen) ? e.state.screen : 'menu';
@@ -1603,10 +1624,9 @@ document.querySelectorAll('[data-nav]').forEach(function(el){
   el.addEventListener('click', function(){ showScreen(el.getAttribute('data-nav')); });
 });
 document.getElementById('natija-menu-btn').addEventListener('click', function(){ showScreen('menu'); });
-document.getElementById('floating-menu-btn').addEventListener('click', function(){ location.href='index.html'; });
-// Bo'lim ichidan boshqa bo'limga o'tish uchun to'g'ridan-to'g'ri O'quv yo'li (Bo'limlar) tabiga olib boradi —
-// endi Bosh sahifaga qaytib, qayta bo'lim tanlash shart emas.
-document.getElementById('floating-bolimlar-btn').addEventListener('click', function(){ location.href='index.html#bolimlar'; });
+// Eslatma: 🏠 Bosh sahifa va 📚 Bo'limlar tugmalari endi bo'lim menyusi ekranida
+// oddiy (fixed bo'lmagan) tugmalar sifatida joylashgan — pastdagi ortiqcha suzuvchi
+// tugmalar olib tashlandi (ular content ustiga tushib qolayotgan edi).
 
 // ═══ ISM O'ZGARTIRISH — endi pastdagi ortiqcha "Serik" belgisi o'rniga,
 // tepadagi chiroyli profil kartasi (ism turgan joy) bosilganda ochiladi ═══
@@ -1889,23 +1909,76 @@ function selectQuizTime(t, el){
   el.classList.add('active');
   document.getElementById('quiz-start-btn').textContent = '🚀 Boshlash — '+t+' sek';
 }
+var quizTimerState = { left:0 };
+var quizExtraState = { offered:false, used:false, offerOpen:false };
 function startQuizTimer(){
   clearInterval(window.__quizTimerInt);
-  var timeLeft = quizTimePerQ;
+  quizTimerState.left = quizTimePerQ;
+  quizExtraState = { offered:false, used:false, offerOpen:false };
   var timerEl = document.getElementById('quiz-timer');
   var wrapEl = document.querySelector('.quiz-timer-wrap');
   if(!timerEl) return;
-  timerEl.textContent = timeLeft;
+  timerEl.textContent = quizTimerState.left;
   if(wrapEl) wrapEl.classList.remove('warn');
   window.__quizTimerInt = setInterval(function(){
-    timeLeft--;
-    timerEl.textContent = timeLeft;
-    if(timeLeft <= 5 && wrapEl) wrapEl.classList.add('warn');
-    if(timeLeft <= 0){
+    if(quizExtraState.offerOpen) return; // taklif ochiq bo'lsa vaqt TO'XTAB turadi
+    quizTimerState.left--;
+    timerEl.textContent = quizTimerState.left;
+    if(quizTimerState.left <= 5 && wrapEl) wrapEl.classList.add('warn');
+    if(quizTimerState.left <= 2 && !quizExtraState.offered && !quizExtraState.used){
+      offerQuizExtraTime();
+    }
+    if(quizTimerState.left <= 0){
       clearInterval(window.__quizTimerInt);
       quizTimeUp();
     }
   }, 1000);
+}
+// "+10 soniya" taklifi — Test'da vaqt tugashiga 2 soniya qolganda ko'rinadi
+// (Match Madness'dagi bilan bir xil g'oya, faqat Test uchun moslashtirilgan).
+function offerQuizExtraTime(){
+  quizExtraState.offered = true;
+  quizExtraState.offerOpen = true; // vaqt to'xtaydi, bemalol o'ylang
+  var box = document.getElementById('quizExtraTimeOffer');
+  if(box) box.style.display = 'flex';
+}
+function buyQuizExtraTime(){
+  if(!spendWalletXP(30, "Test +10 soniya")){
+    var box = document.getElementById('quizExtraTimeOffer');
+    if(box) box.innerHTML = '<span>Hamyonda XP yetarli emas ✗</span>';
+    setTimeout(function(){ closeQuizExtraTimeOffer(); }, 1400);
+    return;
+  }
+  quizTimerState.left += 10;
+  quizExtraState.used = true;
+  quizExtraState.offerOpen = false;
+  var timerEl = document.getElementById('quiz-timer');
+  if(timerEl) timerEl.textContent = quizTimerState.left;
+  var wrapEl = document.querySelector('.quiz-timer-wrap');
+  if(wrapEl) wrapEl.classList.remove('warn');
+  closeQuizExtraTimeOfferBox();
+}
+function closeQuizExtraTimeOfferBox(){
+  var box = document.getElementById('quizExtraTimeOffer');
+  if(box){
+    box.style.display = 'none';
+    box.innerHTML = '<div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div><div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div><button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button><span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()">Yo‘q, kerak emas</span>';
+  }
+}
+// Talaba taklifni rad etsa (yoki XP yetmasa) chaqiriladi:
+// - Turbo rejimida: qo'shimcha vaqt olinmasa, BUTUN Turbo Dars urinishi boshidan qayta boshlanadi
+//   (bu Turboning "hammasi yoki hech narsa" xarakterini kuchaytiradi — top ilovalarda keng tarqalgan usul).
+// - Oddiy Testda: savol normal tarzda "vaqt tugadi" bilan yakunlanadi (keyingi savolga o'tish imkoni bilan).
+function closeQuizExtraTimeOffer(){
+  quizExtraState.offerOpen = false;
+  closeQuizExtraTimeOfferBox();
+  if(smartPath.active){
+    clearInterval(window.__quizTimerInt);
+    startSmartPath();
+  } else {
+    clearInterval(window.__quizTimerInt);
+    quizTimeUp();
+  }
 }
 function quizTimeUp(){
   var word = quizState.current;
@@ -1951,7 +2024,7 @@ function nextQuizQuestion(){
   var word = quizState.queue[quizState.idx];
   quizState.idx++;
   document.getElementById('quiz-progress').textContent = quizState.idx+' / '+quizState.total;
-  var raEl = document.getElementById('quiz-result-area'); if(raEl) raEl.innerHTML = '';
+  var raEl = document.getElementById('quiz-result-area'); if(raEl){ raEl.innerHTML = ''; raEl.style.cssText = ''; }
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
   quizState.current = word;
   var arToUz = Math.random() < 0.5;
@@ -2036,6 +2109,9 @@ function recordQuizMistake(word, correctText, correctIsArabic){
 }
 function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
   var ra = document.getElementById('quiz-result-area');
+  // MUHIM UX TUZATISH: natija+Keyingi tugmasi endi ekran pastida "yopishib" turadi —
+  // talaba scroll qilmasdan, doim bir xil joyda topa oladi (Duolingo uslubi).
+  ra.style.cssText = 'position:sticky;bottom:0;background:linear-gradient(0deg, var(--bg) 75%, rgba(11,14,20,0));padding:14px 16px 14px;margin:10px -16px -24px;z-index:20;';
   var title = timeUp ? '⏰ Vaqt tugadi' : '❌ Xato';
   ra.innerHTML = '<div class="gt-result bad show">'+
     '<div style="font-weight:800;margin-bottom:6px;">'+title+'</div>'+
@@ -2044,9 +2120,9 @@ function showQuizAnswerAndWait(correctText, correctIsArabic, timeUp){
     '</div>';
   var nextBtn = document.createElement('button');
   nextBtn.className = 'btn btn-gold btn-block';
-  nextBtn.style.marginTop = '14px';
+  nextBtn.style.marginTop = '10px';
   nextBtn.textContent = (quizState.idx < quizState.total) ? 'Keyingi →' : 'Yakunlash';
-  nextBtn.onclick = function(){ ra.innerHTML = ''; nextQuizQuestion(); };
+  nextBtn.onclick = function(){ ra.innerHTML = ''; ra.style.cssText = ''; nextQuizQuestion(); };
   ra.appendChild(nextBtn);
 }
 

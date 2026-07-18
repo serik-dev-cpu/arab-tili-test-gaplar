@@ -843,7 +843,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       </div>
       <div id="backupImportPane" style="display:none;">
         <div style="font-size:12px; color:#9BA3B4; margin-bottom:8px;">Avval saqlagan matningizni shu yerga joylang:</div>
-        <textarea id="backupImportText" placeholder="Bu yerga zaxira matnini joylashtiring..." style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(212,162,58,0.3); color:#EDEFF5; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
+        <textarea id="backupImportText" placeholder="Bu yerga zaxira matnini joylashtiring..." autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(212,162,58,0.3); color:#EDEFF5; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
         <button class="shop-buy-btn" style="width:100%; margin-top:10px;" onclick="restoreBackupText()">🔄 Tiklash</button>
         <div id="backupRestoreMsg" style="text-align:center; font-size:12px; margin-top:8px; display:none;"></div>
       </div>
@@ -1163,6 +1163,12 @@ function restoreBackupText(){
     msg.textContent = 'Avval zaxira matnini joylashtiring.';
     return;
   }
+  // MUHIM: iOS'ning "Smart Punctuation" (aqlli tinish belgilari) funksiyasi ba'zan
+  // matn ichidagi oddiy tirnoq (") belgilarini "aqlli" tirnoqlarga ( " " )
+  // almashtirib qo'yishi mumkin — bu esa JSON'ni butunlay buzadi. Shuning uchun
+  // tiklashdan OLDIN barcha "aqlli" tirnoqlarni oddiy tirnoqqa qaytarib olamiz.
+  raw = raw.replace(/[\u201C\u201D\u2033]/g, '"');
+  // 1-URINISH: to'liq JSON sifatida o'qishga harakat qilamiz (eng ishonchli yo'l).
   try{
     var parsed = JSON.parse(raw);
     var data = parsed && parsed.data ? parsed.data : null;
@@ -1175,9 +1181,35 @@ function restoreBackupText(){
     msg.style.color = '#7ED8A0';
     msg.textContent = '✓ ' + count + ' ta ma\'lumot tiklandi! Sahifa qayta yuklanadi...';
     setTimeout(function(){ location.reload(); }, 1200);
+    return;
   }catch(e){
-    msg.style.color = '#E8765C';
-    msg.textContent = 'Bu matn noto\'g\'ri yoki buzilgan. Avval to\'g\'ri zaxira matnini joylashtiring.';
+    // 2-URINISH (QISMAN TIKLASH): matn kesilgan/uzilgan bo'lishi mumkin (masalan
+    // WhatsApp/Telegram uzun xabarni bo'lib yuborgan, yoki nusxalash to'liq bo'lmagan).
+    // Shunga qaramay, ICHIDA BUTUN saqlangan "arabic_..." kalitlarini alohida-alohida
+    // qidirib topamiz va ULARNI tiklaymiz — hech bo'lmasa qisman ma'lumot yo'qolmaydi.
+    var re = /"(arabic_[a-zA-Z0-9_]+)":"((?:[^"\\]|\\.)*)"/g;
+    var m, count2 = 0;
+    while((m = re.exec(raw)) !== null){
+      try{
+        var key = m[1];
+        var val = JSON.parse('"' + m[2] + '"'); // ichki qochirilgan belgilarni to'g'ri ochamiz
+        localStorage.setItem(key, val);
+        count2++;
+      }catch(e2){ /* shu bittasini o'tkazib yuboramiz, qolganini davom ettiramiz */ }
+    }
+    if(count2 > 0){
+      msg.style.color = '#F0C56B';
+      msg.textContent = '⚠️ Matn to\'liq emas edi (kesilgan bo\'lishi mumkin), lekin ' + count2 + ' ta ma\'lumot qisman tiklandi. Sahifa qayta yuklanadi...';
+      setTimeout(function(){ location.reload(); }, 2200);
+    } else {
+      var truncated = /unexpected end of json/i.test(e.message || '');
+      msg.style.color = '#E8765C';
+      if(truncated){
+        msg.textContent = 'Bu matn KESILGAN ko\'rinadi (oxiri yo\'q) — WhatsApp/Telegram xabarni bo\'lib yuborgan bo\'lishi mumkin. Xabarni to\'liq oching ("Ko\'proq o\'qish"ni bosing), BOSHIDAN OXIRIGACHA hammasini belgilab qayta nusxalang.';
+      } else {
+        msg.textContent = 'Bu matn noto\'g\'ri yoki buzilgan. Avval to\'g\'ri zaxira matnini joylashtiring.';
+      }
+    }
   }
 }
 function renderMistakesListHTML(list){

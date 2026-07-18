@@ -423,6 +423,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="subtitle">A1 darajasi · 12 bo'limlik sayohat</div>
     <div class="header-actions-row">
       <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
+      <div class="change-name-link" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download" style="font-size:12px;vertical-align:-1px"></i> Zaxira nusxa</div>
       <button class="home-alifbo-btn" id="homeAlifboBtn" onclick="toggleHomeAlifbo()">
         <i class="ti ti-language" style="font-size:13px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
       </button>
@@ -450,6 +451,19 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
   <!-- ═══════════ TAB: BOSH SAHIFA ═══════════ -->
   <div class="tab-content active" id="tab-home">
+    <!-- MUHIM: Telegram va boshqa ilova-ichi brauzerlarda localStorage tozalanib,
+         progress yo'qolishi mumkin — shu banner haqiqiy brauzerga o'tishga undaydi. -->
+    <div id="webviewWarningBanner" style="display:none; margin-bottom:12px; padding:12px 14px; border-radius:14px; background:linear-gradient(135deg, rgba(232,118,92,0.16), rgba(212,162,58,0.10)); border:1px solid rgba(232,118,92,0.4);">
+      <div style="font-size:12.5px; color:#F0D8C7; line-height:1.6; margin-bottom:8px;">
+        ⚠️ <b>Ilova ichidagi brauzerda ochyapsiz.</b> Bunda ba'zan progress (XP, natijalar)
+        yo'qolib qolishi mumkin. Xavfsizroq bo'lishi uchun shu havolani Safari yoki
+        Chrome brauzerida oching (yuqoridagi "•••" tugmasi orqali "Ochish brauzerda"ni tanlang).
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="shop-buy-btn" style="flex:1;" onclick="copyCurrentUrl()">🔗 Ulashish / nusxalash</button>
+        <button class="shop-buy-btn" style="flex:1; background:rgba(255,255,255,0.08); color:#C7CCD8;" onclick="dismissWebviewWarning()">Tushunarli</button>
+      </div>
+    </div>
     <!-- ═══ PROFIL + NATIJA BITTA KARTADA (Duolingo/Busuu uslubi) ═══ -->
     <!-- 1-TOPSHIRIQ: umumiy natija (foiz halqasi) endi ism yonida, bitta chiroyli kartada. -->
     <div class="hero-card hero-card-merged">
@@ -801,6 +815,43 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   </div>
 </div>
 
+<!-- ═══════════ ZAXIRA NUSXA (Backup/Restore) ═══════════ -->
+<!-- Telegram ichki brauzeri va boshqa sabablarga ko'ra localStorage tozalanib qolishi mumkin —
+     bu funksiya talabaga butun progressini bir tugma bilan Telegram'ga yuborish imkonini beradi. -->
+<div class="proverb-modal-bg" id="backupModal">
+  <div class="proverb-card-modal" style="max-width:400px;">
+    <h3 style="text-align:center; margin-bottom:4px;">💾 Zaxira nusxa</h3>
+    <div style="text-align:center; font-size:12.5px; color:#9BA3B4; margin-bottom:18px; line-height:1.6;">
+      Ma'lumotlaringiz (XP, natijalar) shu telefon/brauzerda saqlanadi. Yo'qolib
+      qolmasligi uchun, hozir bitta tugma bosib o'zingizga Telegram orqali yuboring.
+    </div>
+    <button class="shop-buy-btn" id="backupShareBtn" style="width:100%; padding:16px; font-size:15px;" onclick="shareBackup()">📤 O'zimga Telegram orqali yuborish</button>
+    <div id="backupShareMsg" style="text-align:center; font-size:12px; margin-top:10px; display:none;"></div>
+
+    <div style="text-align:center; margin-top:18px;">
+      <span class="change-name-link" style="font-size:11.5px;" onclick="toggleBackupAdvanced()">Boshqa usul (qo'lda nusxalash)</span>
+    </div>
+    <div id="backupAdvancedPane" style="display:none; margin-top:14px;">
+      <div id="backupTabRow" style="display:flex; gap:8px; margin-bottom:12px;">
+        <button class="shop-buy-btn" id="backupTabExportBtn" style="flex:1;" onclick="showBackupTab('export')">📤 Saqlash</button>
+        <button class="shop-buy-btn" id="backupTabImportBtn" style="flex:1; opacity:0.6;" onclick="showBackupTab('import')">📥 Tiklash</button>
+      </div>
+      <div id="backupExportPane">
+        <textarea id="backupExportText" readonly style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
+        <button class="shop-buy-btn" style="width:100%; margin-top:10px;" onclick="copyBackupText()">📋 Nusxalash</button>
+        <div id="backupCopyMsg" style="text-align:center; font-size:12px; color:#7ED8A0; margin-top:8px; display:none;">✓ Nusxalandi! Endi biror joyga saqlab qo'ying.</div>
+      </div>
+      <div id="backupImportPane" style="display:none;">
+        <div style="font-size:12px; color:#9BA3B4; margin-bottom:8px;">Avval saqlagan matningizni shu yerga joylang:</div>
+        <textarea id="backupImportText" placeholder="Bu yerga zaxira matnini joylashtiring..." style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(212,162,58,0.3); color:#EDEFF5; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
+        <button class="shop-buy-btn" style="width:100%; margin-top:10px;" onclick="restoreBackupText()">🔄 Tiklash</button>
+        <div id="backupRestoreMsg" style="text-align:center; font-size:12px; margin-top:8px; display:none;"></div>
+      </div>
+    </div>
+    <button class="proverb-close-btn" style="margin-top:14px;" onclick="closeBackupModal()">Yopish</button>
+  </div>
+</div>
+
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
 <script src="core.js"></script>
 <script>
@@ -1023,6 +1074,111 @@ function closeMistakesModal(){
   document.getElementById('mistakesModal').classList.remove('show');
   mistakesQuizState = null;
   refreshMistakesCard();
+}
+
+/* ═══ ZAXIRA NUSXA (Backup/Restore) ═══
+   localStorage'dagi barcha "arabic_" bilan boshlanuvchi kalitlarni bitta
+   JSON matn qilib yig'ib beradi (fayl yuklab olish emas — Telegram ichki
+   brauzerida yuklab olish ishlamasligi mumkin, shuning uchun oddiy
+   nusxalanadigan matn ko'rinishida beriladi). */
+function buildBackupText(){
+  var data = {};
+  try{
+    for(var i=0; i<localStorage.length; i++){
+      var k = localStorage.key(i);
+      if(k && k.indexOf('arabic_') === 0){ data[k] = localStorage.getItem(k); }
+    }
+  }catch(e){}
+  return JSON.stringify({v:1, savedAt:new Date().toISOString(), data:data});
+}
+function openBackupModal(){
+  document.getElementById('backupExportText').value = buildBackupText();
+  document.getElementById('backupCopyMsg').style.display = 'none';
+  document.getElementById('backupImportText').value = '';
+  document.getElementById('backupRestoreMsg').style.display = 'none';
+  document.getElementById('backupShareMsg').style.display = 'none';
+  document.getElementById('backupAdvancedPane').style.display = 'none';
+  showBackupTab('export');
+  document.getElementById('backupModal').classList.add('show');
+}
+function closeBackupModal(){
+  document.getElementById('backupModal').classList.remove('show');
+}
+function toggleBackupAdvanced(){
+  var pane = document.getElementById('backupAdvancedPane');
+  pane.style.display = (pane.style.display === 'none') ? 'block' : 'none';
+}
+// Talaba uchun ENG ODDIY yo'l: "nusxalash" tushunchasini tushuntirish shart emas —
+// telefonning o'zining "Ulashish" (Share) oynasi orqali, bir tugma bilan, Telegram'ga
+// (masalan "Saqlangan xabarlar"ga) to'g'ridan-to'g'ri yuboriladi — rasm ulashgandek oddiy.
+function shareBackup(){
+  var text = buildBackupText();
+  var msg = document.getElementById('backupShareMsg');
+  var shareData = {
+    title: "Arab tili — zaxira nusxa",
+    text: "Mening Arab tili darslarim zaxira nusxasi:\n\n" + text
+  };
+  if(navigator.share){
+    navigator.share(shareData).catch(function(){ /* talaba bekor qilgan bo'lishi mumkin — muammo emas */ });
+  } else {
+    // Ulashish qo'llab-quvvatlanmasa (masalan kompyuterda) — nusxalashga o'tamiz
+    document.getElementById('backupExportText').value = text;
+    toggleBackupAdvanced();
+    showBackupTab('export');
+    msg.style.display = 'block';
+    msg.style.color = '#F0C56B';
+    msg.textContent = 'Bu qurilmada ulashish ishlamaydi — pastdagi "Nusxalash" usulidan foydalaning.';
+  }
+}
+function showBackupTab(which){
+  var isExport = which === 'export';
+  document.getElementById('backupExportPane').style.display = isExport ? 'block' : 'none';
+  document.getElementById('backupImportPane').style.display = isExport ? 'none' : 'block';
+  document.getElementById('backupTabExportBtn').style.opacity = isExport ? '1' : '0.6';
+  document.getElementById('backupTabImportBtn').style.opacity = isExport ? '0.6' : '1';
+  if(isExport){ document.getElementById('backupExportText').value = buildBackupText(); }
+}
+function copyBackupText(){
+  var ta = document.getElementById('backupExportText');
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  var msg = document.getElementById('backupCopyMsg');
+  try{
+    navigator.clipboard.writeText(ta.value).then(function(){
+      msg.style.display = 'block';
+    }).catch(function(){
+      document.execCommand('copy');
+      msg.style.display = 'block';
+    });
+  }catch(e){
+    try{ document.execCommand('copy'); msg.style.display = 'block'; }catch(e2){}
+  }
+}
+function restoreBackupText(){
+  var raw = document.getElementById('backupImportText').value.trim();
+  var msg = document.getElementById('backupRestoreMsg');
+  msg.style.display = 'block';
+  if(!raw){
+    msg.style.color = '#E8765C';
+    msg.textContent = 'Avval zaxira matnini joylashtiring.';
+    return;
+  }
+  try{
+    var parsed = JSON.parse(raw);
+    var data = parsed && parsed.data ? parsed.data : null;
+    if(!data || typeof data !== 'object'){ throw new Error('bad format'); }
+    var count = 0;
+    Object.keys(data).forEach(function(k){
+      if(k.indexOf('arabic_') === 0){ localStorage.setItem(k, data[k]); count++; }
+    });
+    if(count === 0){ throw new Error('empty'); }
+    msg.style.color = '#7ED8A0';
+    msg.textContent = '✓ ' + count + ' ta ma\'lumot tiklandi! Sahifa qayta yuklanadi...';
+    setTimeout(function(){ location.reload(); }, 1200);
+  }catch(e){
+    msg.style.color = '#E8765C';
+    msg.textContent = 'Bu matn noto\'g\'ri yoki buzilgan. Avval to\'g\'ri zaxira matnini joylashtiring.';
+  }
 }
 function renderMistakesListHTML(list){
   // Kurtaklar (xato so'zlar) ro'yxati — talaba nimani takrorlashi kerakligini KO'RADI.
@@ -2027,9 +2183,59 @@ function spawnConfetti(){
   }
 }
 
+/* ═══ ILOVA-ICHI BRAUZER (Telegram va h.k.) ANIQLASH ═══
+   100% ishonchli usul yo'q, shuning uchun bir nechta belgi birlashtiriladi.
+   Maqsad — talabani localStorage yo'qolish xavfi bor muhitdan ogohlantirish. */
+function isLikelyInAppWebview(){
+  try{
+    var ua = navigator.userAgent || '';
+    if(window.TelegramWebviewProxy) return true;
+    if(/Telegram/i.test(ua)) return true;
+    // Android'da ilova ichiga o'rnatilgan WebView odatda UA ichida "; wv)" belgisini qoldiradi
+    if(/Android/i.test(ua) && /; wv\)/.test(ua)) return true;
+    // iOS'da standalone Safari emasligini va "Safari" so'zi umuman yo'qligini tekshiramiz
+    // (haqiqiy Safari UA'sida har doim "Safari" so'zi bo'ladi; ko'p ilova ichi brauzerlarda yo'q)
+    if(/iPhone|iPad|iPod/i.test(ua) && !/Safari/i.test(ua) && !/CriOS|FxiOS/i.test(ua)) return true;
+  }catch(e){}
+  return false;
+}
+function initWebviewWarning(){
+  var banner = document.getElementById('webviewWarningBanner');
+  if(!banner) return;
+  var dismissed = false;
+  try{ dismissed = localStorage.getItem('arabic_webview_warning_dismissed') === '1'; }catch(e){}
+  if(isLikelyInAppWebview() && !dismissed){ banner.style.display = 'block'; }
+}
+function dismissWebviewWarning(){
+  try{ localStorage.setItem('arabic_webview_warning_dismissed', '1'); }catch(e){}
+  var banner = document.getElementById('webviewWarningBanner');
+  if(banner) banner.style.display = 'none';
+}
+function copyCurrentUrl(){
+  var url = location.href.split('#')[0];
+  if(navigator.share){
+    navigator.share({ title: "Al-Manhajul Al-A'lamiy", text: 'Arab tili darslari:', url: url })
+      .catch(function(){ /* talaba bekor qilgan bo'lishi mumkin — muammo emas */ });
+    return;
+  }
+  try{
+    navigator.clipboard.writeText(url).then(function(){
+      showBackupToast('✓ Havola nusxalandi! Endi Safari/Chrome\'ni oching va joylashtiring (paste).');
+    }).catch(function(){ showBackupToast(url); });
+  }catch(e){ showBackupToast(url); }
+}
+function showBackupToast(text){
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-weight:700;font-size:12.5px;padding:12px 18px;border-radius:14px;box-shadow:var(--shadow-deep);z-index:99999;max-width:88vw;text-align:center;background:linear-gradient(135deg,#3FBF7F,#6FBF8B);color:#0B1F14;';
+  t.textContent = text;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='opacity .3s ease'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 3200);
+}
+
 if(initNameGate()){
   initRoadmap();
   maybeShowGatingChoice();
+  initWebviewWarning();
   // Bo'lim ichidan "Bo'limlar ro'yxati" tugmasi bilan kelinganda (index.html#bolimlar)
   // to'g'ridan-to'g'ri O'quv yo'li tabini ochamiz — talaba Bosh sahifani qayta bosishi shart emas.
   if(location.hash === '#bolimlar'){ switchTab('bolimlar'); }

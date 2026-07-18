@@ -29,6 +29,11 @@ p{line-height:1.6;}
 
 /* ===== Umumiy mikro-animatsiyalar ===== */
 @keyframes popIn{0%{transform:scale(0.8); opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1); opacity:1;}}
+@keyframes unlockGlowPulse{0%,100%{box-shadow:0 0 0px rgba(240,197,107,0.0);} 50%{box-shadow:0 0 22px rgba(240,197,107,0.35);}}
+@keyframes unlockBurstFloat{0%{transform:translateY(0) scale(0.6) rotate(0deg); opacity:0;} 15%{opacity:1;} 100%{transform:translateY(-90px) scale(1.1) rotate(var(--rot,10deg)); opacity:0;}}
+.unlock-burst-emoji{position:absolute; bottom:10px; font-size:20px; animation:unlockBurstFloat 1.4s ease-out forwards; pointer-events:none;}
+.unlock-banner-pop{animation:popIn .55s cubic-bezier(.34,1.56,.64,1) both, unlockGlowPulse 2.2s ease-in-out .6s infinite;}
+.unlock-pct-num{display:inline-block; font-size:34px; font-weight:900; color:#F0C56B; letter-spacing:-0.5px;}
 
 /* ═══════════════ Match Madness (so'z moslashtirish o'yini) ═══════════════ */
 .mm-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
@@ -193,9 +198,10 @@ p{line-height:1.6;}
 .progress-bar-outer{width:100%; height:8px; background:var(--card); border-radius:8px; overflow:hidden; margin:14px 0;}
 .progress-bar-inner{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold2)); border-radius:8px; transition:width .3s;}
 
-.quiz-card{background:linear-gradient(160deg, rgba(38,42,54,0.5), rgba(26,29,38,0.75)); border:1px solid var(--gold-line); border-radius:18px; padding:26px 18px; text-align:center; margin-top:10px; box-shadow:var(--shadow-soft);}
+.quiz-card{background:linear-gradient(160deg, rgba(212,162,58,0.14), rgba(38,42,54,0.6)); border:1px solid rgba(212,162,58,0.45); border-radius:18px; padding:26px 18px; text-align:center; margin-top:10px; box-shadow:var(--shadow-soft);}
+.quiz-card-label{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#F0C56B;margin-bottom:10px;text-transform:uppercase;}
 .quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:2.2;}
-.opt-btn{display:block; width:100%; text-align:center; padding:16px; margin-top:10px; border-radius:14px; background:var(--card-2); border:1px solid var(--border); color:var(--text); font-size:16px; cursor:pointer; transition:transform .15s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);}
+.opt-btn{display:block; width:100%; text-align:center; padding:16px; margin-top:10px; border-radius:14px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.14); color:var(--text); font-size:16px; cursor:pointer; transition:transform .15s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);}
 .opt-btn:active{transform:scale(.98);}
 .opt-btn-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:24px; line-height:2;}
 .uz-question{font-family:'Inter',sans-serif; font-size:22px; font-weight:700; direction:ltr;}
@@ -596,6 +602,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="spd-chips" id="spd-chips-test"></div>
   <div class="quiz-timer-wrap"><i class="ti ti-clock"></i> <span id="quiz-timer">20</span>s</div>
   <div class="quiz-card">
+    <div class="quiz-card-label">❓ SAVOL</div>
     <div class="ar-big ar" id="quiz-word"></div>
     <div class="quiz-sublabel" id="quiz-sublabel" style="display:none; font-size:13px; color:var(--muted); margin-top:-6px; margin-bottom:10px;"></div>
     <div id="quiz-options"></div>
@@ -621,11 +628,21 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="victory-course-label" id="vc-course-label-qr">Bo'lim progressi: 0%</div>
   </div>
   <!-- 2-TOPSHIRIQ: Turbo yetarli sonda yechilib, keyingi bo'lim ENDI OCHILGANDA aniq tabrik ko'rinadi. -->
-  <div id="unlockBanner" style="display:none; margin:14px 0; padding:14px 16px; border-radius:16px; background:linear-gradient(135deg, rgba(111,191,139,0.18), rgba(212,162,58,0.12)); border:1px solid rgba(111,191,139,0.4); text-align:center;">
-    <div style="font-size:28px; margin-bottom:4px;">🎉</div>
-    <div style="font-weight:800; color:#7ED8A0; font-size:15px; margin-bottom:4px;">Yangi bo'lim ochildi!</div>
-    <div id="unlockBannerSub" style="font-size:12.5px; color:#C7CCD8; margin-bottom:10px;"></div>
-    <button class="premium-btn-primary" id="unlockBannerBtn" style="width:100%;">Keyingi bo'limga o'tish →</button>
+  <div id="unlockBanner" style="display:none; position:relative; overflow:hidden; margin:14px 0; padding:20px 18px 18px; border-radius:18px; background:linear-gradient(160deg, rgba(111,191,139,0.20), rgba(212,162,58,0.14)); border:1px solid rgba(240,197,107,0.45); text-align:center;">
+    <div id="unlockBurstZone" style="position:absolute; inset:0; pointer-events:none;"></div>
+    <div style="font-size:34px; margin-bottom:2px;">🎉👏</div>
+    <div style="font-weight:800; color:#7ED8A0; font-size:16px; margin-bottom:10px;">Ajoyib natija!</div>
+    <div style="font-size:12.5px; color:#9BA3B4; margin-bottom:2px;">Siz shu darsni</div>
+    <div class="unlock-pct-num" id="unlockBannerPct">0%</div>
+    <div style="font-size:12.5px; color:#9BA3B4; margin:2px 0 12px;">natija bilan yakunladingiz</div>
+    <div id="unlockBannerSub" style="font-size:13px; color:#EDEFF5; font-weight:700; margin-bottom:6px;"></div>
+    <div style="font-size:12px; color:#9BA3B4; line-height:1.6; margin-bottom:14px;">
+      Xohlasangiz, shu yerda to'xtab, keyingi bo'limga o'tishingiz mumkin — buning uchun to'liq huquqingiz bor.
+      Yoki agar natijangiz va XP'ingizni yanada oshirmoqchi bo'lsangiz, shu bo'limda yana bir necha
+      Turbo raund bilan mashq qilishda davom etishingiz ham mumkin — ikkalasi ham to'g'ri yo'l! 💪
+    </div>
+    <button class="premium-btn-primary" id="unlockBannerBtn" style="width:100%; margin-bottom:8px;">Keyingi bo'limga o'tish →</button>
+    <button class="premium-btn-secondary" id="unlockBannerStayBtn" style="width:100%; font-size:13px;">🔥 Yana mashq qilib, XP oshiraman</button>
   </div>
   <div class="victory-actions" id="vc-actions-qr">
     <button class="premium-btn-primary" id="qr-retry-btn" onclick="goScreen('quiz-setup')">Yana test</button>
@@ -1614,7 +1631,20 @@ function answerFlashcard(knew){
   const curBox = newBox[w.ar]||1;
   // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
   // Oddiy Flashkard rejimida bosilganda faqat XP beriladi, foiz o'zgarmaydi.
-  if(smartPath.active){ newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1; state.box = newBox; }
+  if(smartPath.active){
+    newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1;
+    state.box = newBox;
+    if(!knew){
+      // Xato daftariga qo'shamiz — talaba keyinroq pullik "Takrorlash" mashqi orqali tuzatadi.
+      try{
+        addMistake({
+          qid: w.ar, bolim: BOLIM_NUM, kind: 'word',
+          question: w.ar, questionIsArabic: true,
+          sub: '', correct: dtxt(w.uz), correctIsArabic: false, options: []
+        });
+      }catch(e){}
+    }
+  }
   if(knew){
     fcState.know++;
   } else {
@@ -1896,12 +1926,47 @@ function finishQuiz(){
 }
 
 /* ═══════════════ AQLLI YO'L (Smart Path) - zanjir funksiyalari ═══════════════ */
+// TURBO RAUND HAJMI: bo'lim kattaligiga (testable so'z+grammatika soni) va kerakli
+// raund soniga (TURBO_NEEDED_LOCAL) qarab avtomatik moslashadi.
+function getTurboRoundSizes(){
+  var testableCount = ALL_WORDS.length + GRAMMAR_ITEMS.length;
+  var need = TURBO_NEEDED_LOCAL;
+  return {
+    flash: Math.min(ALL_WORDS.length, Math.max(8, Math.round(testableCount/need*2.13))),
+    quiz: Math.min(testableCount, Math.max(5, Math.round(testableCount/need*1.28))),
+    gap: Math.min(GAP_TUZISH_DATA.length, Math.max(4, Math.round(testableCount/need*0.85)))
+  };
+}
+// Box darajasi PASTROQ so'zlarga ustunlik beruvchi indekslar (Anki/Duolingo uslubi)
+function weightedWordIndices(){
+  var state = loadProgress();
+  var box = state.box || {};
+  return ALL_WORDS.map(function(w,i){
+    return { i:i, w: Math.random() * Math.max(1, 6-(Number(box[w.ar])||0)) };
+  }).sort(function(a,b){ return b.w-a.w; }).map(function(x){ return x.i; });
+}
+function weightedQuizItems(){
+  var state = loadProgress();
+  var box = state.box || {};
+  var wordItems = ALL_WORDS.map(function(w){ return {kind:'word', data:w}; });
+  var wordDirsRaw = wordItems.map(function(_,i){ return i%2===0 ? 'ar2uz':'uz2ar'; });
+  var wordDirsShuffled = shuffle(wordDirsRaw);
+  wordItems.forEach(function(it,i){ it.dir = wordDirsShuffled[i]; });
+  var grammarItems = GRAMMAR_ITEMS.map(function(g){ return {kind:'grammar', data:g}; });
+  var all = wordItems.concat(grammarItems);
+  return all.map(function(it){
+    var key = it.kind==='word' ? it.data.ar : (it.data.id || it.data.ar || it.data.q);
+    return { it:it, w: Math.random() * Math.max(1, 6-(Number(box[key])||0)) };
+  }).sort(function(a,b){ return b.w-a.w; }).map(function(x){ return x.it; });
+}
 function startSmartPath(){
   smartPath.active = true;
   smartPath.step = 1;
   smartPath.hadAnyError = false;
   smartPath.pctBefore = getCourseProgressPct();
-  fcState = { words: shuffle(ALL_WORDS).slice(0,5), idx:0, know:0, dontknow:0, flipped:false };
+  var sizes = getTurboRoundSizes();
+  var idxs = weightedWordIndices().slice(0, sizes.flash);
+  fcState = { words: idxs.map(function(i){ return ALL_WORDS[i]; }), idx:0, know:0, dontknow:0, flipped:false };
   goScreen('flashcard');
   renderFlashcard();
 }
@@ -1934,7 +1999,8 @@ function smartPathRunGap(){
   // goScreen('gap') avtomatik startGapTuzish() ni chaqiradi (oddiy 'oson' daraja) -
   // shuning uchun ANDAN KEYIN Aqlli Yo'l uchun 3 ta tasodifiy gapni (barcha darajalardan) ustidan yozamiz
   goScreen('gap');
-  gapState.list = shuffle(GAP_TUZISH_DATA.slice()).slice(0,3);
+  var gapCount = getTurboRoundSizes().gap;
+  gapState.list = shuffle(GAP_TUZISH_DATA.slice()).slice(0, gapCount);
   gapState.order = gtShuffleIdx(gapState.list.length);
   gapState.idx = 0;
   gapState.correct = 0;
@@ -1942,12 +2008,7 @@ function smartPathRunGap(){
 }
 function smartPathRunQuiz(){
   smartPath.step = 4;
-  var wordItems = ALL_WORDS.map(function(w){ return {kind:'word', data:w}; });
-  var wordDirsRaw = wordItems.map(function(_,i){ return i%2===0 ? 'ar2uz':'uz2ar'; });
-  var wordDirsShuffled = shuffle(wordDirsRaw);
-  wordItems.forEach(function(it,i){ it.dir = wordDirsShuffled[i]; });
-  var grammarItems = GRAMMAR_ITEMS.map(function(g){ return {kind:'grammar', data:g}; });
-  var items = shuffle(wordItems.concat(grammarItems)).slice(0,3);
+  var items = weightedQuizItems().slice(0, getTurboRoundSizes().quiz);
   quizState = { items:items, idx:0, results:[], timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();
@@ -1956,6 +2017,38 @@ function smartPathAdvance(){
   if(smartPath.step === 1){ smartPathRunMatch(); }
   else if(smartPath.step === 2){ smartPathRunGap(); }
   else if(smartPath.step === 3){ smartPathRunQuiz(); }
+}
+// Foizni 0'dan haqiqiy qiymatgacha "sanab" ko'rsatadi — natijani jonli va quvonchli qiladi.
+function animateUnlockPct(target){
+  var el = document.getElementById('unlockBannerPct');
+  if(!el) return;
+  var dur = 900;
+  var t0 = performance.now();
+  function step(t){
+    var p = Math.min(1, (t - t0) / dur);
+    var eased = 1 - Math.pow(1-p, 3);
+    var val = Math.round(target * eased);
+    el.textContent = val + '%';
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+// Banner ichida yuqoriga suzib chiquvchi kichik emoji zarralari (qarsak/yulduzcha) — qisqa, iliq animatsiya.
+function spawnUnlockBurst(container){
+  if(!container) return;
+  container.innerHTML = '';
+  var emojis = ['👏','✨','🎉','⭐'];
+  var n = 14;
+  for(var i=0;i<n;i++){
+    var el = document.createElement('div');
+    el.className = 'unlock-burst-emoji';
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = (8 + Math.random()*84) + '%';
+    el.style.animationDelay = (Math.random()*0.5) + 's';
+    el.style.setProperty('--rot', (Math.random()*40-20) + 'deg');
+    container.appendChild(el);
+  }
+  setTimeout(function(){ container.innerHTML = ''; }, 2200);
 }
 function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   var totalBefore = getAchievementXP();
@@ -1996,9 +2089,13 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   if(typeof justUnlockedNext !== 'undefined' && justUnlockedNext){
     var ub = document.getElementById('unlockBanner');
     if(ub){
-      document.getElementById('unlockBannerSub').textContent = "Keyingi bo'lim endi ochiq — davom eting!";
+      document.getElementById('unlockBannerSub').textContent = "Keyingi bo'lim endi ochiq!";
       document.getElementById('unlockBannerBtn').onclick = function(){ location.href = 'ManhajA1-bolim12.html'; };
+      document.getElementById('unlockBannerStayBtn').onclick = function(){ ub.style.display = 'none'; startSmartPath(); };
+      ub.classList.add('unlock-banner-pop');
       ub.style.display = 'block';
+      animateUnlockPct(pctAfter);
+      spawnUnlockBurst(document.getElementById('unlockBurstZone'));
     }
   }
   runVictoryCelebration({
@@ -2139,11 +2236,17 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     gapState.correct++;
+    // MUHIM: ovoz TO'LIQ tugagandan keyin o'tamiz — aks holda yangi savol ovoz
+    // tugamasdan chiqib, talaba qaysi matnga tegishli ekanini bilmay chalkashadi.
     if(hasAudioFor('gap')){
-      setTimeout(function(){ speakArabic(correctAnswer, document.querySelector('.gt-listen-btn')); }, 300);
+      setTimeout(function(){
+        speakArabic(correctAnswer, document.querySelector('.gt-listen-btn'), function(){
+          setTimeout(advanceGapQuestion, 500);
+        });
+      }, 300);
+    } else {
+      setTimeout(advanceGapQuestion, 1800);
     }
-    // To'g'ri javobda avtomatik keyingi savolga o'tamiz (qo'shimcha bosish shart emas)
-    setTimeout(advanceGapQuestion, 1800);
   } else {
     playWrong();
     if(smartPath.active) smartPath.hadAnyError = true;

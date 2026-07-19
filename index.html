@@ -105,6 +105,38 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 }
 .home-alifbo-btn:hover{background:linear-gradient(135deg,rgba(212,162,58,0.26),rgba(212,162,58,0.14));}
 .home-alifbo-btn:active{transform:scale(0.96);}
+.news-bell-btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(212,162,58,0.16),rgba(212,162,58,0.08));
+  border:1px solid rgba(212,162,58,0.4);color:#F0C56B;font-size:15px;cursor:pointer;
+  transition:all .2s ease;flex-shrink:0;
+}
+.news-bell-btn:hover{background:linear-gradient(135deg,rgba(212,162,58,0.26),rgba(212,162,58,0.14));}
+.news-bell-btn:active{transform:scale(0.92);}
+.news-bell-dot{
+  position:absolute;top:2px;right:3px;width:9px;height:9px;border-radius:50%;
+  background:#E8765C;border:1.5px solid #14161d;
+  animation:newsBellPulse 1.6s ease-in-out infinite;
+}
+@keyframes newsBellPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(232,118,92,0.55);}
+  50%{box-shadow:0 0 0 4px rgba(232,118,92,0);}
+}
+.news-tab-row{display:flex;gap:8px;margin-bottom:16px;}
+.news-tab-btn{flex:1;padding:9px 8px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);color:#9BA3B4;font-size:13px;font-weight:700;cursor:pointer;
+  transition:all .2s ease;font-family:inherit;}
+.news-tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0B0E14;border-color:transparent;}
+.news-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.news-item:last-child{border-bottom:none;padding-bottom:0;}
+.news-item-icon{font-size:22px;flex-shrink:0;line-height:1.3;}
+.news-item-title{font-size:14px;font-weight:800;color:#EDEFF5;margin-bottom:3px;}
+.news-item-desc{font-size:12.5px;color:#9BA3B4;line-height:1.5;}
+.news-item-date{font-size:11px;color:#5A6275;margin-top:4px;}
+.news-upcoming-badge{display:inline-block;font-size:10.5px;font-weight:800;color:#F0C56B;
+  background:rgba(212,162,58,0.14);border:1px solid rgba(212,162,58,0.35);border-radius:8px;
+  padding:1px 7px;margin-left:6px;vertical-align:middle;}
 
 /* ═══ HERO — PREMIUM STAT BLOK ═══ */
 .hero-card{
@@ -440,6 +472,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="change-name-link" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download" style="font-size:13px;vertical-align:-1px"></i> Zaxira nusxa</div>
       <button class="home-alifbo-btn" id="homeAlifboBtn" onclick="toggleHomeAlifbo()">
         <i class="ti ti-language" style="font-size:14px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
+      </button>
+      <button class="news-bell-btn" id="newsBellBtn" onclick="openNewsModal()" aria-label="Yangiliklar">
+        <i class="ti ti-bell"></i>
+        <span class="news-bell-dot" id="newsBellDot" style="display:none"></span>
       </button>
     </div>
   </div>
@@ -890,6 +926,20 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       </div>
     </div>
     <button class="proverb-close-btn" style="margin-top:14px;" onclick="closeBackupModal()">Yopish</button>
+  </div>
+</div>
+
+<!-- ═══════════ YANGILIKLAR MODAL ═══════════ -->
+<div class="proverb-modal-bg" id="newsModal">
+  <div class="proverb-card-modal" style="max-width:400px;">
+    <h3 style="text-align:center; margin-bottom:14px;">🔔 Yangiliklar</h3>
+    <div class="news-tab-row">
+      <button class="news-tab-btn active" id="newsTabCurrentBtn" onclick="switchNewsTab('current')">Yangiliklar</button>
+      <button class="news-tab-btn" id="newsTabUpcomingBtn" onclick="switchNewsTab('upcoming')">Tez orada</button>
+    </div>
+    <div id="newsListCurrent"></div>
+    <div id="newsListUpcoming" style="display:none"></div>
+    <button class="proverb-close-btn" style="margin-top:16px;" onclick="closeNewsModal()">Yopish</button>
   </div>
 </div>
 
@@ -2306,17 +2356,103 @@ function dismissWebviewWarning(){
   var banner = document.getElementById('webviewWarningBanner');
   if(banner) banner.style.display = 'none';
 }
+function hasTriedAnyGramMini(){
+  for(var i=1; i<=12; i++){
+    try{
+      var d = JSON.parse(localStorage.getItem('arabic_uz_'+i+'bolim_v1'));
+      if(d && d.gram_mini_done) return true;
+    }catch(e){}
+  }
+  return false;
+}
 function initGramFeatureAnnounce(){
   var banner = document.getElementById('gramFeatureAnnounce');
   if(!banner) return;
-  var dismissed = false;
-  try{ dismissed = localStorage.getItem('arabic_gram_feature_announce_dismissed') === '1'; }catch(e){}
-  if(!dismissed) banner.style.display = 'block';
+  var dismissedThisSession = false;
+  try{ dismissedThisSession = sessionStorage.getItem('arabic_gram_feature_announce_dismissed_session') === '1'; }catch(e){}
+  // Talaba hech bo'lmasa bitta bo'limda grammatika mini-testini o'tagunga qadar,
+  // ilova har ochilganda (yangi sessiyada) shu banner qayta ko'rinadi.
+  if(!hasTriedAnyGramMini() && !dismissedThisSession){ banner.style.display = 'block'; }
 }
 function dismissGramFeatureAnnounce(){
-  try{ localStorage.setItem('arabic_gram_feature_announce_dismissed', '1'); }catch(e){}
+  try{ sessionStorage.setItem('arabic_gram_feature_announce_dismissed_session', '1'); }catch(e){}
   var banner = document.getElementById('gramFeatureAnnounce');
   if(banner) banner.style.display = 'none';
+}
+
+/* ═══ YANGILIKLAR (🔔) TIZIMI ═══
+   Har yangi elon qo'shilganda: NEWS_ITEMS ro'yxatiga eng tepaga bitta obyekt qo'shiladi
+   va NEWS_LATEST_ID raqami oshiriladi. Talaba modalni ochganda "ko'rilgan" deb belgilanadi. */
+var NEWS_LATEST_ID = 7;
+var NEWS_ITEMS = [
+  { id:7, icon:'🛒', title:"Bozorga yangi XP mahsulotlari qo'shildi", desc:"Do'kon (Bozor) bo'limi yangi sovg'a va imkoniyatlar bilan boyidi.", date:'2026-yil, iyul' },
+  { id:6, icon:'🎙️', title:'Mutakallim uchun premium dizayn', desc:"Gapirish (المتكلّم) rejimi endi yangilangan, chiroyli ko'rinishga ega.", date:'2026-yil, iyul' },
+  { id:5, icon:'🎁', title:"Sovg'alar bo'limi yangilandi", desc:"Sovg'a (🎁) bo'limi ajoyib va to'liq mazmun bilan to'ldirildi.", date:'2026-yil, iyul' },
+  { id:4, icon:'🎓', title:'Bo\'lim yakunida umumiy imtihon', desc:'Har bir bo\'lim tugagach, o\'sha bo\'lim bo\'yicha umumiy imtihon savollari chiqadi.', date:'2026-yil, iyul' },
+  { id:3, icon:'📲', title:'Asosiy ekranga o\'rnatish', desc:"Ilovani telefoningizning asosiy ekraniga qo'shib, ilova kabi bir bosishda ochishingiz mumkin.", date:'2026-yil, iyul' },
+  { id:2, icon:'📝', title:'Grammatikaga oson mini-testlar', desc:"Har bo'limning Grammatika sahifasida qoidani mustahkamlaydigan kichik testlar qo'shildi.", date:'2026-yil, iyul' },
+  { id:1, icon:'🎧', title:'Turbo rejimga ovoz qo\'shildi', desc:"Tezlashtirilgan (Turbo) o'qishda endi so'zlarning talaffuzi ham eshitiladi.", date:'2026-yil, iyul' }
+];
+var NEWS_UPCOMING = [
+  { icon:'🎧', title:'Tinglab tushunish bo\'limi', desc:"Darslikdagi audio dialoglar asosida tinglab tushunish mashqlari — tayyorlanmoqda." },
+  { icon:'🔓', title:'Bosqichma-bosqich bo\'lim ochilishi', desc:"Yangi til bilan chambarchas, tizimli o'rganish uchun har bo'lim yetarli natija bilan yakunlangach, keyingisi ochiladi." }
+];
+function hasUnreadNews(){
+  var seen = 0;
+  try{ seen = parseInt(localStorage.getItem('arabic_news_seen_v1')) || 0; }catch(e){}
+  return seen < NEWS_LATEST_ID;
+}
+function updateNewsBadge(){
+  var dot = document.getElementById('newsBellDot');
+  if(!dot) return;
+  dot.style.display = hasUnreadNews() ? 'block' : 'none';
+}
+function renderNewsList(){
+  var wrap = document.getElementById('newsListCurrent');
+  if(!wrap) return;
+  var html = '';
+  for(var i=0; i<NEWS_ITEMS.length; i++){
+    var n = NEWS_ITEMS[i];
+    html += '<div class="news-item"><div class="news-item-icon">'+n.icon+'</div><div>'+
+      '<div class="news-item-title">'+n.title+'</div>'+
+      '<div class="news-item-desc">'+n.desc+'</div>'+
+      '<div class="news-item-date">'+n.date+'</div></div></div>';
+  }
+  wrap.innerHTML = html;
+  var wrapU = document.getElementById('newsListUpcoming');
+  if(wrapU){
+    var htmlU = '';
+    for(var j=0; j<NEWS_UPCOMING.length; j++){
+      var u = NEWS_UPCOMING[j];
+      htmlU += '<div class="news-item"><div class="news-item-icon">'+u.icon+'</div><div>'+
+        '<div class="news-item-title">'+u.title+'<span class="news-upcoming-badge">tayyorlanmoqda</span></div>'+
+        '<div class="news-item-desc">'+u.desc+'</div></div></div>';
+    }
+    wrapU.innerHTML = htmlU;
+  }
+}
+function switchNewsTab(tab){
+  var curBtn = document.getElementById('newsTabCurrentBtn');
+  var upBtn = document.getElementById('newsTabUpcomingBtn');
+  var curList = document.getElementById('newsListCurrent');
+  var upList = document.getElementById('newsListUpcoming');
+  if(tab === 'upcoming'){
+    curBtn.classList.remove('active'); upBtn.classList.add('active');
+    curList.style.display = 'none'; upList.style.display = 'block';
+  } else {
+    upBtn.classList.remove('active'); curBtn.classList.add('active');
+    upList.style.display = 'none'; curList.style.display = 'block';
+  }
+}
+function openNewsModal(){
+  renderNewsList();
+  switchNewsTab('current');
+  document.getElementById('newsModal').classList.add('show');
+  try{ localStorage.setItem('arabic_news_seen_v1', String(NEWS_LATEST_ID)); }catch(e){}
+  updateNewsBadge();
+}
+function closeNewsModal(){
+  document.getElementById('newsModal').classList.remove('show');
 }
 function copyCurrentUrl(){
   var url = location.href.split('#')[0];
@@ -2344,6 +2480,7 @@ if(initNameGate()){
   maybeShowGatingChoice();
   initWebviewWarning();
   initGramFeatureAnnounce();
+  updateNewsBadge();
   // Bo'lim ichidan "Bo'limlar ro'yxati" tugmasi bilan kelinganda (index.html#bolimlar)
   // to'g'ridan-to'g'ri O'quv yo'li tabini ochamiz — talaba Bosh sahifani qayta bosishi shart emas.
   if(location.hash === '#bolimlar'){ switchTab('bolimlar'); }

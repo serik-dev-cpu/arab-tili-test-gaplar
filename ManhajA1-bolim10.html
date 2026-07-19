@@ -981,6 +981,7 @@ function awardSessionXP(mode, fullXP){
 }
 
 // ═══ Test XP: savol soniga qarab (TEZ=5, ODATIY=8, SEKIN=10) ═══
+function uzBaseMeaning(u){ return String(u||'').replace(/\([^)]*\)/g,'').trim().toLowerCase(); }
 function quizXpByCount(){
   try{
     if(typeof quizQuestionCount === 'undefined') return 8;
@@ -1593,9 +1594,11 @@ function renderQuizQuestion(){
   var correctShown = dir === 'ar2uz' ? dtxt(q.uz) : q.ar;
   var seenVals = {};
   seenVals[correctShown] = true;
+  var correctBase = uzBaseMeaning(q.uz);
   var distractors = [];
   var pool = shuffle(ALL_WORDS.filter(w=>w.ar!==q.ar));
   for(var di=0; di<pool.length && distractors.length<3; di++){
+    if(uzBaseMeaning(pool[di].uz) === correctBase) continue;
     var shown = dir === 'ar2uz' ? dtxt(pool[di].uz) : pool[di].ar;
     if(seenVals[shown]) continue;
     seenVals[shown] = true;

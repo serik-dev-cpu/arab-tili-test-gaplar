@@ -1157,7 +1157,7 @@ var SENTENCES_3 = {
     {ar:'أُرِيدُ أَنْ أَكُونَ تَاجِرًا.', uz:'Мен савдогар бўлишни истайман.'},
     {ar:'سَتَحْصُلُ عَلَى دَرَجَةٍ عَالِيَةٍ.', uz:'Сиз юқори балл оласиз.'},
     {ar:'مَا شَاءَ اللَّهُ أَنْتَ!', uz:'Машаллоҳ, сиз зўрсиз!'},
-    {ar:'هُوَ يُحِبُّ كِتَابَةَ الْقِصَصِ.', uz:'У ҳикоя ёзишни яхши кўради.'},
+    {ar:'هُوَ يُحِبُّ الْقِرَاءَةَ.', uz:'У ўқишни яхши кўради.'},
     {ar:'هِيَ تُحِبُّ الرَّسْمَ.', uz:'У расм чизишни яхши кўради (аёл).'},
     {ar:'لَا يُحِبُّ صَدِيقِي الدِّرَاسَةَ.', uz:'Дўстим ўқишни ёқтирмайди.'},
     {ar:'أَخِي الصَّغِيرُ فِي الْمَرْحَلَةِ الِابْتِدَائِيَّةِ.', uz:'Кичик укам бошланғич мактабда.'},
@@ -2036,6 +2036,7 @@ function buildWeightedQueue(pool){
   }
   return weightedSort(notLearned).concat(weightedSort(already));
 }
+function uzBaseMeaning(u){ return String(u||'').replace(/\([^)]*\)/g,'').trim().toLowerCase(); }
 function nextQuizQuestion(){
   if(quizState.idx >= quizState.total){
     if(smartPath.active){ finishSmartPath(quizState.correct, quizState.total); return; }
@@ -2057,9 +2058,11 @@ function nextQuizQuestion(){
   var options = [word];
   var seenLbls = {};
   seenLbls[arToUz ? dtxt(word.uz) : word.ar] = true;
+  var wordBase = uzBaseMeaning(word.uz);
   var poolShuffled = pool.slice().sort(function(){return Math.random()-0.5;});
   for(var pi=0; pi<poolShuffled.length && options.length<4; pi++){
     var cand = poolShuffled[pi];
+    if(uzBaseMeaning(cand.uz) === wordBase) continue;
     var lbl = arToUz ? dtxt(cand.uz) : cand.ar;
     if(seenLbls[lbl]) continue;
     seenLbls[lbl] = true;

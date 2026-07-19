@@ -363,6 +363,21 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
 .turbo-status-badge{display:inline-flex; align-items:center; gap:6px; margin:0 auto 14px; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap; width:fit-content;}
 .stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
+
+/* ═══ FRONTEND YANGILANISH: markazlash + o‘qish qulayligi ═══ */
+/* Fokuslangan (bitta karta) ekranlar endi ekran vertikal markazida turadi */
+#screen-flashcard.active, #screen-flashcard-setup.active, #screen-flashcard-result.active,
+#screen-quiz-setup.active, #screen-quiz.active, #screen-quiz-result.active,
+#screen-match-setup.active, #screen-match-result.active, #screen-gap.active{
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:calc(100vh - 24px);
+  min-height:calc(100dvh - 24px);
+}
+/* Arabcha so‘zni uzoqdan ham o‘qish uchun kattaroq (ekran eniga moslashadi) */
+.fc-card .ar-big{font-size:clamp(38px, 12vw, 54px);}
+.quiz-card .ar-big{font-size:clamp(34px, 10.5vw, 48px);}
+/* Match plitkalaridagi harakatlar (diakritika) ustma-ust tushmasligi uchun */
+.mm-tile.ar-tile{line-height:2.05;}
 </style>
 </head>
 <body>
@@ -799,6 +814,8 @@ function getShopFlag(key){
 // Orqaga moslik: eski 'audio_unlocked' (to'liq paket) barcha rejimlarni ochadi.
 function hasAudioFor(mode){
   try{
+    // 🔥 Turbo Dars davomida ovoz TEKIN — rag‘bat uchun (oddiy rejimda pullik qoladi)
+    if(typeof smartPath !== 'undefined' && smartPath && smartPath.active) return true;
     if(getShopFlag('audio_unlocked')) return true; // eski to'liq paket
     return !!getShopFlag('audio_' + mode);
   }catch(e){ return false; }

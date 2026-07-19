@@ -427,6 +427,16 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .quiz-card .ar-big{font-size:clamp(34px, 10.5vw, 48px);}
 /* Match plitkalaridagi harakatlar (diakritika) ustma-ust tushmasligi uchun */
 .mm-tile.ar-tile{line-height:2.05;}
+
+/* ═══ Vertikal markazlash (SAFE): kalta ekran o‘rtaga tushadi, uzun ekran tepadan boshlanadi (qirqilmaydi) ═══ */
+#screen-flashcard.active, #screen-flashcard-setup.active, #screen-flashcard-result.active,
+#screen-quiz.active, #screen-quiz-setup.active, #screen-quiz-result.active,
+#screen-match.active, #screen-match-setup.active, #screen-match-result.active,
+#screen-gap.active{
+  display:flex; flex-direction:column; justify-content:safe center;
+  min-height:calc(100vh - 16px);
+  min-height:calc(100dvh - 16px);
+}
 </style>
 </head>
 <body>

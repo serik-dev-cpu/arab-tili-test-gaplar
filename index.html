@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Al-Manhaj A1">
+<meta name="theme-color" content="#0B0E14">
 <title>Al-Manhajul A1 — Mashqlar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -37,12 +42,12 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .tab-btn{flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 3px; border-radius:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:transform .15s var(--ease), background .15s ease, border-color .15s ease; white-space:nowrap; min-width:0;}
 .tab-btn:active{transform:scale(.95);}
 .tab-btn .tab-icon{font-size:22px; line-height:1;}
-.tab-btn .tab-label{font-size:10px; font-weight:700; color:#8A93A6; letter-spacing:0.1px; overflow:hidden; text-overflow:ellipsis; max-width:100%; text-align:center; line-height:1.15;}
-.tab-btn .tab-sub{font-size:8px; font-weight:600; color:#6B7280;}
+.tab-btn .tab-label{font-size:12px; font-weight:700; color:#8A93A6; letter-spacing:0.1px; overflow:hidden; text-overflow:ellipsis; max-width:100%; text-align:center; line-height:1.15;}
+.tab-btn .tab-sub{font-size:10px; font-weight:600; color:#6B7280;}
 .tab-btn.active{background:linear-gradient(135deg, rgba(212,162,58,0.22), rgba(240,197,107,0.12)); border-color:rgba(212,162,58,0.45);}
 .tab-btn.active .tab-label{color:#F0C56B;}
 .tab-btn.tab-bozor{background:linear-gradient(135deg, rgba(236,64,122,0.18), rgba(255,64,129,0.10)); border-color:rgba(255,64,129,0.45); animation:bozorNeon 2s ease-in-out infinite;}
-.tab-btn.tab-bozor .tab-label{color:#FF6EC7; font-size:13px;}
+.tab-btn.tab-bozor .tab-label{color:#FF6EC7; font-size:14px;}
 .tab-btn.tab-bozor .tab-sub{color:#FFB3DE;}
 .tab-btn.tab-bozor .tab-icon{filter:drop-shadow(0 0 4px rgba(255,64,129,0.6));}
 .tab-btn.tab-bozor.active{background:linear-gradient(135deg, rgba(236,64,122,0.32), rgba(255,64,129,0.18)); border-color:rgba(255,64,129,0.7);}
@@ -56,35 +61,35 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .milestones-row{display:flex; gap:10px; margin-bottom:4px;}
 .milestone-chip{flex:1; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.035); border:1px solid rgba(212,162,58,0.18); border-radius:14px; padding:10px 12px;}
 .milestone-chip i{font-size:20px; color:#D4A23A; flex-shrink:0;}
-.milestone-label{font-size:10.5px; color:#8A93A6; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;}
-.milestone-value{font-size:12.5px; color:#EDEFF5; font-weight:700; margin-top:1px;}
-.quick-link-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; font-size:12px; font-weight:700; color:#D4A23A; transition:transform .15s var(--ease);}
+.milestone-label{font-size:12px; color:#8A93A6; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;}
+.milestone-value{font-size:13px; color:#EDEFF5; font-weight:700; margin-top:1px;}
+.quick-link-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; font-size:13px; font-weight:700; color:#D4A23A; transition:transform .15s var(--ease);}
 .quick-link-btn:active{transform:scale(.96);}
 .quick-link-btn i{font-size:22px;}
 .quick-link-full{flex-direction:row !important; gap:10px !important; padding:18px 12px !important; font-size:15px !important; background:linear-gradient(135deg, rgba(212,162,58,0.14), rgba(240,197,107,0.06)) !important; border-color:rgba(212,162,58,0.35) !important; color:#F0C56B !important;}
 .quick-link-full i{font-size:24px !important;}
-.tab-info-note{font-size:12px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
+.tab-info-note{font-size:13px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
 /* ═══════════════ UNVON DARAJASI (Duolingo uslubida) ═══════════════ */
 .rank-progress-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); border:1px solid var(--gold-line, rgba(212,162,58,0.2)); border-radius:20px; padding:18px 16px; margin-bottom:8px;}
 .rank-progress-current{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
 .rank-progress-icon{font-size:34px; line-height:1;}
 .rank-progress-label{font-size:17px; font-weight:800; color:#EDEFF5;}
-.rank-progress-sub{font-size:11.5px; color:#8A93A6;}
+.rank-progress-sub{font-size:12.5px; color:#8A93A6;}
 .rank-progress-bar-outer{height:10px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;}
 .rank-progress-bar-inner{height:100%; width:0%; background:linear-gradient(90deg, var(--gold, #D4A23A), var(--gold2, #F0C56B)); border-radius:6px; transition:width .6s ease;}
-.rank-progress-note{font-size:11.5px; color:#8A93A6; text-align:center; margin-top:8px; margin-bottom:14px;}
+.rank-progress-note{font-size:12.5px; color:#8A93A6; text-align:center; margin-top:8px; margin-bottom:14px;}
 .rank-ladder{display:flex; justify-content:space-between; gap:4px;}
 .rank-ladder-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px; border-radius:12px; opacity:0.35;}
 .rank-ladder-item.achieved{opacity:1;}
 .rank-ladder-item.current{opacity:1; background:rgba(212,162,58,0.14); border:1px solid rgba(212,162,58,0.35);}
 .rank-ladder-icon{font-size:20px;}
-.rank-ladder-name{font-size:8.5px; font-weight:700; color:#8A93A6; text-align:center;}
+.rank-ladder-name{font-size:10px; font-weight:700; color:#8A93A6; text-align:center;}
 .rank-ladder-item.achieved .rank-ladder-name, .rank-ladder-item.current .rank-ladder-name{color:#F0C56B;}
-.kicker{color:#D4A23A;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.kicker{color:#D4A23A;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
 .title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl;line-height:1.8}
-.subtitle{color:#8A93A6;font-size:13px;font-weight:500}
+.subtitle{color:#8A93A6;font-size:14px;font-weight:500}
 .change-name-link{
-  margin-top:8px;display:inline-block;color:#D4A23A;font-size:12px;font-weight:600;
+  margin-top:8px;display:inline-block;color:#D4A23A;font-size:13px;font-weight:600;
   cursor:pointer;text-decoration:underline;text-underline-offset:2px;
 }
 .header-actions-row{
@@ -95,7 +100,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   display:inline-flex;align-items:center;gap:4px;
   background:linear-gradient(135deg,rgba(212,162,58,0.16),rgba(212,162,58,0.08));
   border:1px solid rgba(212,162,58,0.4);border-radius:20px;
-  color:#F0C56B;font-size:12px;font-weight:700;padding:5px 14px;cursor:pointer;
+  color:#F0C56B;font-size:13px;font-weight:700;padding:5px 14px;cursor:pointer;
   transition:all .2s ease;font-family:inherit;
 }
 .home-alifbo-btn:hover{background:linear-gradient(135deg,rgba(212,162,58,0.26),rgba(212,162,58,0.14));}
@@ -127,19 +132,19 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .hero-info{flex:1;min-width:0;z-index:1}
 .hero-greet{font-size:16px;font-weight:800;color:#EDEFF5;margin-bottom:4px;
   line-height:1.3;letter-spacing:0.2px}
-.hero-xp-wallet{font-size:10.5px;font-weight:700;color:#9BA3B4;margin-left:3px;}
+.hero-xp-wallet{font-size:12px;font-weight:700;color:#9BA3B4;margin-left:3px;}
 .hero-xp-wallet::before{content:'·';margin-right:3px;color:#6B7280;}
 .stat-pill-xp{flex-direction:row;align-items:center;}
-.hero-sub{font-size:12px;color:#8A93A6}
-.epic-title{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#D4A23A;}
-.level-badge{display:inline-block; font-size:9.5px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg,var(--gold),var(--gold2)); padding:2px 7px; border-radius:8px; margin-left:5px; letter-spacing:0.5px; vertical-align:middle;}
+.hero-sub{font-size:13px;color:#8A93A6}
+.epic-title{display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:700; color:#D4A23A;}
+.level-badge{display:inline-block; font-size:11px; font-weight:800; color:#0B0E14; background:linear-gradient(135deg,var(--gold),var(--gold2)); padding:2px 7px; border-radius:8px; margin-left:5px; letter-spacing:0.5px; vertical-align:middle;}
 .hero-stats{display:flex;gap:8px;flex-wrap:wrap;z-index:1;margin-top:8px}
 .stat-pill{
   display:flex;align-items:center;gap:5px;
   background:rgba(212,162,58,0.1);
   border:1px solid rgba(212,162,58,0.28);
   border-radius:20px;padding:6px 10px;
-  font-size:12.5px;font-weight:800;color:#F0C56B;
+  font-size:13px;font-weight:800;color:#F0C56B;
   white-space:nowrap;
 }
 .stat-pill i{font-size:14px}
@@ -163,8 +168,8 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
   font-size:19px;font-weight:800;color:#F0C56B;
 }
 .summary-info{flex:1;min-width:0}
-.summary-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#D4A23A;margin-bottom:5px}
-.summary-sub{font-size:13px;color:#9BA3B4;line-height:1.5}
+.summary-label{font-size:12.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#D4A23A;margin-bottom:5px}
+.summary-sub{font-size:14px;color:#9BA3B4;line-height:1.5}
 .summary-sub b{color:#EDEFF5;font-weight:700}
 
 /* ═══ 1-TOPSHIRIQ: birlashtirilgan profil + natija kartasi (mobil formatga mos) ═══ */
@@ -172,16 +177,16 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .hero-ring-wrap{position:relative;flex-shrink:0;width:64px;height:64px;z-index:1}
 .hero-ring-wrap .summary-ring-svg{position:absolute;inset:0;transform:rotate(-90deg)}
 .hero-ring-wrap .summary-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#F0C56B}
-.summary-sub-line{font-size:12.5px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 14px;}
+.summary-sub-line{font-size:13px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 14px;}
 .summary-sub-line b{color:#EDEFF5;font-weight:700}
 @media (max-width:360px){
   .hero-greet{font-size:15px}
   .hero-ring-wrap{width:56px;height:56px}
-  .hero-ring-wrap .summary-ring-pct{font-size:13px}
-  .stat-pill{padding:5px 9px;font-size:12px}
+  .hero-ring-wrap .summary-ring-pct{font-size:14px}
+  .stat-pill{padding:5px 9px;font-size:13px}
 }
 
-.section-label{color:#8A93A6;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
+.section-label{color:#8A93A6;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
 .section-label .path-dot{width:6px;height:6px;border-radius:50%;background:#D4A23A}
 
 /* ═══════════ BO'LIMLAR — TARTIBLI GRID-KARTOCHKA ═══════════ */
@@ -216,9 +221,9 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .g-ring.is-locked{background:rgba(255,255,255,0.05);color:#5A6275}
 .g-ring i{font-size:16px}
 
-.g-name{font-size:12.5px;font-weight:700;color:#EDEFF5}
+.g-name{font-size:13px;font-weight:700;color:#EDEFF5}
 .g-card.is-locked .g-name{color:#7A8296}
-.g-pct{font-size:10.5px;color:#8A93A6;margin-top:2px}
+.g-pct{font-size:12px;color:#8A93A6;margin-top:2px}
 .g-card.is-active .g-pct{color:#D4A23A;font-weight:700}
 .g-card.is-locked .g-pct{color:#5A6275;font-style:italic}
 
@@ -226,7 +231,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .g-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#D4A23A,#F0C56B)}
 
 .footer-note{
-  margin-top:20px;text-align:center;color:#5A6275;font-size:12px;line-height:1.6;
+  margin-top:20px;text-align:center;color:#5A6275;font-size:13px;line-height:1.6;
 }
 .footer-note b{color:#8A93A6}
 
@@ -284,7 +289,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .reward-card.unlocked .reward-icon-wrap{animation:giftBounce 1.6s ease-in-out infinite}
 @keyframes giftBounce{0%,100%{transform:rotate(0deg) scale(1)}25%{transform:rotate(-8deg) scale(1.05)}75%{transform:rotate(8deg) scale(1.05)}}
 .reward-title{font-size:16px;font-weight:800;color:#EDEFF5;margin-bottom:3px}
-.reward-desc{font-size:12.5px;color:#8A93A6;line-height:1.4}
+.reward-desc{font-size:13px;color:#8A93A6;line-height:1.4}
 .reward-card.unlocked .reward-desc{color:#D4A23A;font-weight:600}
 
 .reward-modal{
@@ -316,15 +321,15 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .rm-lock-overlay{position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; font-size:16px; color:#EDEFF5; z-index:2;}
 .rm-crown{font-size:42px; line-height:1; margin-bottom:4px; filter:drop-shadow(0 4px 10px rgba(212,162,58,0.5));}
 .rm-wc-title{font-size:19px; font-weight:900; letter-spacing:2.5px; color:#F0C56B; text-shadow:0 2px 12px rgba(240,197,107,0.4);}
-.rm-wc-sub{font-size:11px; color:#B8BECC; margin-top:3px; letter-spacing:0.5px;}
+.rm-wc-sub{font-size:12.5px; color:#B8BECC; margin-top:3px; letter-spacing:0.5px;}
 .rm-wc-divider{height:1px; background:linear-gradient(90deg, transparent, #D4A23A, transparent); margin:14px 8px;}
-.rm-wc-name-label{font-size:9.5px; text-transform:uppercase; letter-spacing:2px; color:#8A93A6;}
+.rm-wc-name-label{font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#8A93A6;}
 .rm-wc-name{font-size:23px; font-weight:800; color:#EDEFF5; margin:3px 0 9px;}
-.rm-wc-rank{display:inline-block; background:linear-gradient(135deg, #D4A23A, #F0C56B); color:#0B0E14; font-weight:800; font-size:12px; padding:6px 14px; border-radius:18px; box-shadow:0 4px 14px rgba(212,162,58,0.4);}
-.rm-wc-pct-row{font-size:13px; color:#B8BECC; margin-top:14px;}
+.rm-wc-rank{display:inline-block; background:linear-gradient(135deg, #D4A23A, #F0C56B); color:#0B0E14; font-weight:800; font-size:13px; padding:6px 14px; border-radius:18px; box-shadow:0 4px 14px rgba(212,162,58,0.4);}
+.rm-wc-pct-row{font-size:14px; color:#B8BECC; margin-top:14px;}
 .rm-wc-pct-row span{color:#F0C56B; font-weight:800; font-size:16px;}
-.rm-wc-foot{font-size:11.5px; color:#B8BECC; margin-top:10px; font-style:italic;}
-.rm-hint{font-size:11.5px; color:#F0C56B; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px;}
+.rm-wc-foot{font-size:12.5px; color:#B8BECC; margin-top:10px; font-style:italic;}
+.rm-hint{font-size:12.5px; color:#F0C56B; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px;}
 .confetti{position:fixed;top:-10px;width:8px;height:14px;opacity:.9;animation:confettiFall linear forwards; z-index:9999; pointer-events:none;}
 @keyframes confettiFall{to{transform:translateY(420px) rotate(540deg);opacity:0}}
 /* ═══════════════ Premium Aura + Avatar ramkalari ═══════════════ */
@@ -344,33 +349,33 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
 /* ═══════════════ XP Do'kon ═══════════════ */
 .shop-wallet{background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.08)); border:1px solid rgba(212,162,58,0.4); border-radius:20px; padding:20px; text-align:center; margin-bottom:16px; box-shadow:var(--shadow-soft);}
-.shop-wallet-label{font-size:11px; color:#8A93A6; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;}
+.shop-wallet-label{font-size:12.5px; color:#8A93A6; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;}
 .shop-wallet-num{font-size:36px; font-weight:800; color:var(--gold2);}
-.shop-wallet-note{font-size:12px; color:#8A93A6; margin-top:6px;}
+.shop-wallet-note{font-size:13px; color:#8A93A6; margin-top:6px;}
 .shop-item{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.78)); border:1px solid var(--gold-line); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow-soft);}
 .shop-item-head{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
 .shop-item-icon{font-size:24px; flex-shrink:0;}
 .shop-item-title{font-size:15px; font-weight:700;}
-.shop-item-desc{font-size:12.5px; color:#8A93A6; line-height:1.5; margin-bottom:10px;}
+.shop-item-desc{font-size:13px; color:#8A93A6; line-height:1.5; margin-bottom:10px;}
 .shop-item-footer{display:flex; align-items:center; justify-content:space-between; gap:10px;}
 .shop-item-price{font-size:14px; font-weight:800; color:var(--gold2);}
 .shop-folder{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.78)); border:1px solid var(--gold-line); border-radius:18px; margin-bottom:14px; overflow:hidden; box-shadow:var(--shadow-soft);}
 .shop-folder-head{display:flex; align-items:center; gap:12px; padding:16px; cursor:pointer; user-select:none;}
 .shop-folder-icon{font-size:26px; flex-shrink:0;}
 .shop-folder-title{font-size:15px; font-weight:800; flex:1; min-width:0;}
-.shop-folder-count{font-size:11px; color:var(--muted); font-weight:700; background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:10px; padding:2px 8px; flex-shrink:0;}
+.shop-folder-count{font-size:12.5px; color:var(--muted); font-weight:700; background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:10px; padding:2px 8px; flex-shrink:0;}
 .shop-folder-chevron{font-size:16px; color:var(--gold2); flex-shrink:0; transition:transform .2s ease;}
 .shop-folder.open .shop-folder-chevron{transform:rotate(180deg);}
 .shop-folder-body{display:none; padding:0 14px 14px;}
 .shop-folder.open .shop-folder-body{display:block;}
 .shop-folder-body .shop-item:last-child{margin-bottom:0;}
 .shop-buy-row{display:flex; gap:8px;}
-.shop-buy-btn{padding:9px 14px; border-radius:12px; border:none; font-weight:700; font-size:12.5px; cursor:pointer; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; transition:transform .15s var(--ease), opacity .15s ease;}
+.shop-buy-btn{padding:9px 14px; border-radius:12px; border:none; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; transition:transform .15s var(--ease), opacity .15s ease;}
 .shop-buy-btn:active{transform:scale(.95);}
 .shop-buy-btn.owned{background:rgba(111,191,139,0.18); color:#8FD9A8; border:1px solid #6FBF8B; cursor:default;}
 .shop-buy-btn.active-flag{background:rgba(111,191,139,0.3); color:#8FD9A8; border:1px solid #6FBF8B;}
 .shop-buy-btn.disabled{opacity:0.4; cursor:not-allowed;}
-.shop-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); font-weight:700; font-size:13px; padding:12px 22px; border-radius:14px; box-shadow:var(--shadow-deep); z-index:99999; white-space:nowrap; animation:fadeIn .25s ease;}
+.shop-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); font-weight:700; font-size:14px; padding:12px 22px; border-radius:14px; box-shadow:var(--shadow-deep); z-index:99999; white-space:nowrap; animation:fadeIn .25s ease;}
 .shop-toast.ok{background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14;}
 .shop-toast.err{background:linear-gradient(135deg,#E8765C,#F0A188); color:#2a0d07;}
 .mystery-result{text-align:center; font-size:14px; font-weight:700; color:var(--gold2); margin-top:8px; min-height:20px;}
@@ -382,12 +387,12 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .proverb-item{border-bottom:1px solid var(--gold-line); padding-bottom:14px; margin-bottom:14px;}
 .proverb-item:last-of-type{border-bottom:none; margin-bottom:0; padding-bottom:0;}
 .proverb-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:20px; color:var(--gold2); line-height:2.2; text-align:center; margin-bottom:8px;}
-.proverb-uz{font-size:13px; color:#EDEFF5; text-align:center; line-height:1.5; margin-bottom:8px;}
-.proverb-share-btn{display:block; margin:0 auto; font-size:11.5px; color:var(--gold2); background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:14px; padding:5px 14px; cursor:pointer;}
+.proverb-uz{font-size:14px; color:#EDEFF5; text-align:center; line-height:1.5; margin-bottom:8px;}
+.proverb-share-btn{display:block; margin:0 auto; font-size:12.5px; color:var(--gold2); background:rgba(212,162,58,0.12); border:1px solid var(--gold-line); border-radius:14px; padding:5px 14px; cursor:pointer;}
 .proverb-close-btn{width:100%; margin-top:6px; padding:12px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0B0E14; font-weight:800; font-size:14px; cursor:pointer;}
-.spend-log-item{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; margin-bottom:6px; font-size:12.5px;}
+.spend-log-item{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; margin-bottom:6px; font-size:13px;}
 .spend-log-label{color:#EDEFF5;}
-.spend-log-date{color:#6B7280; font-size:10.5px; margin-top:2px;}
+.spend-log-date{color:#6B7280; font-size:12px; margin-top:2px;}
 .spend-log-amount{color:#E8765C; font-weight:800; white-space:nowrap;}
 .entry-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9600; display:none; align-items:center; justify-content:center; padding:20px;}
 .entry-modal-bg.show{display:flex;}
@@ -396,13 +401,22 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .entry-option{width:100%; text-align:left; border-radius:16px; padding:14px 16px; margin-bottom:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); transition:transform .15s ease;}
 .entry-option:active{transform:scale(.97);}
 .entry-option-title{font-size:14.5px; font-weight:700; color:#EDEFF5; margin-bottom:4px;}
-.entry-option-desc{font-size:12px; color:#8A93A6; line-height:1.5;}
+.entry-option-desc{font-size:13px; color:#8A93A6; line-height:1.5;}
 .entry-option.turbo{background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(240,197,107,0.08)); border-color:rgba(212,162,58,0.4);}
 .entry-option.turbo .entry-option-title{color:#F0C56B;}
-.entry-cancel{width:100%; text-align:center; padding:10px; font-size:13px; color:#8A93A6; cursor:pointer; margin-top:2px;}
+.entry-cancel{width:100%; text-align:center; padding:10px; font-size:14px; color:#8A93A6; cursor:pointer; margin-top:2px;}
 .gating-btn{display:block; width:100%; text-align:center; border:none; border-radius:14px; padding:13px 16px; font-size:14px; font-weight:800; cursor:pointer; margin-bottom:10px;}
 .gating-btn.primary{background:linear-gradient(135deg,#F0C56B,#D4A23A); color:#1a1408;}
 .gating-btn.ghost{background:rgba(255,255,255,0.05); color:#C7CCD8; border:1px solid rgba(255,255,255,0.1);}
+
+/* ═══ FRONTEND: qisqa tablar bo‘sh joyda markazda, uzun tablar odatdagidek ═══ */
+/* justify-content:center + min-height => KALTA kontent markazlashadi, UZUN kontent */
+/* (Bozor, roadmap, Bosh) o‘z-o‘zidan tepadan boshlanib scroll bo‘ladi (klip yo‘q). */
+.tab-content.active{
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:calc(100vh - 240px);
+  min-height:calc(100dvh - 240px);
+}
 </style>
 </head>
 <body>
@@ -427,10 +441,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="title">المنهج الألمعي</div>
     <div class="subtitle">A1 darajasi · 12 bo'limlik sayohat</div>
     <div class="header-actions-row">
-      <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:12px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
-      <div class="change-name-link" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download" style="font-size:12px;vertical-align:-1px"></i> Zaxira nusxa</div>
+      <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:13px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
+      <div class="change-name-link" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download" style="font-size:13px;vertical-align:-1px"></i> Zaxira nusxa</div>
       <button class="home-alifbo-btn" id="homeAlifboBtn" onclick="toggleHomeAlifbo()">
-        <i class="ti ti-language" style="font-size:13px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
+        <i class="ti ti-language" style="font-size:14px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
       </button>
     </div>
   </div>
@@ -459,7 +473,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <!-- MUHIM: Telegram va boshqa ilova-ichi brauzerlarda localStorage tozalanib,
          progress yo'qolishi mumkin — shu banner haqiqiy brauzerga o'tishga undaydi. -->
     <div id="webviewWarningBanner" style="display:none; margin-bottom:12px; padding:12px 14px; border-radius:14px; background:linear-gradient(135deg, rgba(232,118,92,0.16), rgba(212,162,58,0.10)); border:1px solid rgba(232,118,92,0.4);">
-      <div style="font-size:12.5px; color:#F0D8C7; line-height:1.6; margin-bottom:8px;">
+      <div style="font-size:13px; color:#F0D8C7; line-height:1.6; margin-bottom:8px;">
         ⚠️ <b>Ilova ichidagi brauzerda ochyapsiz.</b> Bunda ba'zan progress (XP, natijalar)
         yo'qolib qolishi mumkin. Xavfsizroq bo'lishi uchun shu havolani Safari yoki
         Chrome brauzerida oching (yuqoridagi "•••" tugmasi orqali "Ochish brauzerda"ni tanlang).
@@ -496,7 +510,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       </div>
     </div>
     <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
-    <div style="text-align:center; font-size:10.5px; color:#5A6275; margin:-8px 0 12px;">(butun 12 bo'lim bo'yicha umumiy ko'rsatkich)</div>
+    <div style="text-align:center; font-size:12px; color:#5A6275; margin:-8px 0 12px;">(butun 12 bo'lim bo'yicha umumiy ko'rsatkich)</div>
 
     <!-- ═══ KEYINGI BOSQICHLAR: Imtihon va Unvongacha qancha qoldi ═══ -->
     <div class="milestones-row">
@@ -525,7 +539,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <div class="reward-icon-wrap"><i class="ti ti-notebook"></i></div>
       <div class="reward-info">
         <div class="reward-title">🌿 Xato daftari <span style="font-family:'Noto Naskh Arabic','Amiri',serif; color:#F0C56B; font-size:15px;">حَدِيقَةُ الْعِلْمِ</span></div>
-        <div style="font-size:11px; color:#8A93A6; font-style:italic; margin:2px 0 3px;">Xato qilingan so'zlarni takrorlab mustahkamlang</div>
+        <div style="font-size:12.5px; color:#8A93A6; font-style:italic; margin:2px 0 3px;">Xato qilingan so'zlarni takrorlab mustahkamlang</div>
         <div class="reward-desc" id="mistakesCardDesc">0 ta so'z</div>
       </div>
     </div>
@@ -645,7 +659,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         <i class="ti ti-chevron-down shop-folder-chevron"></i>
       </div>
       <div class="shop-folder-body">
-        <div style="font-size:12px; color:#8A93A6; margin:0 0 12px; line-height:1.5;">Har rejim uchun so'z va gaplarning to'g'ri arabcha talaffuzini eshiting. Har birini alohida sotib olasiz.</div>
+        <div style="font-size:13px; color:#8A93A6; margin:0 0 12px; line-height:1.5;">Har rejim uchun so'z va gaplarning to'g'ri arabcha talaffuzini eshiting. Har birini alohida sotib olasiz.</div>
         <div class="shop-item">
           <div class="shop-item-head"><div class="shop-item-icon">🃏</div><div class="shop-item-title">Flashcard ovozi</div></div>
           <div class="shop-item-desc">Flashcard kartani ochganda so'zning arabcha talaffuzi avtomatik eshitiladi.</div>
@@ -810,15 +824,15 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div style="font-size:44px; margin-bottom:8px;">🎉</div>
     <div style="font-size:19px; font-weight:800; color:#F0C56B; margin-bottom:12px;">Platforma yangilandi!</div>
     <div style="font-size:14px; color:#C7CCD8; line-height:1.65; margin-bottom:8px;">Endi bo'limlar <b style="color:#EDEFF5;">bosqichma-bosqich</b> ochiladi — har bo'lim Testini yakunlaganingizda keyingisi ochiladi. Bu tartibli o'rganishga va hech narsani o'tkazib yubormaslikka yordam beradi.</div>
-    <div style="font-size:13px; color:#8A93A6; line-height:1.6; margin-bottom:18px;">Butun progressingiz saqlanadi. O'zingizga qulay tartibni tanlang:</div>
-    <button class="gating-btn primary" onclick="chooseGating(true)">✨ Yangi tartibni yoqish <span style="font-weight:600;font-size:12px;">(tavsiya etiladi)</span></button>
+    <div style="font-size:14px; color:#8A93A6; line-height:1.6; margin-bottom:18px;">Butun progressingiz saqlanadi. O'zingizga qulay tartibni tanlang:</div>
+    <button class="gating-btn primary" onclick="chooseGating(true)">✨ Yangi tartibni yoqish <span style="font-weight:600;font-size:13px;">(tavsiya etiladi)</span></button>
     <button class="gating-btn ghost" onclick="chooseGating(false)">Hozircha hammasi ochiq qolsin</button>
   </div>
 </div>
 <div class="proverb-modal-bg" id="proverbModal">
   <div class="proverb-card-modal">
     <h3 style="text-align:center; margin-bottom:6px;">🔑 Arab maqollari</h3>
-    <div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:16px;" id="proverbCountLabel">0 / 15 maqol ochildi</div>
+    <div style="text-align:center; font-size:13px; color:#9BA3B4; margin-bottom:16px;" id="proverbCountLabel">0 / 15 maqol ochildi</div>
     <div id="proverbListContainer"></div>
     <button class="shop-buy-btn" id="proverbBuyMoreBtn" onclick="buyBonusLesson()" style="width:100%; margin-bottom:10px;">Yana 3 tasi — 150 XP</button>
     <button class="proverb-close-btn" onclick="closeProverbModal()">Yopish</button>
@@ -845,15 +859,15 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 <div class="proverb-modal-bg" id="backupModal">
   <div class="proverb-card-modal" style="max-width:400px;">
     <h3 style="text-align:center; margin-bottom:4px;">💾 Zaxira nusxa</h3>
-    <div style="text-align:center; font-size:12.5px; color:#9BA3B4; margin-bottom:18px; line-height:1.6;">
+    <div style="text-align:center; font-size:13px; color:#9BA3B4; margin-bottom:18px; line-height:1.6;">
       Ma'lumotlaringiz (XP, natijalar) shu telefon/brauzerda saqlanadi. Yo'qolib
       qolmasligi uchun, hozir bitta tugma bosib o'zingizga Telegram orqali yuboring.
     </div>
     <button class="shop-buy-btn" id="backupShareBtn" style="width:100%; padding:16px; font-size:15px;" onclick="shareBackup()">📤 O'zimga Telegram orqali yuborish</button>
-    <div id="backupShareMsg" style="text-align:center; font-size:12px; margin-top:10px; display:none;"></div>
+    <div id="backupShareMsg" style="text-align:center; font-size:13px; margin-top:10px; display:none;"></div>
 
     <div style="text-align:center; margin-top:18px;">
-      <span class="change-name-link" style="font-size:11.5px;" onclick="toggleBackupAdvanced()">Boshqa usul (qo'lda nusxalash)</span>
+      <span class="change-name-link" style="font-size:12.5px;" onclick="toggleBackupAdvanced()">Boshqa usul (qo'lda nusxalash)</span>
     </div>
     <div id="backupAdvancedPane" style="display:none; margin-top:14px;">
       <div id="backupTabRow" style="display:flex; gap:8px; margin-bottom:12px;">
@@ -861,15 +875,15 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         <button class="shop-buy-btn" id="backupTabImportBtn" style="flex:1; opacity:0.6;" onclick="showBackupTab('import')">📥 Tiklash</button>
       </div>
       <div id="backupExportPane">
-        <textarea id="backupExportText" readonly style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
+        <textarea id="backupExportText" readonly style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:12.5px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
         <button class="shop-buy-btn" style="width:100%; margin-top:10px;" onclick="copyBackupText()">📋 Nusxalash</button>
-        <div id="backupCopyMsg" style="text-align:center; font-size:12px; color:#7ED8A0; margin-top:8px; display:none;">✓ Nusxalandi! Endi biror joyga saqlab qo'ying.</div>
+        <div id="backupCopyMsg" style="text-align:center; font-size:13px; color:#7ED8A0; margin-top:8px; display:none;">✓ Nusxalandi! Endi biror joyga saqlab qo'ying.</div>
       </div>
       <div id="backupImportPane" style="display:none;">
-        <div style="font-size:12px; color:#9BA3B4; margin-bottom:8px;">Avval saqlagan matningizni shu yerga joylang:</div>
-        <textarea id="backupImportText" placeholder="Bu yerga zaxira matnini joylashtiring..." autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(212,162,58,0.3); color:#EDEFF5; font-size:11px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
+        <div style="font-size:13px; color:#9BA3B4; margin-bottom:8px;">Avval saqlagan matningizni shu yerga joylang:</div>
+        <textarea id="backupImportText" placeholder="Bu yerga zaxira matnini joylashtiring..." autocorrect="off" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:100%; height:110px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(212,162,58,0.3); color:#EDEFF5; font-size:12.5px; padding:10px; box-sizing:border-box; resize:none;"></textarea>
         <button class="shop-buy-btn" style="width:100%; margin-top:10px;" onclick="restoreBackupText()">🔄 Tiklash</button>
-        <div id="backupRestoreMsg" style="text-align:center; font-size:12px; margin-top:8px; display:none;"></div>
+        <div id="backupRestoreMsg" style="text-align:center; font-size:13px; margin-top:8px; display:none;"></div>
       </div>
     </div>
     <button class="proverb-close-btn" style="margin-top:14px;" onclick="closeBackupModal()">Yopish</button>
@@ -903,7 +917,7 @@ function initHeroStats(name){
   var rankLabelEl = document.getElementById('heroRankLabel');
 
   if(avatarEl) avatarEl.textContent = initials || '?';
-  if(greetEl) greetEl.innerHTML = '<span style="font-size:11.5px;font-weight:600;color:#9BA3B4;display:block;margin-bottom:1px;">Xush kelibsiz,</span>' + name;
+  if(greetEl) greetEl.innerHTML = '<span style="font-size:12.5px;font-weight:600;color:#9BA3B4;display:block;margin-bottom:1px;">Xush kelibsiz,</span>' + name;
   if(xpEl) xpEl.textContent = xp;
   var walletEl = document.getElementById('heroWalletXp');
   if(walletEl){
@@ -1244,8 +1258,8 @@ function renderMistakesListHTML(list){
     var e = list[i];
     var q = String(e.question || '');
     var c = String(e.correct || '');
-    var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:16px; line-height:2.0; direction:rtl;" : "font-size:12px;";
-    var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:15px; line-height:2.0; direction:rtl;" : "font-size:12px;";
+    var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:16px; line-height:2.0; direction:rtl;" : "font-size:13px;";
+    var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:15px; line-height:2.0; direction:rtl;" : "font-size:13px;";
     rows += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.06);">' +
       '<span style="color:#EDEFF5; ' + qStyle + '">\uD83D\uDCDD ' + q + '</span>' +
       '<span style="color:#7ED8A0; ' + cStyle + '">' + c + '</span>' +
@@ -1264,7 +1278,7 @@ function renderMistakesLanding(){
     card.innerHTML =
       '<h3 style="text-align:center; margin-bottom:2px;">\uD83D\uDCD3 Xato daftari</h3>' +
       '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:6px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
-      '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin:10px 0 18px;">Hozircha xato so\'z yo\'q \u2014 baraka topshaysiz!</div>' +
+      '<div style="text-align:center; font-size:14px; color:#9BA3B4; margin:10px 0 18px;">Hozircha xato so\'z yo\'q \u2014 baraka topshaysiz!</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
     return;
   }
@@ -1272,12 +1286,12 @@ function renderMistakesLanding(){
   card.innerHTML =
     '<h3 style="text-align:center; margin-bottom:2px;">\uD83D\uDCD3 Xato daftari</h3>' +
     '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:4px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
-    '<div style="text-align:center; font-size:11px; color:#8A93A6; font-style:italic; margin-bottom:8px;">Test va mashqlarda xato qilgan so\'zlaringiz shu yerga yig\'iladi</div>' +
-    '<div style="text-align:center; font-size:12px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta xato so'z to'plangan" + '</div>' +
+    '<div style="text-align:center; font-size:12.5px; color:#8A93A6; font-style:italic; margin-bottom:8px;">Test va mashqlarda xato qilgan so\'zlaringiz shu yerga yig\'iladi</div>' +
+    '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta xato so'z to'plangan" + '</div>' +
     renderMistakesListHTML(list) +
-    '<div style="font-size:13px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Takrorlash mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 bu so\'zlar daftardan o\'chiriladi. Jon tugasa, so\'zlar daftarda qoladi.</div>' +
+    '<div style="font-size:14px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Takrorlash mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 bu so\'zlar daftardan o\'chiriladi. Jon tugasa, so\'zlar daftarda qoladi.</div>' +
     '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Takrorlashni boshlash \u2014 ' + price + ' XP</button>' +
-    (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:12px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +
+    (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:13px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +
     '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
 }
 function startMistakesQuiz(){
@@ -1302,11 +1316,11 @@ function renderMistakesQuestion(){
   for(var i=0;i<MISTAKES_LIVES;i++){ livesHtml += (i < st.lives) ? '\u2764\uFE0F' : '\uD83D\uDDA4'; }
   var qFontFamily = entry.questionIsArabic ? "'Noto Naskh Arabic','Amiri',serif" : "'Inter',sans-serif";
   var html = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">' +
-      '<span style="font-size:13px; color:#9BA3B4;">' + (st.idx+1) + ' / ' + st.indices.length + '</span>' +
+      '<span style="font-size:14px; color:#9BA3B4;">' + (st.idx+1) + ' / ' + st.indices.length + '</span>' +
       '<span style="font-size:18px; letter-spacing:2px;">' + livesHtml + '</span>' +
     '</div>' +
     '<div style="text-align:center; font-size:' + (entry.questionIsArabic ? '26px' : '17px') + '; font-weight:700; font-family:' + qFontFamily + '; direction:' + (entry.questionIsArabic ? 'rtl' : 'ltr') + '; line-height:1.8; margin-bottom:6px; color:#EDEFF5;">' + entry.question + '</div>' +
-    (entry.sub ? '<div style="text-align:center; font-size:12px; color:#8A93A6; margin-bottom:14px;">' + entry.sub + '</div>' : '<div style="margin-bottom:14px;"></div>') +
+    (entry.sub ? '<div style="text-align:center; font-size:13px; color:#8A93A6; margin-bottom:14px;">' + entry.sub + '</div>' : '<div style="margin-bottom:14px;"></div>') +
     '<div id="mistakesOptWrap" style="display:flex; flex-direction:column; gap:9px; margin-bottom:6px;"></div>' +
     '<div id="mistakesResultArea" style="margin-top:8px;"></div>';
   card.innerHTML = html;
@@ -1359,7 +1373,7 @@ function answerMistakesQuestion(btnEl, entry){
   }
   var ra = document.getElementById('mistakesResultArea');
   if(st.lives <= 0){
-    ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:13px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 so\'zlar daftarda qoladi</div>' +
+    ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:14px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 so\'zlar daftarda qoladi</div>' +
       '<button class="proverb-close-btn" onclick="finishMistakesQuiz(false)">Tugatish</button>';
     return;
   }
@@ -1382,12 +1396,12 @@ function finishMistakesQuiz(success){
     card.innerHTML =
       '<div style="text-align:center; font-size:40px; margin-bottom:6px;">\uD83C\uDF89</div>' +
       '<h3 style="text-align:center; margin-bottom:8px;">Tabriklaymiz!</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">' + st.indices.length + " ta so'z mustahkamlandi va daftardan o'chirildi." + '</div>' +
+      '<div style="text-align:center; font-size:14px; color:#C7CCD8; margin-bottom:18px;">' + st.indices.length + " ta so'z mustahkamlandi va daftardan o'chirildi." + '</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
   } else {
     card.innerHTML =
       '<h3 style="text-align:center; margin-bottom:8px;">\uD83D\uDC94 Mashq tugadi</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; margin-bottom:18px;">Jonlar tugadi, lekin xavotir olmang \u2014 so\'zlar daftarda joyida qoldi. Yana urinib ko\'ring!</div>' +
+      '<div style="text-align:center; font-size:14px; color:#C7CCD8; margin-bottom:18px;">Jonlar tugadi, lekin xavotir olmang \u2014 so\'zlar daftarda joyida qoldi. Yana urinib ko\'ring!</div>' +
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
   }
   mistakesQuizState = null;
@@ -1411,7 +1425,7 @@ function renderSpendHistoryList(){
   var log = getSpendLog();
   if(!list) return;
   if(log.length === 0){
-    list.innerHTML = '<div style="text-align:center; color:#6B7280; font-size:12px; padding:12px 0;">Hali hech narsa sotib olinmagan</div>';
+    list.innerHTML = '<div style="text-align:center; color:#6B7280; font-size:13px; padding:12px 0;">Hali hech narsa sotib olinmagan</div>';
     return;
   }
   var html = '';
@@ -1576,7 +1590,7 @@ function renderProverbModal(){
         '</div>';
     }
     if(unlockedCount === 0){
-      html = '<div style="text-align:center; color:#8A93A6; font-size:13px; padding:20px 0;">Hali maqol ochilmagan. Pastdagi tugma orqali birinchisini oching!</div>';
+      html = '<div style="text-align:center; color:#8A93A6; font-size:14px; padding:20px 0;">Hali maqol ochilmagan. Pastdagi tugma orqali birinchisini oching!</div>';
     }
     container.innerHTML = html;
   }
@@ -1737,7 +1751,7 @@ function showStreakPenaltyModal(p){
     html =
       '<div style="text-align:center; font-size:44px; margin-bottom:6px;">🛡️</div>' +
       '<h3 style="text-align:center; margin-bottom:10px;">Himoya ishladi!</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; line-height:1.7; margin-bottom:18px;">' +
+      '<div style="text-align:center; font-size:14px; color:#C7CCD8; line-height:1.7; margin-bottom:18px;">' +
         'Bir kun kirmadingiz, lekin <b>Kunlik himoyangiz (Streak Freeze)</b> zanjiringizni saqlab qoldi. ' +
         'Himoya sarflandi — bugundan yana muntazam kiring!' +
       '</div>' +
@@ -1762,14 +1776,14 @@ function showStreakPenaltyModal(p){
     html =
       '<div style="text-align:center; font-size:44px; margin-bottom:6px;">' + icon + '</div>' +
       '<h3 style="text-align:center; margin-bottom:8px;">' + title + '</h3>' +
-      '<div style="text-align:center; font-size:13px; color:#C7CCD8; line-height:1.7; margin-bottom:14px;">' + detail + '</div>' +
+      '<div style="text-align:center; font-size:14px; color:#C7CCD8; line-height:1.7; margin-bottom:14px;">' + detail + '</div>' +
       '<div style="background:rgba(232,118,92,0.1); border:1px solid rgba(232,118,92,0.3); border-radius:12px; padding:12px 14px; margin-bottom:16px;">' +
-        '<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">' +
+        '<div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px;">' +
           '<span style="color:#9BA3B4;">XP:</span>' +
           '<span style="color:#EDEFF5; font-weight:700;">' + p.beforeXP + ' → ' + p.afterXP + '</span>' +
         '</div>' +
         (rankChanged ?
-          '<div style="display:flex; justify-content:space-between; font-size:13px;">' +
+          '<div style="display:flex; justify-content:space-between; font-size:14px;">' +
             '<span style="color:#9BA3B4;">Unvon:</span>' +
             '<span style="color:#E8765C; font-weight:700;">' + p.beforeRank + ' → ' + p.afterRank + '</span>' +
           '</div>' : '') +
@@ -2047,10 +2061,10 @@ function openGatingLockedModal(num){
     '<div style="font-size:19px;font-weight:800;color:#F0C56B;margin-bottom:10px;">' + head + '</div>' +
     '<div style="font-size:14px;color:#C7CCD8;line-height:1.65;margin-bottom:14px;">' + sub + '</div>' +
     '<div style="background:rgba(212,162,58,0.08); border:1px solid rgba(212,162,58,0.2); border-radius:14px; padding:14px; margin-bottom:14px;">' +
-      '<div style="font-size:13px;color:#9BA3B4;margin-bottom:8px;">🔥 Sifatli Turbo: <b style="color:#F0C56B;">' + st.turboGood + ' / ' + st.turboNeeded + '</b></div>' +
+      '<div style="font-size:14px;color:#9BA3B4;margin-bottom:8px;">🔥 Sifatli Turbo: <b style="color:#F0C56B;">' + st.turboGood + ' / ' + st.turboNeeded + '</b></div>' +
       '<div>' + bars + '</div>' +
     '</div>' +
-    '<div style="font-size:13px;color:#6FBF8B;font-style:italic;line-height:1.6;margin-bottom:18px;">' + tip + '</div>' +
+    '<div style="font-size:14px;color:#6FBF8B;font-style:italic;line-height:1.6;margin-bottom:18px;">' + tip + '</div>' +
     '<button class="gating-btn primary" onclick="gotoBolim(' + prev + ')">' + prev + "-bo'lim Turbo rejimiga o'tish →</button>";
 
   if(body) body.innerHTML = html;
@@ -2304,7 +2318,7 @@ function copyCurrentUrl(){
 }
 function showBackupToast(text){
   var t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-weight:700;font-size:12.5px;padding:12px 18px;border-radius:14px;box-shadow:var(--shadow-deep);z-index:99999;max-width:88vw;text-align:center;background:linear-gradient(135deg,#3FBF7F,#6FBF8B);color:#0B1F14;';
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-weight:700;font-size:13px;padding:12px 18px;border-radius:14px;box-shadow:var(--shadow-deep);z-index:99999;max-width:88vw;text-align:center;background:linear-gradient(135deg,#3FBF7F,#6FBF8B);color:#0B1F14;';
   t.textContent = text;
   document.body.appendChild(t);
   setTimeout(function(){ t.style.transition='opacity .3s ease'; t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 3200);

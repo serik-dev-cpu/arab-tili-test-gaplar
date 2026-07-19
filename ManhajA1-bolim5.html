@@ -1545,7 +1545,7 @@ function groupGrammarByTopic(items){
 function pickGramMiniQuestions(){
   var groups = groupGrammarByTopic(GRAMMAR_ITEMS);
   var topics = Object.keys(groups);
-  var perTopic = Math.max(1, Math.round(10 / topics.length));
+  var perTopic = Math.max(1, Math.round(20 / topics.length));
   var picked = [];
   topics.forEach(function(t){
     var pool = shuffle(groups[t].slice());

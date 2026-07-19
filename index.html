@@ -478,6 +478,14 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         <button class="shop-buy-btn" style="flex:1; background:rgba(255,255,255,0.08); color:#C7CCD8;" onclick="dismissWebviewWarning()">Tushunarli</button>
       </div>
     </div>
+    <div id="gramFeatureAnnounce" style="display:none; margin-bottom:12px; padding:12px 14px; border-radius:14px; background:linear-gradient(135deg, rgba(212,162,58,0.18), rgba(212,162,58,0.06)); border:1px solid rgba(212,162,58,0.4);">
+      <div style="font-size:13px; color:#F0E4C8; line-height:1.6; margin-bottom:8px;">
+        🎯 <b>Yangilik!</b> Endi har bo'limning Grammatika sahifasida kichik test bor —
+        qoidalarni o'rgangach, pastdagi "Testni boshlash" tugmasi orqali bilimingizni
+        sinab ko'ring va qo'shimcha XP yutib oling!
+      </div>
+      <button class="shop-buy-btn" style="width:100%;" onclick="dismissGramFeatureAnnounce()">Tushunarli, rahmat!</button>
+    </div>
     <!-- ═══ PROFIL + NATIJA BITTA KARTADA (Duolingo/Busuu uslubi) ═══ -->
     <!-- 1-TOPSHIRIQ: umumiy natija (foiz halqasi) endi ism yonida, bitta chiroyli kartada. -->
     <div class="hero-card hero-card-merged">
@@ -2298,6 +2306,18 @@ function dismissWebviewWarning(){
   var banner = document.getElementById('webviewWarningBanner');
   if(banner) banner.style.display = 'none';
 }
+function initGramFeatureAnnounce(){
+  var banner = document.getElementById('gramFeatureAnnounce');
+  if(!banner) return;
+  var dismissed = false;
+  try{ dismissed = localStorage.getItem('arabic_gram_feature_announce_dismissed') === '1'; }catch(e){}
+  if(!dismissed) banner.style.display = 'block';
+}
+function dismissGramFeatureAnnounce(){
+  try{ localStorage.setItem('arabic_gram_feature_announce_dismissed', '1'); }catch(e){}
+  var banner = document.getElementById('gramFeatureAnnounce');
+  if(banner) banner.style.display = 'none';
+}
 function copyCurrentUrl(){
   var url = location.href.split('#')[0];
   if(navigator.share){
@@ -2323,6 +2343,7 @@ if(initNameGate()){
   initRoadmap();
   maybeShowGatingChoice();
   initWebviewWarning();
+  initGramFeatureAnnounce();
   // Bo'lim ichidan "Bo'limlar ro'yxati" tugmasi bilan kelinganda (index.html#bolimlar)
   // to'g'ridan-to'g'ri O'quv yo'li tabini ochamiz — talaba Bosh sahifani qayta bosishi shart emas.
   if(location.hash === '#bolimlar'){ switchTab('bolimlar'); }

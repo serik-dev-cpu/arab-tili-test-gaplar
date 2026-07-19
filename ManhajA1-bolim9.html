@@ -43,7 +43,7 @@ p{line-height:1.6;}
 /* ===== Telefonda bilinadigan bosish effekti (barmoq tez tegib ketsa ham ko'rinadi) ===== */
 .tapped{animation:tapPulse .22s var(--ease);}
 @keyframes tapPulse{0%{transform:scale(1);}45%{transform:scale(0.93);}100%{transform:scale(1);}}
-.screen{display:none; padding:20px 16px 20px; max-width:720px; margin:0 auto; position:relative;}
+.screen{display:none; padding:12px 16px 14px; max-width:720px; margin:0 auto; position:relative;}
 .screen.active{display:block; animation:fadeIn .25s ease;}
 @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
@@ -76,7 +76,7 @@ p{line-height:1.6;}
 .time-choice.active{border-color:var(--gold); background:rgba(212,162,58,.1);}
 .time-choice.active i{color:var(--gold);}
 .time-choice:active{transform:scale(.96);}
-.quiz-timer-wrap{display:flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:700; color:var(--gold2); margin:10px 0;}
+.quiz-timer-wrap{display:flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:700; color:var(--gold2); margin:6px 0;}
 .quiz-timer-wrap.warn{color:#E8765C;}
 
 .premium-card{
@@ -112,7 +112,7 @@ p{line-height:1.6;}
 .lugat-scrolltop-btn{display:none; position:fixed; right:16px; bottom:88px; min-width:52px; height:52px; padding:0 18px; border-radius:26px; background:linear-gradient(135deg,var(--gold2),var(--gold)); color:#1a1408; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:800; box-shadow:0 4px 16px rgba(212,162,58,.4); z-index:900; cursor:pointer; border:none;}
 .lugat-scrolltop-btn.show{display:flex;}
 .lugat-scrolltop-btn.paused{background:linear-gradient(135deg,#6FBF8B,#4E9E6E);}
-.spd-chips{display:none; align-items:center; justify-content:center; gap:6px; margin:0 0 10px 0; flex-wrap:wrap;}
+.spd-chips{display:none; align-items:center; justify-content:center; gap:6px; margin:0 0 6px 0; flex-wrap:wrap;}
 .spd-chips.show{display:flex;}
 .spd-chips .spd-label{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:4px; margin-right:2px;}
 .spd-chips .lugat-speed-chip{font-size:11px; font-weight:700; padding:5px 10px; border-radius:12px; background:rgba(212,162,58,.08); border:1px solid var(--gold-line); color:var(--muted); cursor:pointer;}
@@ -160,10 +160,10 @@ p{line-height:1.6;}
 }
 .premium-btn-secondary:active{transform:scale(.98); border-color:var(--gold-line);}
 
-.progress-bar-outer{width:100%; height:8px; background:var(--card); border-radius:8px; overflow:hidden; margin:14px 0;}
+.progress-bar-outer{width:100%; height:8px; background:var(--card); border-radius:8px; overflow:hidden; margin:9px 0;}
 .progress-bar-inner{height:100%; background:linear-gradient(90deg,var(--gold),var(--gold2)); border-radius:8px; transition:width .3s;}
 
-.quiz-card{background:linear-gradient(160deg, rgba(212,162,58,0.14), rgba(38,42,54,0.6)); border:1px solid rgba(212,162,58,0.45); border-radius:18px; padding:26px 18px; text-align:center; margin-top:10px; box-shadow:var(--shadow-soft);}
+.quiz-card{background:linear-gradient(160deg, rgba(212,162,58,0.14), rgba(38,42,54,0.6)); border:1px solid rgba(212,162,58,0.45); border-radius:18px; padding:20px 16px; text-align:center; margin-top:8px; box-shadow:var(--shadow-soft);}
 .quiz-card-label{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#F0C56B;margin-bottom:10px;text-transform:uppercase;}
 .quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:2.2;}
 .opt-btn{display:block; width:100%; text-align:center; padding:16px; margin-top:10px; border-radius:14px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.14); color:var(--text); font-size:16px; cursor:pointer; transition:transform .15s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);}
@@ -205,7 +205,7 @@ p{line-height:1.6;}
 .stat-box .num{font-size:22px; font-weight:700; color:var(--gold2);}
 .stat-box .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
 
-.level-tabs{display:flex; gap:8px; margin-bottom:16px;}
+.level-tabs{display:flex; gap:8px; margin-bottom:10px;}
 .level-tab{flex:1; text-align:center; padding:10px; border-radius:12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--muted); cursor:pointer; border:1px solid transparent;}
 .level-tab.active{background:rgba(212,162,58,0.15); color:var(--gold2); border-color:var(--border);}
 
@@ -344,7 +344,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .epic-xp-mini{font-size:11px; color:var(--muted); margin-top:4px;}
 
 /* ===== Flashkard ===== */
-.fc-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--gold-line); border-radius:22px; padding:40px 20px; text-align:center; margin-top:16px; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-deep); transition:transform .15s var(--ease); position:relative;}
+.fc-card{background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--gold-line); border-radius:22px; padding:28px 20px; text-align:center; margin-top:10px; min-height:180px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-deep); transition:transform .15s var(--ease); position:relative;}
 .audio-btn{position:absolute; top:12px; left:14px; width:34px; height:34px; border-radius:50%; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease); z-index:2; color:var(--gold2); font-size:16px;}
 .audio-btn:active{transform:scale(.9);}
 .audio-btn.playing{background:var(--gold); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
@@ -366,7 +366,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .fc-btn:active{transform:scale(.97);}
 .fc-btn-know{background:linear-gradient(135deg,#6FBF8B,#8FD9A8); color:#0B0E14;}
 .fc-btn-dontknow{background:linear-gradient(135deg,#E8765C,#F0A188); color:#0B0E14;}
-.turbo-status-badge{display:inline-flex; align-items:center; gap:6px; margin:0 auto 14px; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap; width:fit-content;}
+.turbo-status-badge{display:inline-flex; align-items:center; gap:6px; margin:0 auto 9px; background:linear-gradient(135deg, rgba(255,64,129,0.92), rgba(212,162,58,0.92)); color:#1a1408; font-weight:800; font-size:13px; padding:7px 16px; border-radius:20px; box-shadow:0 4px 14px rgba(0,0,0,0.4); white-space:nowrap; width:fit-content;}
 .stat-box .xp-wallet-sub{font-size:11px;font-weight:700;color:#8A93A6;display:block;margin-top:1px;}
 
 /* ═══ FRONTEND YANGILANISH: markazlash + o‘qish qulayligi ═══ */

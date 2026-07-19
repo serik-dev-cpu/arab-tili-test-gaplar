@@ -1037,7 +1037,7 @@ function applyCosmetics(avatarEl, greetEl, cardEl){
     if(activeChar){
       if(pngChars[activeChar]){
         // Load PNG image from folder, wrapped in animation div
-        avatarEl.innerHTML = '<div class="char-breathe-img"><img src="rasmlar/'+activeChar+'.png" style="width:100%;height:100%;display:block;" alt="'+activeChar+'"/></div>';
+        avatarEl.innerHTML = '<div class="char-breathe-img"><img src="'+activeChar+'.png" style="width:100%;height:100%;display:block;" alt="'+activeChar+'"/></div>';
       } else if(svgOnlyChars[activeChar] && CHAR_SVGS[activeChar]){
         // Use SVG fallback (no animation wrapper needed for SVG, it has char-breathe in <g>)
         avatarEl.innerHTML = CHAR_SVGS[activeChar];
@@ -1383,7 +1383,7 @@ function renderCharacterPreviews(){
     if(el && !el.dataset.filled){
       if(pngChars[id]){
         // Load PNG image from folder, wrapped in animation div
-        el.innerHTML = '<div class="char-breathe-img"><img src="rasmlar/'+id+'.png" style="width:100%;height:100%;display:block;" alt="'+id+'"/></div>';
+        el.innerHTML = '<div class="char-breathe-img"><img src="'+id+'.png" style="width:100%;height:100%;display:block;" alt="'+id+'"/></div>';
       } else if(svgOnlyChars[id] && CHAR_SVGS[id]){
         // Use SVG (no animation wrapper needed for SVG)
         el.innerHTML = CHAR_SVGS[id];

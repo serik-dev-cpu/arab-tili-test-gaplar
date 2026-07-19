@@ -3166,7 +3166,7 @@ function getTurboRoundSizes(){
   return {
     flash: Math.min(VOCAB.length, Math.max(8, Math.round(n / need * 2.13))),
     quiz: Math.min(testable.length, Math.max(5, Math.round(n / need * 1.28))),
-    gap: Math.max(4, Math.round(n / need * 0.85))
+    gap: Math.max(4, Math.min(8, Math.round(n / need * 0.45)))
   };
 }
 // Box darajasi PASTROQ so'zlarga ustunlik beruvchi indekslar ro'yxati (Anki/Duolingo uslubi) —

@@ -236,6 +236,22 @@ body{padding-bottom:130px;}
 .gram-example{background:var(--card); border-left:3px solid var(--gold); border-radius:8px; padding:12px 14px; margin-top:10px; box-shadow:var(--shadow-soft);}
 .gram-example .ar{font-size:24px; color:var(--gold2); line-height:2.2; display:block; padding:4px 0;}
 .gram-example .uz{font-size:13px; color:var(--muted); margin-top:5px;}
+
+/* ===== Grammatika mini-test bannerlari ===== */
+.gram-banner-top{background:linear-gradient(135deg, rgba(212,162,58,.16), rgba(212,162,58,.05)); border:1px solid var(--gold-line); border-radius:12px; padding:10px 14px; margin-bottom:18px; font-size:13px; color:var(--muted); line-height:1.6;}
+.gram-banner-top b{color:var(--gold2);}
+.gram-banner-bottom{background:linear-gradient(135deg, rgba(212,162,58,.16), rgba(212,162,58,.05)); border:1px solid var(--gold-line); border-radius:14px; padding:16px; margin-top:20px; margin-bottom:14px; text-align:center;}
+.gbb-title{font-size:15px; font-weight:700; color:var(--gold2); margin-bottom:6px;}
+.gbb-desc{font-size:13px; color:var(--muted); line-height:1.7;}
+.gram-quiz-start-btn{width:100%; background:var(--gold); color:#1a1408; border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:700; box-shadow:var(--shadow-soft); display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:80px;}
+.gram-quiz-start-btn:active{transform:scale(.97);}
+.gram-result-card{background:var(--card); border:1px solid var(--gold-line); border-radius:16px; padding:22px; text-align:center; margin-top:20px; box-shadow:var(--shadow-soft);}
+.gram-result-pct{font-size:40px; font-weight:800; color:var(--gold2);}
+.gram-result-grade{font-size:16px; font-weight:700; margin-top:4px; margin-bottom:10px;}
+.gram-result-xp{font-size:14px; color:var(--gold2); font-weight:600; margin-bottom:16px;}
+.gram-result-topics{text-align:left; margin-bottom:6px;}
+.gram-topic-row{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); padding:8px 4px; border-bottom:1px solid var(--border);}
+.gram-topic-row:last-child{border-bottom:none;}
 .neg-box{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
 .neg-item{flex:1; min-width:90px; background:var(--card); border:1px solid var(--gold-line); border-radius:12px; padding:10px; text-align:center;}
 .neg-item .particle{font-family:'Noto Naskh Arabic','Amiri',serif; font-size:24px; color:var(--gold); margin-bottom:4px; line-height:2;}
@@ -713,6 +729,9 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 <div class="screen" id="screen-grammar">
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Grammatika</h2>
+  <div class="gram-banner-top" id="gramBannerTop" style="display:none;">
+    🎯 <b id="gbt-text"></b>
+  </div>
 
   <div class="gram-section">
     <h3>1. Jumla fe'liyya — fe'lli gap qurilishi</h3>
@@ -814,7 +833,30 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     </div>
     <p class="gram-note"><b>Diqqat:</b> سَـ fe'lga chiziqsiz, bevosita yopishtirib yoziladi (masalan سَأَحْجِزُ), سَوْفَ esa alohida so'z sifatida oldin yoziladi.</p>
   </div>
+
+  <div class="gram-banner-bottom" id="gramBannerBottom" style="display:none;">
+    <div class="gbb-title">🎯 <span id="gbb-title-text"></span></div>
+    <div class="gbb-desc" id="gbb-desc-text"></div>
+  </div>
+  <button class="gram-quiz-start-btn" onclick="startGramMini()">
+    <i class="ti ti-pencil-check"></i> <span id="gram-quiz-start-label"></span>
+  </button>
 </div>
+
+<div class="screen" id="screen-gram-quiz">
+  <div class="back-row"><span class="back-link" onclick="goScreen('grammar')"><i class="ti ti-chevron-left"></i> Bekor qilish</span></div>
+  <div id="gram-quiz-mainarea">
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="gram-quiz-progress-bar" style="width:0%"></div></div>
+    <div class="quiz-card">
+      <div class="quiz-card-label">❓ SAVOL</div>
+      <div class="ar-big ar" id="gram-quiz-word"></div>
+      <div class="quiz-sublabel" id="gram-quiz-sublabel" style="display:none; font-size:13px; color:var(--muted); margin-top:-6px; margin-bottom:10px;"></div>
+      <div id="gram-quiz-options"></div>
+    </div>
+  </div>
+  <div id="gram-quiz-result" style="display:none;"></div>
+</div>
+
 
 <!-- ================= EKRAN: Statistika ================= -->
 <div class="screen" id="screen-stats">
@@ -1066,6 +1108,7 @@ function goScreen(name, push){
   if(name === 'quiz') renderSpeedChipsFor('test');
   if(name === 'match') renderSpeedChipsFor('match');
   if(name === 'stats') renderStats();
+  if(name === 'grammar') updateGramBanners();
   if(name === 'gap'){ startGapTuzish(); renderSpeedChipsFor('gap'); }
   if(name === 'match-setup'){
     var mb = document.getElementById('mm-best');
@@ -1428,6 +1471,155 @@ function answerFlashcard(knew){
 
 /* ---------------- Test (SRS quiz) ---------------- */
 var BOLIM_NUM = 10; // Hadiqatul-Ilm yozuvlari uchun (core.js: addMistake)
+
+// ═══════════════════════ GRAMMATIKA MINI-TEST (alohida, asosiy Testga qo'shilmaydi) ═══════════════════════
+const GRAMMAR_MINI_ITEMS = [{"id": "gm-001", "topic": "Jumla fi'liyya", "promptDisplay": "اسْتَخْدَمَ الوَلَدُ فُرْشاةَ الأَسْنانِ", "promptIsArabic": true, "subQuestion": "«فرشاة الأسنان» қайси турга тегишли?", "options": ["Мафъул биҳи (мансуб)", "Ҳарфи жар + исм маррур", "Зарф (вақт/жой, мансуб)"], "correct": "Мафъул биҳи (мансуб)", "optionsAreArabic": false}, {"id": "gm-002", "topic": "Jumla fi'liyya", "promptDisplay": "حَجَزَتْ مَوْعِدًا عِنْدَ طَبيبِ الأَسْنانِ", "promptIsArabic": true, "subQuestion": "«عند طبيب الأسنان» қайси турга тегишли?", "options": ["Ҳарфи жар + исм маррур", "Мафъул биҳи (мансуб)", "Зарф (вақт/жой, мансуб)"], "correct": "Ҳарфи жар + исм маррур", "optionsAreArabic": false}, {"id": "gm-003", "topic": "Jumla fi'liyya", "promptDisplay": "سَيَذْهَبُ إِلَى المُسْتَشْفَى غَدًا", "promptIsArabic": true, "subQuestion": "«غدا» қайси турга тегишли?", "options": ["Зарф (вақт/жой, мансуб)", "Мафъул биҳи (мансуб)", "Ҳарфи жар + исм маррур"], "correct": "Зарф (вақт/жой, мансуб)", "optionsAreArabic": false}, {"id": "gm-004", "topic": "Jumla fi'liyya", "promptDisplay": "Феълли гап нечта асосий қисмдан тузилади?", "promptIsArabic": false, "subQuestion": "", "options": ["3 та", "2 та", "4 та"], "correct": "3 та", "optionsAreArabic": false}, {"id": "gm-005", "topic": "Jumla fi'liyya", "promptDisplay": "«تَتِمَّةُ الجُمْلَة» нечта хил бўлиши мумкин?", "promptIsArabic": false, "subQuestion": "", "options": ["3 хил", "2 хил", "4 хил"], "correct": "3 хил", "optionsAreArabic": false}, {"id": "gm-006", "topic": "Uslubun-nafy", "promptDisplay": "ما أَخَذَ الرَّجُلُ الدَّواءَ", "promptIsArabic": true, "subQuestion": "Қайси замонни инкор қилади?", "options": ["Ўтган замон", "Ҳозирги замон", "Келаси замон"], "correct": "Ўтган замон", "optionsAreArabic": false}, {"id": "gm-007", "topic": "Uslubun-nafy", "promptDisplay": "لَمْ يَأْخُذِ الرَّجُلُ الدَّواءَ", "promptIsArabic": true, "subQuestion": "Қайси инкор заррачаси ишлатилган?", "options": ["لَمْ", "ما", "لا", "لَنْ"], "correct": "لَمْ", "optionsAreArabic": true}, {"id": "gm-008", "topic": "Uslubun-nafy", "promptDisplay": "لا يَأْخُذُ الرَّجُلُ الدَّواءَ", "promptIsArabic": true, "subQuestion": "Қайси замонни инкор қилади?", "options": ["Ҳозирги замон", "Ўтган замон", "Келаси замон"], "correct": "Ҳозирги замон", "optionsAreArabic": false}, {"id": "gm-009", "topic": "Uslubun-nafy", "promptDisplay": "لَنْ يَأْخُذَ الرَّجُلُ الدَّواءَ", "promptIsArabic": true, "subQuestion": "Қайси замонни инкор қилади?", "options": ["Келаси замон", "Ўтган замон", "Ҳозирги замон"], "correct": "Келаси замон", "optionsAreArabic": false}, {"id": "gm-010", "topic": "Uslubun-nafy", "promptDisplay": "لَيْسَ الطَّبيبُ مَشْغولًا", "promptIsArabic": true, "subQuestion": "Бу қандай гапда ишлатилади?", "options": ["Исмли гап (жумла исмия)", "Феълли гап (жумла феълия)"], "correct": "Исмли гап (жумла исмия)", "optionsAreArabic": false}, {"id": "gm-011", "topic": "Uslubun-nafy", "promptDisplay": "Исмли гапда қайси инкор сўзи ишлатилади?", "promptIsArabic": false, "subQuestion": "", "options": ["لَيْسَ", "لا", "لَمْ", "لَنْ"], "correct": "لَيْسَ", "optionsAreArabic": true}, {"id": "gm-012", "topic": "Uslubun-nafy", "promptDisplay": "لَمْ заррачасидан кейин феъл қайси шаклда келади?", "promptIsArabic": false, "subQuestion": "", "options": ["Мудори (маъноси ўтган замон)", "Мозий", "Амр"], "correct": "Мудори (маъноси ўтган замон)", "optionsAreArabic": false}, {"id": "gm-013", "topic": "Fe'l madi tuslanishi", "promptDisplay": "أَنَا + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْتُ", "حَجَزْتَ", "حَجَزْتِ", "حَجَزْنا"], "correct": "حَجَزْتُ", "optionsAreArabic": true}, {"id": "gm-014", "topic": "Fe'l madi tuslanishi", "promptDisplay": "نَحْنُ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْنا", "حَجَزْتُ", "حَجَزوا", "حَجَزَ"], "correct": "حَجَزْنا", "optionsAreArabic": true}, {"id": "gm-015", "topic": "Fe'l madi tuslanishi", "promptDisplay": "أَنْتَ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْتَ", "حَجَزْتِ", "حَجَزْتُ", "حَجَزَ"], "correct": "حَجَزْتَ", "optionsAreArabic": true}, {"id": "gm-016", "topic": "Fe'l madi tuslanishi", "promptDisplay": "أَنْتِ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْتِ", "حَجَزْتَ", "حَجَزْتُ", "حَجَزَتْ"], "correct": "حَجَزْتِ", "optionsAreArabic": true}, {"id": "gm-017", "topic": "Fe'l madi tuslanishi", "promptDisplay": "أَنْتُما + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْتُما", "حَجَزا", "حَجَزَتا", "حَجَزْتُمْ"], "correct": "حَجَزْتُما", "optionsAreArabic": true}, {"id": "gm-018", "topic": "Fe'l madi tuslanishi", "promptDisplay": "أَنْتُمْ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزْتُمْ", "حَجَزْتُنَّ", "حَجَزوا", "حَجَزْتُما"], "correct": "حَجَزْتُمْ", "optionsAreArabic": true}, {"id": "gm-019", "topic": "Fe'l madi tuslanishi", "promptDisplay": "هُوَ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزَ", "حَجَزَتْ", "حَجَزا", "حَجَزوا"], "correct": "حَجَزَ", "optionsAreArabic": true}, {"id": "gm-020", "topic": "Fe'l madi tuslanishi", "promptDisplay": "هِيَ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزَتْ", "حَجَزَ", "حَجَزَتا", "حَجَزْنَ"], "correct": "حَجَزَتْ", "optionsAreArabic": true}, {"id": "gm-021", "topic": "Fe'l madi tuslanishi", "promptDisplay": "هُما (م) + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزا", "حَجَزَتا", "حَجَزوا", "حَجَزْتُما"], "correct": "حَجَزا", "optionsAreArabic": true}, {"id": "gm-022", "topic": "Fe'l madi tuslanishi", "promptDisplay": "هُمْ + حَجَزَ", "promptIsArabic": true, "subQuestion": "Тўғри мозий шакли қайси?", "options": ["حَجَزوا", "حَجَزْنَ", "حَجَزا", "حَجَزْتُمْ"], "correct": "حَجَزوا", "optionsAreArabic": true}, {"id": "gm-023", "topic": "Kelasi zamon", "promptDisplay": "سَأَحْجِزُ مَوْعِدًا عِنْدَ طَبيبِ الأَسْنانِ", "promptIsArabic": true, "subQuestion": "Қайси заррача ишлатилган?", "options": ["سَـ", "سَوْفَ"], "correct": "سَـ", "optionsAreArabic": true}, {"id": "gm-024", "topic": "Kelasi zamon", "promptDisplay": "سَأَحْجِزُ", "promptIsArabic": true, "subQuestion": "Бу қандай келажак тури?", "options": ["Яқин келажак", "Узоқ/таъкидли келажак"], "correct": "Яқин келажак", "optionsAreArabic": false}, {"id": "gm-025", "topic": "Kelasi zamon", "promptDisplay": "سَوْفَ يَفْحَصُ الطَّبيبُ المَريضَ", "promptIsArabic": true, "subQuestion": "Бу қандай келажак тури?", "options": ["Узоқ/таъкидли келажак", "Яқин келажак"], "correct": "Узоқ/таъкидли келажак", "optionsAreArabic": false}, {"id": "gm-026", "topic": "Kelasi zamon", "promptDisplay": "سَـ заррачаси қандай ёзилади?", "promptIsArabic": false, "subQuestion": "", "options": ["Феълга бевосита ёпиштириб", "Алоҳида сўз сифатида"], "correct": "Феълга бевосита ёпиштириб", "optionsAreArabic": false}, {"id": "gm-027", "topic": "Kelasi zamon", "promptDisplay": "سَوْفَ қандай ёзилади?", "promptIsArabic": false, "subQuestion": "", "options": ["Алоҳида сўз сифатида", "Феълга ёпиштириб"], "correct": "Алоҳида сўз сифатида", "optionsAreArabic": false}, {"id": "gm-028", "topic": "Kelasi zamon", "promptDisplay": "يَفْحَصُ + سَـ = ?", "promptIsArabic": true, "subQuestion": "Тўғри бирлашган шакл қайси?", "options": ["سَيَفْحَصُ", "سَوْفَ يَفْحَصُ", "يَسَفْحَصُ"], "correct": "سَيَفْحَصُ", "optionsAreArabic": true}];
+
+function getGramState(){
+  try{
+    var k = 'arabic_uz_'+BOLIM_NUM+'bolim_v1';
+    return JSON.parse(localStorage.getItem(k)) || {};
+  }catch(e){ return {}; }
+}
+function setGramState(patch){
+  try{
+    var k = 'arabic_uz_'+BOLIM_NUM+'bolim_v1';
+    var d = getGramState();
+    Object.keys(patch).forEach(function(key){ d[key] = patch[key]; });
+    localStorage.setItem(k, JSON.stringify(d));
+  }catch(e){}
+}
+
+function updateGramBanners(){
+  var d = getGramState();
+  if(d.gram_banner_seen) return;
+  var top = document.getElementById('gramBannerTop');
+  var bottom = document.getElementById('gramBannerBottom');
+  var startLabel = document.getElementById('gram-quiz-start-label');
+  if(top){
+    document.getElementById('gbt-text').textContent = dtxt('Енгил тест — пастда сизни кутмоқда, шошилманг!');
+    top.style.display = 'block';
+  }
+  if(bottom){
+    document.getElementById('gbb-title-text').textContent = dtxt('Енгил тест');
+    document.getElementById('gbb-desc-text').textContent = dtxt('Қоидаларни ўқиб чиққач, пастдаги тугма орқали кичик тестни ечинг. Таймер йўқ — шошилмасдан ўйлаб жавоб беринг. Биринчи марта ишлаганингизда катта XP бонус, ҳар тўғри жавобга эса қўшимча XP берилади!');
+    bottom.style.display = 'block';
+  }
+  if(startLabel) startLabel.textContent = dtxt('Тестни бошлаш');
+  setGramState({ gram_banner_seen: true });
+}
+
+function groupGrammarByTopic(items){
+  var groups = {};
+  items.forEach(function(it){
+    if(!groups[it.topic]) groups[it.topic] = [];
+    groups[it.topic].push(it);
+  });
+  return groups;
+}
+function pickGramMiniQuestions(){
+  var groups = groupGrammarByTopic(GRAMMAR_MINI_ITEMS);
+  var topics = Object.keys(groups);
+  var perTopic = Math.max(1, Math.round(10 / topics.length));
+  var picked = [];
+  topics.forEach(function(t){
+    var pool = shuffle(groups[t].slice());
+    picked = picked.concat(pool.slice(0, Math.min(perTopic, pool.length)));
+  });
+  return shuffle(picked);
+}
+
+var gramMiniState = { items:[], idx:0, results:[] };
+function startGramMini(){
+  gramMiniState = { items: pickGramMiniQuestions(), idx:0, results:[] };
+  document.getElementById('gram-quiz-mainarea').style.display = 'block';
+  document.getElementById('gram-quiz-result').style.display = 'none';
+  document.getElementById('gram-quiz-result').innerHTML = '';
+  goScreen('gram-quiz');
+  renderGramMiniQuestion();
+}
+function renderGramMiniQuestion(){
+  var item = gramMiniState.items[gramMiniState.idx];
+  var wordEl = document.getElementById('gram-quiz-word');
+  var subEl = document.getElementById('gram-quiz-sublabel');
+  var opWrap = document.getElementById('gram-quiz-options');
+  document.getElementById('gram-quiz-progress-bar').style.width = Math.round((gramMiniState.idx/gramMiniState.items.length)*100)+'%';
+  opWrap.innerHTML = '';
+  subEl.textContent = item.subQuestion ? dtxt(item.subQuestion) : '';
+  subEl.style.display = item.subQuestion ? 'block' : 'none';
+  wordEl.textContent = item.promptIsArabic ? item.promptDisplay : dtxt(item.promptDisplay);
+  wordEl.className = item.promptIsArabic ? 'ar-big ar' : 'ar-big uz-question';
+  var opts = shuffle(item.options.slice());
+  opts.forEach(function(optStr){
+    var btn = document.createElement('button');
+    btn.className = item.optionsAreArabic ? 'opt-btn opt-btn-ar' : 'opt-btn';
+    btn.textContent = item.optionsAreArabic ? optStr : dtxt(optStr);
+    var correctShown = item.optionsAreArabic ? item.correct : dtxt(item.correct);
+    btn.onclick = function(){ answerGramMini(item, btn, opWrap, correctShown); };
+    opWrap.appendChild(btn);
+  });
+}
+function answerGramMini(item, btnEl, wrap, correctText){
+  var isCorrect = btnEl.textContent === correctText;
+  Array.from(wrap.children).forEach(function(b){ b.onclick = null; });
+  btnEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  if(!isCorrect){
+    Array.from(wrap.children).forEach(function(b){ if(b.textContent === correctText) b.classList.add('correct'); });
+  }
+  gramMiniState.results.push({ topic: item.topic, correct: isCorrect });
+  setTimeout(function(){
+    gramMiniState.idx++;
+    if(gramMiniState.idx < gramMiniState.items.length){
+      renderGramMiniQuestion();
+    } else {
+      finishGramMini();
+    }
+  }, 900);
+}
+function finishGramMini(){
+  var byTopic = {};
+  gramMiniState.results.forEach(function(r){
+    if(!byTopic[r.topic]) byTopic[r.topic] = { correct:0, total:0 };
+    byTopic[r.topic].total++;
+    if(r.correct) byTopic[r.topic].correct++;
+  });
+  var totalCorrect = gramMiniState.results.filter(function(r){ return r.correct; }).length;
+  var totalCount = gramMiniState.results.length;
+
+  var d = getGramState();
+  var isFirstTime = !d.gram_mini_done;
+  var xpEarned;
+  if(isFirstTime){
+    xpEarned = 20 + totalCorrect * 2;
+    setGramState({ gram_mini_done: true });
+  } else {
+    xpEarned = totalCorrect * 1;
+  }
+  addAchievementXP(xpEarned);
+
+  renderGramMiniResults(byTopic, totalCorrect, totalCount, xpEarned, isFirstTime);
+}
+function renderGramMiniResults(byTopic, totalCorrect, totalCount, xpEarned, isFirstTime){
+  var pct = totalCount ? Math.round(totalCorrect/totalCount*100) : 0;
+  var grade = pct>=90 ? dtxt('Аъло 🏆') : pct>=70 ? dtxt('Яхши ✅') : pct>=50 ? dtxt('Қониқарли ⚠️') : dtxt('Қайта кўриб чиқинг 🔁');
+  var html = '<div class="gram-result-card">';
+  html += '<div class="gram-result-pct">'+pct+'%</div>';
+  html += '<div class="gram-result-grade">'+grade+'</div>';
+  html += '<div class="gram-result-xp">+'+xpEarned+' XP'+(isFirstTime ? ' ('+dtxt('биринчи марта бонус')+')' : '')+'</div>';
+  html += '<div class="gram-result-topics">';
+  Object.keys(byTopic).forEach(function(t){
+    var td = byTopic[t];
+    var tpct = td.total ? Math.round(td.correct/td.total*100) : 0;
+    html += '<div class="gram-topic-row"><span>'+dtxt(t)+'</span><span>'+td.correct+'/'+td.total+' ('+tpct+'%)</span></div>';
+  });
+  html += '</div>';
+  html += '<button class="opt-btn" onclick="goScreen(\'grammar\')" style="margin-top:14px;">'+dtxt('Грамматикага қайтиш')+'</button>';
+  html += '</div>';
+  document.getElementById('gram-quiz-mainarea').style.display = 'none';
+  var resultEl = document.getElementById('gram-quiz-result');
+  resultEl.innerHTML = html;
+  resultEl.style.display = 'block';
+}
 var TURBO_NEEDED_LOCAL = 5; // Bu bo'lim uchun kerakli sifatli Turbo soni
 function getGatingInfo(){
   var need = TURBO_NEEDED_LOCAL;

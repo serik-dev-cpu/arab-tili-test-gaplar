@@ -1955,6 +1955,18 @@ function finishMistakeRetry(){
     });
     if(changed) saveProgress(state);
   }catch(e){}
+  // Darhol mustahkamlangan so'z Hadiqatul-Ilm (Xato daftari)'dan ham o'chadi —
+  // ikkita joyda (shu yerda va Hadiqatul-Ilm'da) qolib ketmasligi uchun.
+  try{
+    var allMistakes = getMistakes();
+    var idxToRemove = [];
+    Object.keys(st.fixedQids).forEach(function(qid){
+      for(var i=0;i<allMistakes.length;i++){
+        if(allMistakes[i].qid === qid && allMistakes[i].bolim === BOLIM_NUM && idxToRemove.indexOf(i)===-1){ idxToRemove.push(i); break; }
+      }
+    });
+    if(idxToRemove.length && typeof removeMistakesByIndex === 'function'){ removeMistakesByIndex(idxToRemove); }
+  }catch(e){}
   var retryBox = document.getElementById('qr-mistake-retry-box');
   var actions = document.getElementById('vc-actions-qr');
   var hint = document.getElementById('vc-hint-qr');

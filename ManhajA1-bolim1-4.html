@@ -467,6 +467,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="mm-extratime-offer" id="quizExtraTimeOffer">
     <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
     <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div>
+    <div id="quizExtraWallet" style="display:flex; align-items:center; justify-content:center; gap:6px; font-size:15px; font-weight:800; color:#F0C56B; background:rgba(212,162,58,0.14); border:1px solid var(--gold-line); border-radius:12px; padding:8px 12px; margin:2px 0 6px;">💰 Hamyoningiz: <span id="quizExtraWalletVal">0</span> XP</div>
     <button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button>
     <span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()" id="quizExtraTimeCloseLabel">Yo‘q, kerak emas</span>
   </div>
@@ -480,7 +481,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="topbar-actions"><button class="toggle-alifbo" id="alifbo-btn-gt">Кирилл</button></div>
   </div>
   <div class="spd-chips" id="spd-chips-gap"></div>
-  <div class="level-tabs">
+  <div class="level-tabs" id="gt-level-tabs">
     <div class="level-tab active" data-level="oson">Oson</div>
     <div class="level-tab" data-level="ortacha">O'rtacha</div>
     <div class="level-tab" data-level="prof">Profi</div>
@@ -492,7 +493,6 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Gapni tinglang va arabchada tuzing:</div>
     <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="playListenSentence(this)"><i class="ti ti-volume"></i> Tinglash</span>
     <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
-      <span class="gt-listen-btn" style="font-size:12.5px; padding:7px 14px;" onclick="playListenSentence(this)"><i class="ti ti-repeat"></i> Qayta eshitish</span>
       <span class="gt-listen-btn" id="gt-listen-slow-btn" style="font-size:12.5px; padding:7px 14px;" onclick="playListenSentenceSlow(this)"><i class="ti ti-player-track-prev"></i> Sekin</span>
     </div>
     <div style="margin-top:12px;">
@@ -641,6 +641,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="mm-extratime-offer" id="mmExtraTimeOffer">
     <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
     <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+20 soniya</b> qo‘shib davom etasizmi?</div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:6px; font-size:15px; font-weight:800; color:#F0C56B; background:rgba(212,162,58,0.14); border:1px solid var(--gold-line); border-radius:12px; padding:8px 12px; margin:2px 0 6px;">💰 Hamyoningiz: <span id="mmExtraWalletVal">0</span> XP</div>
     <button class="mm-extratime-btn" onclick="buyExtraTime()">Ha, +20 soniya (40 XP)</button>
     <span class="mm-extratime-close" onclick="closeExtraTimeOffer()">Yo‘q, kerak emas</span>
   </div>
@@ -1996,6 +1997,8 @@ function startQuizTimer(){
 function offerQuizExtraTime(){
   quizExtraState.offered = true;
   quizExtraState.offerOpen = true; // vaqt to'xtaydi, bemalol o'ylang
+  var wv = document.getElementById('quizExtraWalletVal');
+  if(wv) wv.textContent = getWalletXP();
   var box = document.getElementById('quizExtraTimeOffer');
   if(box) box.style.display = 'flex';
 }
@@ -2250,11 +2253,23 @@ function renderGapCurrent(){
   // Bu rejim ikki holatda faol: (1) oddiy Gap tuzishda "🎧 Eshitib" tabi tanlangan,
   // (2) Turbo Dars ichidagi maxsus "Eshitib" bosqichida (gtState.turboListen).
   var isListenMode = (gtState.level === 'eshitib') || (gtState.level === 'turbo' && gtState.turboListen);
+  // Turbo rejimida daraja tanlash tab qatori yashiriladi (darajalar avtomat almashadi);
+  // oddiy rejimda ko'rinib turadi.
+  var tabsEl = document.getElementById('gt-level-tabs');
+  if(tabsEl) tabsEl.style.display = (gtState.level === 'turbo') ? 'none' : 'flex';
   var uzWrap = document.getElementById('gt-translation');
   var promptEl = document.getElementById('gt-listen-prompt');
   if(isListenMode){
     if(uzWrap) uzWrap.style.display = 'none';
     if(promptEl) promptEl.style.display = 'block';
+    // Yangi savol chiqishi bilan gap AVTOMATIK o'qiladi (talaba "Tinglash"ni bosishi shart emas);
+    // qayta eshitmoqchi bo'lsa "Tinglash" tugmasini bosadi.
+    if(sentence && sentence.ar){
+      setTimeout(function(){
+        var b = document.querySelector('#gt-listen-prompt .gt-listen-btn');
+        speakArabic(sentence.ar, b);
+      }, 350);
+    }
   } else {
     if(uzWrap) uzWrap.style.display = '';
     if(promptEl) promptEl.style.display = 'none';
@@ -3313,6 +3328,8 @@ function offerExtraTime(){
   if(!mmState || mmState.extraTimeOffered || mmState.extraTimeUsed) return;
   mmState.extraTimeOffered = true;
   mmState.offerOpen = true; // vaqt to'xtaydi, plitkalar qulflanadi — bemalol o'ylang
+  var wv = document.getElementById('mmExtraWalletVal');
+  if(wv) wv.textContent = getWalletXP();
   var box = document.getElementById('mmExtraTimeOffer');
   if(box) box.style.display = 'flex';
 }
@@ -3585,18 +3602,26 @@ function smartPathRunMatch(){
 function smartPathRunGap(){
   smartPath.step = 3;
   showScreen('gaptuzish'); // bu avtomatik startGapTuzish() ni chaqiradi (gtState.level='oson' qiladi) -
-  // shuning uchun ANDAN KEYIN Turbo Dars uchun bo'lim hajmiga mos sondagi tasodifiy gapni
-  // (barcha darajalardan) ustidan yozamiz
-  var allSentences = []
-    .concat(SENTENCES.oson || [])
-    .concat(SENTENCES.ortacha || [])
-    .concat(SENTENCES.prof || []);
-  var gapCount = Math.min(allSentences.length, getTurboRoundSizes().gap);
-  var picked = shuffle(allSentences).slice(0, gapCount);
+  // shuning uchun ANDAN KEYIN Turbo Dars uchun bo'lim hajmiga mos sondagi gapni ustidan yozamiz.
+  // Turbo Gap: darajalar avtomat, OSONDAN QIYINGA qarab almashadi (har darajadan aralash tanlab,
+  // keyin oson→o'rtacha→profi tartibida saralaymiz).
+  var gapCount = getTurboRoundSizes().gap;
+  var perLevel = Math.ceil(gapCount / 3);
+  var pOson = shuffle((SENTENCES.oson || []).slice()).slice(0, perLevel);
+  var pOrta = shuffle((SENTENCES.ortacha || []).slice()).slice(0, perLevel);
+  var pProf = shuffle((SENTENCES.prof || []).slice()).slice(0, perLevel);
+  // Osondan qiyinga tartib bilan birlashtirib, kerakli songacha kesamiz.
+  var picked = pOson.concat(pOrta).concat(pProf).slice(0, gapCount);
+  // Agar biror daraja bo'sh bo'lib, yetmay qolsa — qolganini boshqa gaplardan to'ldiramiz.
+  if(picked.length < gapCount){
+    var all = [].concat(SENTENCES.oson||[]).concat(SENTENCES.ortacha||[]).concat(SENTENCES.prof||[]);
+    var extra = shuffle(all).filter(function(s){ return picked.indexOf(s) === -1; });
+    picked = picked.concat(extra).slice(0, gapCount);
+  }
   gtState.level = 'turbo';
   gtState.turboListen = false; // oddiy (yozma) gap tuzish bosqichi
   SENTENCES['turbo'] = picked;
-  gtState.order = picked.map(function(_,i){ return i; });
+  gtState.order = picked.map(function(_,i){ return i; }); // tartib SAQLANADI (aralashtirmaymiz)
   gtState.idx = 0;
   gtState.correctCount = 0;
   renderGapCurrent();

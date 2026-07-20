@@ -1736,7 +1736,7 @@ function answerFlashcard(knew){
   // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
   // Oddiy Flashkard rejimida bosilganda faqat XP beriladi, foiz o'zgarmaydi.
   if(smartPath.active){
-    newBox[w.ar] = knew ? Math.min(5,curBox+1) : 1;
+    newBox[w.ar] = knew ? Math.min(5,curBox+1) : Math.max(1,curBox-2);
     state.box = newBox;
     if(!knew){
       // Xato daftariga qo'shamiz — talaba keyinroq pullik "Takrorlash" mashqi orqali tuzatadi.
@@ -2193,7 +2193,7 @@ function finishQuiz(){
   let correctCount=0;
   quizState.results.forEach(r=>{
     const curBox = newBox[r.qid]||1;
-    if(smartPath.active){ newBox[r.qid] = r.correct ? Math.min(5,curBox+1) : 1; } // faqat Turboda box o'zgaradi
+    if(smartPath.active){ newBox[r.qid] = r.correct ? Math.min(5,curBox+1) : Math.max(1,curBox-2); } // faqat Turboda box o'zgaradi
     if(r.correct){
       correctCount++;
       // MUHIM: 'word' VA 'grammar' ikkalasi ham umumiy hisobga qo'shiladi!
@@ -2333,7 +2333,7 @@ function finishMistakeRetry(){
       // Turboda xato qilinganda box 1'ga tushadi — shu yerda darhol to'g'ri javob berilsa,
       // box ham normal Test'dagi kabi +1 oshadi, shunda foiz haqiqiy holatni ko'rsatadi.
       var curBox = Number(state.box[qid]) || 1;
-      state.box[qid] = Math.min(5, curBox + 1);
+      state.box[qid] = Math.min(5, curBox + 2);
       changed = true;
     });
     if(changed) saveProgress(state);

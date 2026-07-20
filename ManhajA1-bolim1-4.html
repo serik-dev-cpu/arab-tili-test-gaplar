@@ -2042,7 +2042,7 @@ function quizTimeUp(){
     b.classList.add('disabled');
     if(b.getAttribute('data-correct')==='true') b.classList.add('correct');
   });
-  if(smartPath.active){ setBox(word.ar, 1); }
+  if(smartPath.active){ setBox(word.ar, Math.max(1, getBox(word.ar) - 2)); }
   var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
   var correctIsArabic = !quizState.currentArToUz;
   recordQuizMistake(word, correctText, correctIsArabic);
@@ -2139,7 +2139,7 @@ function handleQuizAnswer(btn){
     setTimeout(function(){ nextQuizQuestion(); }, 1000);
   } else {
     playWrong();
-    if(smartPath.active){ smartPath.hadAnyError = true; setBox(word.ar, 1); }
+    if(smartPath.active){ smartPath.hadAnyError = true; setBox(word.ar, Math.max(1, box - 2)); }
     var correctText = quizState.currentArToUz ? dtxt(word.uz) : word.ar;
     var correctIsArabic = !quizState.currentArToUz;
     recordQuizMistake(word, correctText, correctIsArabic);
@@ -2485,7 +2485,7 @@ function fkAdvance(know){
   if(know){ if(smartPath.active){ setBox(word.ar, box+1); } fkState.knowCount++; } // XP endi sessiya oxirida (finishSession)
   else {
     if(smartPath.active){
-      setBox(word.ar, 1);
+      setBox(word.ar, Math.max(1, box - 2));
       // Front tomon har doim arabcha (word.ar) — flashcard "bilmadim" bosilganda shu holat.
       recordTurboBoxDrop(word, true);
     }
@@ -2798,7 +2798,7 @@ function finishMistakeRetry(){
     // Turboda xato qilinganda box 1'ga tushadi — shu yerda darhol to'g'ri javob berilsa,
     // box ham normal Test'dagi kabi +1 oshadi, shunda foiz haqiqiy holatni ko'rsatadi.
     Object.keys(st.fixedQids).forEach(function(qid){
-      setBox(qid, Math.min(5, getBox(qid) + 1));
+      setBox(qid, Math.min(5, getBox(qid) + 2));
     });
   }catch(e){}
   // Darhol mustahkamlangan so'z Hadiqatul-Ilm (Xato daftari)'dan ham o'chadi —

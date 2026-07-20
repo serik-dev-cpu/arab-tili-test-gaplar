@@ -1153,7 +1153,7 @@ function refreshMistakesCard(){
   if(!card) return;
   if(list.length === 0){ card.style.display = 'none'; return; }
   card.style.display = 'flex';
-  if(desc) desc.textContent = list.length + " ta xato so'z \u2014 takrorlab mustahkamlash: " + getMistakeClearPrice() + ' XP';
+  if(desc) desc.textContent = list.length + " ta xato so'z \u2014 bepul takrorlab mustahkamlang";
 }
 
 function openMistakesModal(){
@@ -1323,8 +1323,6 @@ function renderMistakesListHTML(list){
 
 function renderMistakesLanding(){
   var list = getMistakes();
-  var price = getMistakeClearPrice();
-  var wallet = getWalletXP();
   var card = document.getElementById('mistakesModalCard');
   if(!card) return;
   if(list.length === 0){
@@ -1335,7 +1333,6 @@ function renderMistakesLanding(){
       '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
     return;
   }
-  var canAfford = wallet >= price;
   card.innerHTML =
     '<h3 style="text-align:center; margin-bottom:2px;">\uD83D\uDCD3 Xato daftari</h3>' +
     '<div style="text-align:center; font-family:\'Noto Naskh Arabic\',\'Amiri\',serif; font-size:17px; color:#F0C56B; margin-bottom:4px;">\u062D\u064E\u062F\u0650\u064A\u0642\u064E\u0629\u064F \u0627\u0644\u0652\u0639\u0650\u0644\u0652\u0645\u0650</div>' +
@@ -1343,16 +1340,12 @@ function renderMistakesLanding(){
     '<div style="text-align:center; font-size:13px; color:#9BA3B4; margin-bottom:10px;">' + list.length + " ta xato so'z to'plangan" + '</div>' +
     renderMistakesListHTML(list) +
     '<div style="font-size:14px; color:#C7CCD8; line-height:1.6; margin-bottom:18px; text-align:center;">Takrorlash mashqida 3 ta jon (\u2764\uFE0F\u2764\uFE0F\u2764\uFE0F) bilan aralash savollarga javob berasiz. Hammasini oxirigacha to\'g\'ri yechsangiz \u2014 bu so\'zlar daftardan o\'chiriladi. Jon tugasa, so\'zlar daftarda qoladi.</div>' +
-    '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;' + (canAfford ? '' : ' opacity:.5;') + '" onclick="startMistakesQuiz()"' + (canAfford ? '' : ' disabled') + '>Takrorlashni boshlash \u2014 ' + price + ' XP</button>' +
-    (canAfford ? '' : '<div style="text-align:center; color:#E8765C; font-size:13px; margin-bottom:10px;">Hamyonda XP yetarli emas</div>') +
+    '<button class="shop-buy-btn" style="width:100%; margin-bottom:10px;" onclick="startMistakesQuiz()">Takrorlashni boshlash \u2014 bepul</button>' +
     '<button class="proverb-close-btn" onclick="closeMistakesModal()">Yopish</button>';
 }
 function startMistakesQuiz(){
   var list = getMistakes();
   if(list.length === 0) return;
-  var price = getMistakeClearPrice();
-  if(!spendWalletXP(price, "Xato daftari takrorlash mashqi")){ renderMistakesLanding(); return; }
-  refreshHeroAndShop();
   var indices = shuffleArr(list.map(function(_, i){ return i; })).slice(0, Math.min(MISTAKES_QUIZ_SIZE, list.length));
   mistakesQuizState = { indices: indices, idx: 0, lives: MISTAKES_LIVES, failed: false };
   renderMistakesQuestion();

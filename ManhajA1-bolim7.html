@@ -619,6 +619,18 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="stat-box"><div class="num" id="result-wrong">0</div><div class="lbl">Xato</div></div>
     <div class="stat-box"><div class="num" id="result-percent">0%</div><div class="lbl">Natija</div></div>
   </div>
+  <!-- 3-TOPSHIRIQ: Xatolarni DARHOL shu yerda ko'rsatish va tuzatish -->
+  <div id="qr-mistakes-box" style="display:none; margin:14px 0; padding:16px; border-radius:18px; background:linear-gradient(160deg, rgba(232,118,92,0.12), rgba(232,118,92,0.05)); border:1px solid rgba(232,118,92,0.3);">
+    <div style="font-weight:800; color:#F0A188; font-size:14.5px; margin-bottom:10px;">😅 <span id="qr-mistakes-count">0</span> ta xato bor edi — hoziroq tuzatib olaylik</div>
+    <div id="qr-mistakes-list"></div>
+    <button class="premium-btn-primary" id="qr-mistakes-fix-btn" style="width:100%; margin-top:4px; background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startMistakeRetry()">🔁 Xatolarni hoziroq mustahkamlash</button>
+  </div>
+  <div id="qr-mistake-retry-box" style="display:none; margin:14px 0; padding:16px; border-radius:18px; background:linear-gradient(160deg, rgba(38,42,54,0.55), rgba(26,29,38,0.8)); border:1px solid var(--gold-line);">
+    <div style="text-align:center; font-size:12.5px; color:#9BA3B4; margin-bottom:10px;" id="qr-retry-progress">0 / 0</div>
+    <div id="qr-retry-question" style="text-align:center; margin-bottom:6px;"></div>
+    <div id="qr-retry-options"></div>
+    <div id="qr-retry-feedback"></div>
+  </div>
   <div class="victory-course-wrap">
     <div class="progress-bar-outer"><div class="progress-bar-inner" id="vc-course-fill-qr" style="width:0%; transition:width 1s ease;"></div></div>
     <div class="victory-course-label" id="vc-course-label-qr">Bo'lim progressi: 0%</div>
@@ -1728,7 +1740,7 @@ function recordQuizMistake(item, wrap, correctText, correctIsArabic){
       questionIsArabic = !!g.promptIsArabic;
       sub = g.subQuestion ? dtxt(g.subQuestion) : '';
     }
-    addMistake({
+    var mistakeObj = {
       qid: item.kind==='word' ? item.data.ar : item.data.id,
       bolim: BOLIM_NUM,
       kind: item.kind,
@@ -1738,7 +1750,9 @@ function recordQuizMistake(item, wrap, correctText, correctIsArabic){
       correct: correctText,
       correctIsArabic: correctIsArabic,
       options: opts
-    });
+    };
+    addMistake(mistakeObj);
+    if(quizState && quizState.wrongItems){ quizState.wrongItems.push(mistakeObj); }
   }catch(e){}
 }
 function startQuiz(){
@@ -1754,7 +1768,7 @@ function startQuiz(){
   var _notLearned = shuffle(_allItems.filter(function(it){ return _learned.indexOf(_qid(it))===-1; }));
   var _alreadyLearned = shuffle(_allItems.filter(function(it){ return _learned.indexOf(_qid(it))!==-1; }));
   const items = _notLearned.concat(_alreadyLearned).slice(0, quizQuestionCount);
-  quizState = { items, idx:0, results:[], timePerQ: quizTimePerQ };
+  quizState = { items, idx:0, results:[], wrongItems:[], timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();
 }
@@ -1910,12 +1924,125 @@ function finishQuiz(){
   var qrBtnT = document.getElementById('qr-retry-btn');
   if(qrBtnT){ qrBtnT.textContent = 'Yana test'; qrBtnT.onclick = function(){ goScreen('quiz-setup'); }; }
   goScreen('quiz-result');
+  renderMistakesBox(quizState.wrongItems);
   runVictoryCelebration({
     xpElId:'qr-xp', courseFillElId:'vc-course-fill-qr', courseLabelElId:'vc-course-label-qr',
     actionsElId:'vc-actions-qr', hintElId:'vc-hint-qr',
     earnedXP: earnedXP, coursePctBefore: pctBefore, coursePctAfter: pctAfter,
     rankBefore: getRank(totalBefore), rankAfter: getRank(totalAfter)
   });
+}
+
+var mistakeRetryState = null;
+function renderMistakesBox(wrongItems){
+  var box = document.getElementById('qr-mistakes-box');
+  var retryBox = document.getElementById('qr-mistake-retry-box');
+  if(retryBox) retryBox.style.display = 'none';
+  if(!box) return;
+  if(!wrongItems || !wrongItems.length){ box.style.display = 'none'; return; }
+  document.getElementById('qr-mistakes-count').textContent = wrongItems.length;
+  var listEl = document.getElementById('qr-mistakes-list');
+  var html = '';
+  wrongItems.forEach(function(m){
+    html += '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.07);">'+
+      '<span style="'+(m.questionIsArabic?'font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;direction:rtl;font-size:16px;':'font-size:13px;color:#C7CCD8;')+'">'+m.question+'</span>'+
+      '<span style="font-size:12px; color:#6FBF8B; white-space:nowrap;">→ '+(m.correctIsArabic?('<span style="font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;">'+m.correct+'</span>'):m.correct)+'</span>'+
+      '</div>';
+  });
+  listEl.innerHTML = html;
+  box.style.display = 'block';
+}
+function startMistakeRetry(){
+  var box = document.getElementById('qr-mistakes-box');
+  var retryBox = document.getElementById('qr-mistake-retry-box');
+  var actions = document.getElementById('vc-actions-qr');
+  var hint = document.getElementById('vc-hint-qr');
+  if(box) box.style.display = 'none';
+  if(actions) actions.style.display = 'none';
+  if(hint) hint.style.display = 'none';
+  mistakeRetryState = {
+    queue: quizState.wrongItems.slice(),
+    total: quizState.wrongItems.length,
+    fixedQids: {}
+  };
+  if(retryBox) retryBox.style.display = 'block';
+  renderRetryQuestion();
+}
+function renderRetryQuestion(){
+  var st = mistakeRetryState;
+  if(!st) return;
+  if(st.queue.length === 0){ finishMistakeRetry(); return; }
+  var item = st.queue.shift();
+  st.current = item;
+  var fixedCount = Object.keys(st.fixedQids).length;
+  document.getElementById('qr-retry-progress').textContent = fixedCount+' / '+st.total+' mustahkamlandi';
+  var qEl = document.getElementById('qr-retry-question');
+  qEl.innerHTML = (item.sub ? '<div style="font-size:12.5px;color:#9BA3B4;margin-bottom:6px;">'+item.sub+'</div>' : '') +
+    '<div style="'+(item.questionIsArabic?'font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;direction:rtl;font-size:26px;line-height:2;':'font-size:17px;font-weight:700;color:#EDEFF5;')+'">'+item.question+'</div>';
+  var optWrap = document.getElementById('qr-retry-options');
+  optWrap.innerHTML = '';
+  document.getElementById('qr-retry-feedback').innerHTML = '';
+  var opts = (item.options && item.options.length ? item.options.slice() : [item.correct]).sort(function(){return Math.random()-0.5;});
+  opts.forEach(function(optText){
+    var btn = document.createElement('button');
+    btn.className = item.correctIsArabic ? 'opt-btn opt-btn-ar' : 'opt-btn';
+    btn.textContent = optText;
+    btn.onclick = function(){ answerRetryQuestion(item, btn, optWrap, optText); };
+    optWrap.appendChild(btn);
+  });
+}
+function answerRetryQuestion(item, btnEl, wrap, pickedText){
+  var st = mistakeRetryState;
+  if(!st) return;
+  Array.from(wrap.children).forEach(function(b){ b.onclick = null; });
+  var isCorrect = pickedText === item.correct;
+  btnEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  var fb = document.getElementById('qr-retry-feedback');
+  if(isCorrect){
+    st.fixedQids[item.qid] = true;
+    if(hasAudioFor && typeof hasAudioFor==='function' && hasAudioFor('test')){
+      var arText = item.correctIsArabic ? item.correct : (item.questionIsArabic ? item.question : '');
+      if(arText){ setTimeout(function(){ speakArabic(arText); }, 120); }
+    }
+    fb.innerHTML = '<div style="text-align:center; color:#6FBF8B; font-weight:700; font-size:13px; margin-top:10px;">✓ To\u2019g\u2019ri!</div>';
+    setTimeout(function(){ renderRetryQuestion(); }, 650);
+  } else {
+    Array.from(wrap.children).forEach(function(b){ if(b.textContent===item.correct) b.classList.add('correct'); });
+    st.queue.push(item);
+    fb.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:13px; margin:10px 0;">✗ Yana urinib ko\u2019ring — bu savol keyinroq qaytadi</div>'+
+      '<button class="premium-btn-primary" style="width:100%;" onclick="renderRetryQuestion()">Davom etish →</button>';
+  }
+}
+function finishMistakeRetry(){
+  var st = mistakeRetryState;
+  if(!st) return;
+  try{
+    var state = loadProgress();
+    var changed = false;
+    Object.keys(st.fixedQids).forEach(function(qid){
+      if(state.learned.indexOf(qid) === -1){ state.learned.push(qid); changed = true; }
+    });
+    if(changed) saveProgress(state);
+  }catch(e){}
+  var retryBox = document.getElementById('qr-mistake-retry-box');
+  var actions = document.getElementById('vc-actions-qr');
+  var hint = document.getElementById('vc-hint-qr');
+  if(retryBox){
+    retryBox.innerHTML = '<div style="text-align:center; padding:6px 0;">'+
+      '<div style="font-size:28px; margin-bottom:6px;">✅</div>'+
+      '<div style="font-weight:800; color:#7ED8A0; font-size:15px;">Barcha xatolar mustahkamlandi!</div>'+
+      '</div>';
+  }
+  if(actions) actions.style.display = '';
+  if(hint) hint.style.display = '';
+  try{
+    var newPct = getCourseProgressPct();
+    var fillEl = document.getElementById('vc-course-fill-qr');
+    var labelEl = document.getElementById('vc-course-label-qr');
+    if(fillEl) fillEl.style.width = Math.min(100,newPct)+'%';
+    if(labelEl) labelEl.textContent = "Bo'lim progressi: "+Math.round(Math.min(100,newPct))+'%';
+  }catch(e){}
+  mistakeRetryState = null;
 }
 
 /* ---------------- Gap tuzish ---------------- */
@@ -2955,7 +3082,7 @@ function smartPathRunGap(){
 function smartPathRunQuiz(){
   smartPath.step = 4;
   var items = weightedQuizItems().slice(0, getTurboRoundSizes().quiz);
-  quizState = { items:items, idx:0, results:[], timePerQ: quizTimePerQ };
+  quizState = { items:items, idx:0, results:[], wrongItems:[], timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();
 }
@@ -3031,6 +3158,7 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ startSmartPath(); }; }
 
   goScreen('quiz-result');
+  renderMistakesBox(quizState.wrongItems);
   if(justUnlockedNext){
     var ub = document.getElementById('unlockBanner');
     if(ub){

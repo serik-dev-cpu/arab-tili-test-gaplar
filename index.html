@@ -416,6 +416,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 .proverb-modal-bg{position:fixed; inset:0; background:rgba(5,6,10,0.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9500; display:none; align-items:center; justify-content:center; padding:20px;}
 .proverb-modal-bg.show{display:flex;}
 .proverb-card-modal{background:linear-gradient(160deg, rgba(38,42,54,0.95), rgba(20,22,29,0.97)); border:1px solid var(--gold-line); border-radius:22px; padding:26px 22px; max-width:360px; max-height:80vh; overflow-y:auto; box-shadow:var(--shadow-deep);}
+#mistakesModalCard{max-width:94vw; width:440px; max-height:88vh; padding:28px 22px;}
 .proverb-item{border-bottom:1px solid var(--gold-line); padding-bottom:14px; margin-bottom:14px;}
 .proverb-item:last-of-type{border-bottom:none; margin-bottom:0; padding-bottom:0;}
 .proverb-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:20px; color:var(--gold2); line-height:2.2; text-align:center; margin-bottom:8px;}
@@ -1365,9 +1366,9 @@ function renderMistakesQuestion(){
       '<span style="font-size:14px; color:#9BA3B4;">' + (st.idx+1) + ' / ' + st.indices.length + '</span>' +
       '<span style="font-size:18px; letter-spacing:2px;">' + livesHtml + '</span>' +
     '</div>' +
-    '<div style="text-align:center; font-size:' + (entry.questionIsArabic ? '26px' : '17px') + '; font-weight:700; font-family:' + qFontFamily + '; direction:' + (entry.questionIsArabic ? 'rtl' : 'ltr') + '; line-height:1.8; margin-bottom:6px; color:#EDEFF5;">' + entry.question + '</div>' +
-    (entry.sub ? '<div style="text-align:center; font-size:13px; color:#8A93A6; margin-bottom:14px;">' + entry.sub + '</div>' : '<div style="margin-bottom:14px;"></div>') +
-    '<div id="mistakesOptWrap" style="display:flex; flex-direction:column; gap:9px; margin-bottom:6px;"></div>' +
+    '<div style="text-align:center; font-size:' + (entry.questionIsArabic ? '34px' : '20px') + '; font-weight:700; font-family:' + qFontFamily + '; direction:' + (entry.questionIsArabic ? 'rtl' : 'ltr') + '; line-height:2; margin-bottom:8px; color:#EDEFF5;">' + entry.question + '</div>' +
+    (entry.sub ? '<div style="text-align:center; font-size:14px; color:#8A93A6; margin-bottom:16px;">' + entry.sub + '</div>' : '<div style="margin-bottom:16px;"></div>') +
+    '<div id="mistakesOptWrap" style="display:flex; flex-direction:column; gap:11px; margin-bottom:6px;"></div>' +
     '<div id="mistakesResultArea" style="margin-top:8px;"></div>';
   card.innerHTML = html;
   var wrap = document.getElementById('mistakesOptWrap');
@@ -1375,7 +1376,7 @@ function renderMistakesQuestion(){
     var isArabicOpt = entry.correctIsArabic;
     var btn = document.createElement('button');
     btn.className = 'shop-buy-btn';
-    btn.style.cssText = 'width:100%; text-align:center; font-size:' + (isArabicOpt ? '17px' : '13px') + '; font-family:' + (isArabicOpt ? "'Noto Naskh Arabic','Amiri',serif" : "'Inter',sans-serif") + '; direction:' + (isArabicOpt ? 'rtl' : 'ltr') + '; padding:12px;';
+    btn.style.cssText = 'width:100%; text-align:center; font-size:' + (isArabicOpt ? '22px' : '15px') + '; font-family:' + (isArabicOpt ? "'Noto Naskh Arabic','Amiri',serif" : "'Inter',sans-serif") + '; direction:' + (isArabicOpt ? 'rtl' : 'ltr') + '; line-height:1.8; padding:16px;';
     btn.textContent = optText;
     btn.onclick = function(){ answerMistakesQuestion(this, entry); };
     wrap.appendChild(btn);
@@ -1422,6 +1423,14 @@ function answerMistakesQuestion(btnEl, entry){
   if(st.lives <= 0){
     ra.innerHTML = '<div style="text-align:center; color:#E8765C; font-weight:700; font-size:14px; margin-bottom:10px;">\uD83D\uDC94 Jonlar tugadi \u2014 so\'zlar daftarda qoladi</div>' +
       '<button class="proverb-close-btn" onclick="finishMistakesQuiz(false)">Tugatish</button>';
+    return;
+  }
+  if(isCorrect){
+    // To'g'ri javobda — qolgan bo'lim/testlardagi kabi avtomatik keyingi savolga o'tamiz.
+    setTimeout(function(){
+      st.idx++;
+      if(st.idx < st.indices.length){ renderMistakesQuestion(); } else { finishMistakesQuiz(true); }
+    }, 700);
     return;
   }
   var nextBtn = document.createElement('button');

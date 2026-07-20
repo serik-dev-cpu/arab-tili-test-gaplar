@@ -1509,8 +1509,8 @@ function renderShop(){
   if(balEl) balEl.textContent = wallet + ' XP';
   if(noteEl) noteEl.textContent = "Jami to'plangan: " + total + " XP (unvon uchun, kamaymaydi)";
 
-  setBtn('shopBtnFreeze', getShopFlag('streak_freeze'), 150, wallet, 'Faol ✓');
-  setBtn('shopBtnAura', getShopFlag('premium_aura'), 300, wallet, 'Faol ✓');
+  setBtn('shopBtnFreeze', getShopFlag('streak_freeze'), 105, wallet, 'Faol ✓');
+  setBtn('shopBtnAura', getShopFlag('premium_aura'), 210, wallet, 'Faol ✓');
   var proverbPurchases = getProverbPurchases();
   var bonusBtn = document.getElementById('shopBtnBonus');
   var bonusPriceEl = document.getElementById('shopBonusPrice');
@@ -1529,27 +1529,27 @@ function renderShop(){
   if(bonusPriceEl) bonusPriceEl.textContent = PROVERB_COST + ' XP';
 
   var frameTier = getShopFlag('avatar_frame_tier') || '';
-  setFrameBtn('shopBtnFrameBronze', 'bronze', frameTier, 200, wallet);
-  setFrameBtn('shopBtnFrameSilver', 'silver', frameTier, 400, wallet);
-  setFrameBtn('shopBtnFrameGold', 'gold', frameTier, 700, wallet);
+  setFrameBtn('shopBtnFrameBronze', 'bronze', frameTier, 140, wallet);
+  setFrameBtn('shopBtnFrameSilver', 'silver', frameTier, 200, wallet);
+  setFrameBtn('shopBtnFrameGold', 'gold', frameTier, 350, wallet);
 
   var theme = getShopFlag('active_theme') || 'gold';
-  setThemeBtn('shopBtnThemeEmerald', 'emerald', theme, 250, wallet);
-  setThemeBtn('shopBtnThemeRuby', 'ruby', theme, 250, wallet);
+  setThemeBtn('shopBtnThemeEmerald', 'emerald', theme, 175, wallet);
+  setThemeBtn('shopBtnThemeRuby', 'ruby', theme, 175, wallet);
   var goldBtn = document.getElementById('shopBtnThemeGold');
   if(goldBtn) goldBtn.className = 'shop-buy-btn' + (theme==='gold' ? ' active-flag' : '');
 
   var confetti = getShopFlag('active_confetti') || 'default';
-  setThemeBtn('shopBtnConfettiSilver', 'silver', confetti, 200, wallet, 'confetti_owned_silver');
-  setThemeBtn('shopBtnConfettiFire', 'fire', confetti, 200, wallet, 'confetti_owned_fire');
+  setThemeBtn('shopBtnConfettiSilver', 'silver', confetti, 140, wallet, 'confetti_owned_silver');
+  setThemeBtn('shopBtnConfettiFire', 'fire', confetti, 140, wallet, 'confetti_owned_fire');
   var defBtn = document.getElementById('shopBtnConfettiDefault');
   if(defBtn) defBtn.className = 'shop-buy-btn' + (confetti==='default' ? ' active-flag' : '');
 
-  setBtn('shopBtnAudioFlashcard', getShopFlag('audio_flashcard') || getShopFlag('audio_unlocked'), 400, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioMatch', getShopFlag('audio_match') || getShopFlag('audio_unlocked'), 400, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioTest', getShopFlag('audio_test') || getShopFlag('audio_unlocked'), 500, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioGap', getShopFlag('audio_gap') || getShopFlag('audio_unlocked'), 1000, wallet, 'Faol ✓');
-  setBtn('shopBtnAudioLugat', getShopFlag('audio_lugat') || getShopFlag('audio_unlocked'), 1000, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioFlashcard', getShopFlag('audio_flashcard') || getShopFlag('audio_unlocked'), 200, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioMatch', getShopFlag('audio_match') || getShopFlag('audio_unlocked'), 200, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioTest', getShopFlag('audio_test') || getShopFlag('audio_unlocked'), 250, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioGap', getShopFlag('audio_gap') || getShopFlag('audio_unlocked'), 500, wallet, 'Faol ✓');
+  setBtn('shopBtnAudioLugat', getShopFlag('audio_lugat') || getShopFlag('audio_unlocked'), 500, wallet, 'Faol ✓');
   updateSpeedButtons();
 }
 function setBtn(id, owned, cost, wallet, ownedLabel, alwaysClickable){

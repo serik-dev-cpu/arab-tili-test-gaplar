@@ -482,9 +482,17 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="level-tab active" data-level="oson">Oson</div>
     <div class="level-tab" data-level="ortacha">O'rtacha</div>
     <div class="level-tab" data-level="prof">Profi</div>
+    <div class="level-tab" data-level="eshitib">🎧 Eshitib</div>
   </div>
   <div class="quiz-progress" id="gt-progress">1 / 20</div>
-  <div class="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gt-uz-text">...</span></div>
+  <div class="gt-translation" id="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gt-uz-text">...</span></div>
+  <div id="gt-listen-prompt" style="display:none; text-align:center; margin-bottom:14px; background:rgba(212,162,58,0.08); border:1px solid var(--gold-line); border-radius:14px; padding:16px;">
+    <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Gapni tinglang va arabchada tuzing:</div>
+    <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="handleAudioClick('gap', gtState.currentSentence.ar, this)"><i class="ti ti-volume"></i> Tinglash</span>
+    <div style="margin-top:10px;">
+      <span style="font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer;" onclick="revealGapTranslation()">Tarjimani ko'rsatish</span>
+    </div>
+  </div>
   <div class="sentence-box empty" id="gt-answer-zone"></div>
   <div class="gt-result" id="gt-result"></div>
   <div class="word-pool" id="gt-pool"></div>
@@ -2164,9 +2172,16 @@ function startGapTuzish(){
     t.classList.toggle('active', t.getAttribute('data-level')===gtState.level);
     t.onclick = function(){
       if(smartPath.active) return;
-      gtState.level = t.getAttribute('data-level');
+      var lvl = t.getAttribute('data-level');
+      gtState.level = lvl;
       gtState.idx = 0;
       gtState.correctCount = 0;
+      if(lvl === 'eshitib' && !SENTENCES['eshitib']){
+        // 4-TOPSHIRIQ (Acrab tahlili): "Eshitib tuzish" — barcha darajadagi gaplarni
+        // birlashtirib, tinglab-tuzish rejimi uchun bittalik massiv yasaymiz.
+        var allS = [].concat(SENTENCES.oson||[]).concat(SENTENCES.ortacha||[]).concat(SENTENCES.prof||[]);
+        SENTENCES['eshitib'] = shuffle(allS);
+      }
       gtState.order = shuffleIdx(SENTENCES[gtState.level].length);
       document.querySelectorAll('.level-tab').forEach(function(x){x.classList.remove('active');});
       t.classList.add('active');
@@ -2205,6 +2220,18 @@ function renderGapCurrent(){
   gtState.answered = false;
   gtState.selected = [];
   document.getElementById('gt-uz-text').textContent = dtxt(sentence.uz);
+  // 4-TOPSHIRIQ: "Eshitib tuzish" rejimida tarjima matni avval yashirin bo'ladi —
+  // talaba avval ovozni tinglab, keyin gapni tuzadi (xohlasa "Tarjimani ko'rsatish" bosadi).
+  var isListenMode = (gtState.level === 'eshitib');
+  var uzWrap = document.getElementById('gt-translation');
+  var promptEl = document.getElementById('gt-listen-prompt');
+  if(isListenMode){
+    if(uzWrap) uzWrap.style.display = 'none';
+    if(promptEl) promptEl.style.display = 'block';
+  } else {
+    if(uzWrap) uzWrap.style.display = '';
+    if(promptEl) promptEl.style.display = 'none';
+  }
   var words = sentence.ar.split(' ');
   // Takroriy plitkalarni oldini olamiz: jumlada bor so'zni distraktor sifatida qo'shmaymiz
   // va distraktorlar bir-birini takrorlamasligini ta'minlaymiz.
@@ -2274,6 +2301,10 @@ function renderGapAnswerZone(){
     });
   });
 }
+function revealGapTranslation(){
+  var uzWrap = document.getElementById('gt-translation');
+  if(uzWrap) uzWrap.style.display = '';
+}
 document.getElementById('gt-clear-btn').addEventListener('click', function(){
   if(gtState.answered) return;
   gtState.selected.forEach(function(s){ s.used = false; });
@@ -2294,6 +2325,11 @@ function advanceGapQuestion(){
 document.getElementById('gt-check-btn').addEventListener('click', function(){
   if(gtState.answered) return;
   gtState.answered = true;
+  // Javob tekshirilgach, "Eshitib tuzish" rejimida ham tarjima va oddiy natija ko'rinishi chiqadi.
+  var promptEl0 = document.getElementById('gt-listen-prompt');
+  if(promptEl0) promptEl0.style.display = 'none';
+  var uzWrap0 = document.getElementById('gt-translation');
+  if(uzWrap0) uzWrap0.style.display = '';
   var userAnswer = gtState.selected.map(function(s){return s.word;}).join(' ');
   var correct = userAnswer === gtState.currentSentence.ar;
   var resultEl = document.getElementById('gt-result');

@@ -2807,6 +2807,12 @@ function finishMistakeRetry(){
       if(state.learned.indexOf(qid) === -1){ state.learned.push(qid); changed = true; }
     });
     if(changed) saveProgress(state);
+    // MUHIM: "Bo'lim progressi" foizi box (mustahkamlik darajasi) yig'indisiga asoslanadi.
+    // Turboda xato qilinganda box 1'ga tushadi — shu yerda darhol to'g'ri javob berilsa,
+    // box ham normal Test'dagi kabi +1 oshadi, shunda foiz haqiqiy holatni ko'rsatadi.
+    Object.keys(st.fixedQids).forEach(function(qid){
+      setBox(qid, Math.min(5, getBox(qid) + 1));
+    });
   }catch(e){}
   // Darhol mustahkamlangan so'z Hadiqatul-Ilm (Xato daftari)'dan ham o'chadi —
   // ikkita joyda (shu yerda va Hadiqatul-Ilm'da) qolib ketmasligi uchun.

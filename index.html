@@ -1384,6 +1384,7 @@ function renderMistakesQuestion(){
 function answerMistakesQuestion(btnEl, entry){
   var st = mistakesQuizState;
   if(!st) return;
+  var card = document.getElementById('mistakesModalCard');
   var wrap = document.getElementById('mistakesOptWrap');
   Array.from(wrap.children).forEach(function(b){ b.onclick = null; });
   var isCorrect = btnEl.textContent === entry.correct;

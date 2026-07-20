@@ -209,13 +209,24 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .hero-ring-wrap{position:relative;flex-shrink:0;width:64px;height:64px;z-index:1}
 .hero-ring-wrap .summary-ring-svg{position:absolute;inset:0;transform:rotate(-90deg)}
 .hero-ring-wrap .summary-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#F0C56B}
-.summary-sub-line{font-size:13px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 14px;}
+.summary-sub-line{font-size:13px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 10px;}
 .summary-sub-line b{color:#EDEFF5;font-weight:700}
+
+/* ═══ Bo'lim-yo'li tasmasi: 12 segment, har biri bitta bo'lim holatini ko'rsatadi ═══ */
+.bolim-track{display:flex;gap:3px;margin:0 4px 10px;}
+.bolim-seg{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;}
+.bolim-seg.seg-done{background:linear-gradient(90deg,#F0C56B,#D4A23A);box-shadow:0 0 6px rgba(240,197,107,.35);}
+.bolim-seg.seg-progress{background:rgba(240,197,107,.22);}
+.bolim-seg.seg-progress::after{content:'';position:absolute;top:0;left:0;bottom:0;width:var(--fill,0%);
+  background:linear-gradient(90deg,#F0C56B,#D4A23A);border-radius:4px;}
+.bolim-seg.seg-locked{background:rgba(255,255,255,.03);}
+
 @media (max-width:360px){
   .hero-greet{font-size:15px}
   .hero-ring-wrap{width:56px;height:56px}
   .hero-ring-wrap .summary-ring-pct{font-size:14px}
   .stat-pill{padding:5px 9px;font-size:13px}
+  .bolim-seg{height:7px}
 }
 
 .section-label{color:#8A93A6;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:30px 0 4px 4px;display:flex;align-items:center;gap:8px}
@@ -549,8 +560,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         <div class="summary-ring-pct" id="summaryPct">0%</div>
       </div>
     </div>
+    <div class="bolim-track" id="bolimTrack" title="12 bo'lim yo'li"></div>
     <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
-    <div style="text-align:center; font-size:12px; color:#5A6275; margin:-8px 0 12px;">(butun 12 bo'lim bo'yicha umumiy ko'rsatkich)</div>
 
     <!-- ═══ KEYINGI BOSQICHLAR: Imtihon va Unvongacha qancha qoldi ═══ -->
     <div class="milestones-row">
@@ -947,6 +958,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 <!-- ═══════════ SOVG'A MODAL ═══════════ -->
 <script src="core.js"></script>
 <script>
+// XP sonlarini pul-uslubida guruhlash uchun (masalan 305275 -> 305,275)
+function fmtXP(n){ n = Math.round(Number(n)||0); return n.toLocaleString('en-US'); }
 'use strict';
 
 // ═══ UMUMIY ISM TIZIMI — barcha bo'limlar shu kalitdan foydalanadi ═══
@@ -972,11 +985,11 @@ function initHeroStats(name){
 
   if(avatarEl) avatarEl.textContent = initials || '?';
   if(greetEl) greetEl.innerHTML = '<span style="font-size:12.5px;font-weight:600;color:#9BA3B4;display:block;margin-bottom:1px;">Xush kelibsiz,</span>' + name;
-  if(xpEl) xpEl.textContent = xp;
+  if(xpEl) xpEl.textContent = fmtXP(xp);
   var walletEl = document.getElementById('heroWalletXp');
   if(walletEl){
     var w = getWalletXP();
-    walletEl.textContent = w + ' qoldiq';
+    walletEl.textContent = fmtXP(w) + ' qoldiq';
   }
   if(streakEl) streakEl.textContent = streak;
   if(rankLabelEl){ var rank = getRank(xp); rankLabelEl.textContent = rank.label; }
@@ -1072,7 +1085,7 @@ function renderRankProgress(){
       var progressed = xp - cur.min;
       var pct = Math.max(0, Math.min(100, Math.round((progressed/span)*100)));
       if(barEl) barEl.style.width = pct + '%';
-      if(noteEl) noteEl.textContent = "Keyingi unvongacha (" + next.label + "): " + xp + " / " + next.min + " XP";
+      if(noteEl) noteEl.textContent = "Keyingi unvongacha (" + next.label + "): " + fmtXP(xp) + " / " + fmtXP(next.min) + " XP";
     } else {
       if(barEl) barEl.style.width = '100%';
       if(noteEl) noteEl.textContent = "Eng yuqori oddiy unvonga yetdingiz!";
@@ -1489,7 +1502,7 @@ function renderSpendHistoryList(){
     var item = log[i];
     var d = new Date(item.date);
     var dateStr = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
-    html += '<div class="spend-log-item"><div><div class="spend-log-label">'+item.label+'</div><div class="spend-log-date">'+dateStr+'</div></div><div class="spend-log-amount">-'+item.amount+' XP</div></div>';
+    html += '<div class="spend-log-item"><div><div class="spend-log-label">'+item.label+'</div><div class="spend-log-date">'+dateStr+'</div></div><div class="spend-log-amount">-'+fmtXP(item.amount)+' XP</div></div>';
   }
   list.innerHTML = html;
 }
@@ -1506,8 +1519,8 @@ function renderShop(){
   var total = getAchievementXP();
   var balEl = document.getElementById('shopWalletBalance');
   var noteEl = document.getElementById('shopWalletNote');
-  if(balEl) balEl.textContent = wallet + ' XP';
-  if(noteEl) noteEl.textContent = "Jami to'plangan: " + total + " XP (unvon uchun, kamaymaydi)";
+  if(balEl) balEl.textContent = fmtXP(wallet) + ' XP';
+  if(noteEl) noteEl.textContent = "Jami to'plangan: " + fmtXP(total) + " XP (unvon uchun, kamaymaydi)";
 
   setBtn('shopBtnFreeze', getShopFlag('streak_freeze'), 105, wallet, 'Faol ✓');
   setBtn('shopBtnAura', getShopFlag('premium_aura'), 210, wallet, 'Faol ✓');
@@ -2178,6 +2191,7 @@ function initRoadmap(){
   var totalLearned = 0, totalWords = 0, anyStarted = false;
   var allComplete = true, incompleteCount = 0;  // hamma bo'lim Turbo bilan tugatilganmi
   var cardsHtml = '';
+  var segStates = []; // bo'lim-yo'li tasmasi uchun: har bo'lim holati (done/progress/empty/locked)
 
   nums.forEach(function(num){
     var entry = byNum[num];
@@ -2186,6 +2200,7 @@ function initRoadmap(){
     if(entry.locked){
       cardsHtml += buildCard(item, true, 0);
       allComplete = false; incompleteCount++;
+      segStates.push('locked');
       return;
     }
 
@@ -2204,9 +2219,24 @@ function initRoadmap(){
     var gatedLock = !isBolimUnlocked(num);
     item.gatingLocked = gatedLock;
     cardsHtml += buildCard(item, gatedLock, pct);
+
+    if(gatedLock) segStates.push('locked');
+    else if(isBolimComplete(num)) segStates.push('done');
+    else if(pct > 0) segStates.push({state:'progress', fill:pct});
+    else segStates.push('empty');
   });
 
   document.getElementById('roadRows').innerHTML = cardsHtml;
+
+  var trackEl = document.getElementById('bolimTrack');
+  if(trackEl){
+    trackEl.innerHTML = segStates.map(function(s){
+      if(typeof s === 'object'){
+        return '<div class="bolim-seg seg-progress" style="--fill:'+s.fill+'%"></div>';
+      }
+      return '<div class="bolim-seg seg-'+s+'"></div>';
+    }).join('');
+  }
 
   var overallPct = totalWords ? Math.round(totalLearned / totalWords * 100) : 0;
   var SUMMARY_C = 2 * Math.PI * 37;
@@ -2219,7 +2249,7 @@ function initRoadmap(){
   if(summaryPct) summaryPct.textContent = overallPct + '%';
   if(summarySub){
     summarySub.innerHTML = anyStarted
-      ? '<b>' + totalLearned + '</b> / ' + totalWords + ' so\'z o\'rganildi · ' + BOLIMLAR.length + ' ta tayyor bo\'lim'
+      ? '<b>' + totalLearned + '</b> / ' + totalWords + ' so\'z o\'rganildi'
       : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
   }
 
@@ -2243,7 +2273,7 @@ function initRoadmap(){
       } else {
         var _need = RANK_THRESHOLDS[_idx + 1] - _xp;
         var _nextRank = getRank(RANK_THRESHOLDS[_idx + 1]).label;
-        rankChip.textContent = _nextRank + ' — ' + _need + ' XP qoldi';
+        rankChip.textContent = _nextRank + ' — ' + fmtXP(_need) + ' XP qoldi';
       }
     }catch(e){ rankChip.textContent = '—'; }
   }

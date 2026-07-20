@@ -383,6 +383,8 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 /* ═══════════════ Muqaddas Tantana (Victory Celebration) ═══════════════ */
 .victory-fx{position:fixed; inset:0; pointer-events:none; z-index:9000; overflow:hidden;}
 .confetti-piece{position:absolute; top:-20px; width:8px; height:14px; opacity:0; border-radius:2px; animation:confettiFall ease-in forwards;}
+@keyframes floatXpRise{0%{transform:translate(-50%,0) scale(0.7); opacity:0;} 18%{transform:translate(-50%,-10px) scale(1.1); opacity:1;} 45%{transform:translate(-50%,-34px) scale(1); opacity:1;} 100%{transform:translate(-50%,-92px) scale(0.95); opacity:0;}}
+.float-xp{position:fixed; left:50%; top:44%; transform:translate(-50%,0); z-index:99998; pointer-events:none; font-weight:800; font-size:26px; color:#F0C56B; text-shadow:0 2px 10px rgba(212,162,58,0.55), 0 0 22px rgba(240,197,107,0.4); animation:floatXpRise 1.5s cubic-bezier(.22,.61,.36,1) forwards;}
 @keyframes confettiFall{
   0%{transform:translateY(0) rotate(0deg); opacity:1;}
   100%{transform:translateY(110vh) rotate(540deg); opacity:0;}
@@ -648,6 +650,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="mm-extratime-offer" id="quizExtraTimeOffer">
     <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
     <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+10 soniya</b> qo‘shib davom etasizmi?</div>
+    <div id="quizExtraWallet" style="display:flex; align-items:center; justify-content:center; gap:6px; font-size:15px; font-weight:800; color:#F0C56B; background:rgba(212,162,58,0.14); border:1px solid var(--gold-line); border-radius:12px; padding:8px 12px; margin:2px 0 6px;">💰 Hamyoningiz: <span id="quizExtraWalletVal">0</span> XP</div>
     <button class="mm-extratime-btn" onclick="buyQuizExtraTime()">Ha, +10 soniya (30 XP)</button>
     <span class="mm-extratime-close" onclick="closeQuizExtraTimeOffer()">Yo‘q, kerak emas</span>
   </div>
@@ -713,13 +716,24 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="back-row"><span class="back-link" onclick="goScreen('home')"><i class="ti ti-chevron-left"></i> Bosh menyu</span></div>
   <h2>Gap tuzish</h2>
   <div class="spd-chips" id="spd-chips-gap"></div>
-  <div class="level-tabs">
+  <div class="level-tabs" id="gt-level-tabs">
     <div class="level-tab active" data-lvl="oson" onclick="selectGapLevel('oson',this)">Oson</div>
     <div class="level-tab" data-lvl="ortacha" onclick="selectGapLevel('ortacha',this)">O'rtacha</div>
     <div class="level-tab" data-lvl="profi" onclick="selectGapLevel('profi',this)">Profi</div>
+    <div class="level-tab" data-lvl="eshitib" onclick="selectGapLevel('eshitib',this)">🎧 Eshitib</div>
   </div>
   <div class="quiz-progress" id="gap-progress">1 / 20</div>
-  <div class="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gap-cyr">...</span></div>
+  <div class="gt-translation" id="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gap-cyr">...</span></div>
+  <div id="gt-listen-prompt" style="display:none; text-align:center; margin-bottom:14px; background:rgba(212,162,58,0.08); border:1px solid var(--gold-line); border-radius:14px; padding:16px;">
+    <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Gapni tinglang va arabchada tuzing:</div>
+    <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="playListenSentence(this)"><i class="ti ti-volume"></i> Tinglash</span>
+    <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+      <span class="gt-listen-btn" id="gt-listen-slow-btn" style="font-size:12.5px; padding:7px 14px;" onclick="playListenSentenceSlow(this)"><i class="ti ti-player-track-prev"></i> Sekin</span>
+    </div>
+    <div style="margin-top:12px;">
+      <span style="font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer;" onclick="revealGapTranslation()">Tarjimani ko'rsatish</span>
+    </div>
+  </div>
   <div class="sentence-box empty" id="gt-answer"></div>
   <div class="gt-result" id="gt-result-area"></div>
   <div class="word-pool" id="gt-pool"></div>
@@ -871,6 +885,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   <div class="mm-extratime-offer" id="mmExtraTimeOffer">
     <div style="font-size:17px; margin-bottom:2px;">⏸️ Vaqt to’xtatildi</div>
     <div style="font-size:14px; color:#C7CCD8; font-weight:600; margin-bottom:4px;">Yana <b style="color:#F0C56B;">+20 soniya</b> qo‘shib davom etasizmi?</div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:6px; font-size:15px; font-weight:800; color:#F0C56B; background:rgba(212,162,58,0.14); border:1px solid var(--gold-line); border-radius:12px; padding:8px 12px; margin:2px 0 6px;">💰 Hamyoningiz: <span id="mmExtraWalletVal">0</span> XP</div>
     <button class="mm-extratime-btn" onclick="buyExtraTime()">Ha, +20 soniya (40 XP)</button>
     <span class="mm-extratime-close" onclick="closeExtraTimeOffer()">Yo‘q, kerak emas</span>
   </div>
@@ -1952,6 +1967,8 @@ function startQuizTimer(){
 function offerQuizExtraTime(){
   quizExtraState.offered = true;
   quizExtraState.offerOpen = true;
+  var wv = document.getElementById('quizExtraWalletVal');
+  if(wv) wv.textContent = getWalletXP();
   var box = document.getElementById('quizExtraTimeOffer');
   if(box) box.style.display = 'flex';
 }
@@ -2128,6 +2145,7 @@ function answerQuiz(item, btnEl, wrap, correctText, correctIsArabic){
       var arText = (item.kind==='word') ? item.data.ar : (correctIsArabic ? correctText : '');
       if(arText){ setTimeout(function(){ speakArabic(arText); }, 150); }
     }
+    awardInstantXp(1); // Har to'g'ri javobda +1 XP (haqiqiy) + floating animatsiya
     setTimeout(()=>{ advanceQuiz(); }, 600);
   } else {
     recordQuizMistake(item, wrap, correctText, correctIsArabic);
@@ -2299,8 +2317,15 @@ function finishMistakeRetry(){
   try{
     var state = loadProgress();
     var changed = false;
+    if(!state.box) state.box = {};
     Object.keys(st.fixedQids).forEach(function(qid){
       if(state.learned.indexOf(qid) === -1){ state.learned.push(qid); changed = true; }
+      // MUHIM: "Bo'lim progressi" foizi box (mustahkamlik darajasi) yig'indisiga asoslanadi.
+      // Turboda xato qilinganda box 1'ga tushadi — shu yerda darhol to'g'ri javob berilsa,
+      // box ham normal Test'dagi kabi +1 oshadi, shunda foiz haqiqiy holatni ko'rsatadi.
+      var curBox = Number(state.box[qid]) || 1;
+      state.box[qid] = Math.min(5, curBox + 1);
+      changed = true;
     });
     if(changed) saveProgress(state);
   }catch(e){}
@@ -2340,6 +2365,21 @@ function finishMistakeRetry(){
 /* ═══════════════ AQLLI YO'L (Smart Path) - zanjir funksiyalari ═══════════════ */
 // TURBO RAUND HAJMI: bo'lim kattaligiga (testable so'z+grammatika soni) va kerakli
 // raund soniga (TURBO_NEEDED_LOCAL) qarab avtomatik moslashadi.
+// Ekranda "+N XP" belgisini ortada paydo qilib, sekin yuqoriga ko'tarib yo'qotadi.
+function showFloatXp(amount){
+  try{
+    var el = document.createElement('div');
+    el.className = 'float-xp';
+    el.textContent = '+' + amount + ' XP';
+    document.body.appendChild(el);
+    setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); }, 1550);
+  }catch(e){}
+}
+function awardInstantXp(amount){
+  amount = amount || 1;
+  addAchievementXP(amount);
+  showFloatXp(amount);
+}
 function getTurboRoundSizes(){
   var testableCount = ALL_WORDS.length + GRAMMAR_ITEMS.length;
   var need = TURBO_NEEDED_LOCAL;
@@ -2408,27 +2448,54 @@ function smartPathRunMatch(){
 }
 function smartPathRunGap(){
   smartPath.step = 3;
-  // goScreen('gap') avtomatik startGapTuzish() ni chaqiradi (oddiy 'oson' daraja) -
-  // shuning uchun ANDAN KEYIN Aqlli Yo'l uchun 3 ta tasodifiy gapni (barcha darajalardan) ustidan yozamiz
   goScreen('gap');
-  var gapCount = getTurboRoundSizes().gap;
-  gapState.list = shuffle(GAP_TUZISH_DATA.slice()).slice(0, gapCount);
-  gapState.order = gtShuffleIdx(gapState.list.length);
+  // Turbo Gap: darajalar avtomat, OSONDAN QIYINGA qarab almashadi (3 ta gap).
+  var gapCount = 3;
+  var perLevel = Math.ceil(gapCount / 3);
+  var pOson = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='oson';})).slice(0, perLevel);
+  var pOrta = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='ortacha';})).slice(0, perLevel);
+  var pProf = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='profi';})).slice(0, perLevel);
+  var picked = pOson.concat(pOrta).concat(pProf).slice(0, gapCount);
+  if(picked.length < gapCount){
+    var extra = shuffle(GAP_TUZISH_DATA.slice()).filter(function(s){ return picked.indexOf(s) === -1; });
+    picked = picked.concat(extra).slice(0, gapCount);
+  }
+  gapState.list = picked;
+  gapState.order = picked.map(function(_,i){ return i; }); // tartib SAQLANADI
   gapState.idx = 0;
   gapState.correct = 0;
+  gapState.level = 'turbo';
+  gapState.turboListen = false;
+  renderGapCurrent();
+}
+// Yangi Turbo bosqichi: "Eshitib tuzish" — Gap bosqichidan keyin, Test'dan oldin.
+function smartPathRunListen(){
+  smartPath.step = 4;
+  goScreen('gap');
+  var eligible = filterListenSentences(GAP_TUZISH_DATA.slice());
+  var listenCount = Math.min(eligible.length, 3);
+  var picked = shuffle(eligible).slice(0, listenCount);
+  gapState.list = picked;
+  gapState.order = picked.map(function(_,i){ return i; });
+  gapState.idx = 0;
+  gapState.correct = 0;
+  gapState.level = 'turbo';
+  gapState.turboListen = true;
   renderGapCurrent();
 }
 function smartPathRunQuiz(){
-  smartPath.step = 4;
+  smartPath.step = 5;
   var items = weightedQuizItems().slice(0, getTurboRoundSizes().quiz);
   quizState = { items:items, idx:0, results:[], wrongItems:[], timePerQ: quizTimePerQ };
   goScreen('quiz');
   renderQuizQuestion();
 }
 function smartPathAdvance(){
+  // Turbo zanjiri: 1) Flashcard  2) Match  3) Gap tuzish  4) Eshitib tuzish  5) Test
   if(smartPath.step === 1){ smartPathRunMatch(); }
   else if(smartPath.step === 2){ smartPathRunGap(); }
-  else if(smartPath.step === 3){ smartPathRunQuiz(); }
+  else if(smartPath.step === 3){ smartPathRunListen(); }
+  else if(smartPath.step === 4){ smartPathRunQuiz(); }
 }
 // Foizni 0'dan haqiqiy qiymatgacha "sanab" ko'rsatadi — natijani jonli va quvonchli qiladi.
 function animateUnlockPct(target){
@@ -2525,6 +2592,29 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
 var GT_DISTRACTOR_WORDS = ['كِتَابٌ','بَيْتٌ','قَلَمٌ','مَكْتَبٌ','جَمِيلٌ','كَبِيرٌ','اليَوْمَ','هُنَاكَ','سَرِيعًا','دَائِمًا'];
 var gapState = {level:'oson', idx:0, order:[], list:[], pool:[], selected:[], answered:false, correct:0};
 
+// "Eshitib" gaplaridagi so'z sonini bo'lim guruhiga qarab cheklaydi:
+// 1-4 -> 4 tagacha, 5-8 -> 5 tagacha, 9-12 -> 6 tagacha (esda qolishi uchun).
+function listenMaxWords(){ return 6; }
+function filterListenSentences(arr){
+  var max = listenMaxWords();
+  var filtered = arr.filter(function(s){ return s.words && s.words.length <= max; });
+  return filtered.length ? filtered : arr;
+}
+function playListenSentence(btnEl){
+  if(gapState.currentItem && gapState.currentItem.answer){
+    speakArabic(gapState.currentItem.answer.join(' '), btnEl);
+  }
+}
+// "Sekin" tugmasi — gapni 0.5x tezlikda (juda sekin) o'qib beradi.
+function playListenSentenceSlow(btnEl){
+  if(gapState.currentItem && gapState.currentItem.answer){
+    speakArabic(gapState.currentItem.answer.join(' '), btnEl, null, 0.5);
+  }
+}
+function revealGapTranslation(){
+  var uzWrap = document.getElementById('gt-translation');
+  if(uzWrap) uzWrap.style.display = '';
+}
 function gtShuffleIdx(n){
   var arr = []; for(var i=0;i<n;i++) arr.push(i);
   arr.sort(function(){return Math.random()-0.5;});
@@ -2560,6 +2650,26 @@ function renderGapCurrent(){
   gapState.answered = false;
   gapState.selected = [];
   document.getElementById('gap-cyr').textContent = dtxt(item.cyr);
+  // 4-TOPSHIRIQ: "Eshitib tuzish" rejimida tarjima matni avval yashirin bo'ladi —
+  // talaba avval ovozni tinglab, keyin gapni tuzadi. Turboda daraja-tab qatori yashiriladi.
+  var isListenMode = (gapState.level === 'eshitib') || (gapState.level === 'turbo' && gapState.turboListen);
+  var uzWrap = document.getElementById('gt-translation');
+  var promptEl = document.getElementById('gt-listen-prompt');
+  var tabsEl = document.getElementById('gt-level-tabs');
+  if(tabsEl) tabsEl.style.display = (gapState.level === 'turbo') ? 'none' : 'flex';
+  if(isListenMode){
+    if(uzWrap) uzWrap.style.display = 'none';
+    if(promptEl) promptEl.style.display = 'block';
+    if(item && item.answer){
+      setTimeout(function(){
+        var b = document.querySelector('#gt-listen-prompt .gt-listen-btn');
+        speakArabic(item.answer.join(' '), b);
+      }, 350);
+    }
+  } else {
+    if(uzWrap) uzWrap.style.display = '';
+    if(promptEl) promptEl.style.display = 'none';
+  }
 
   var shuffledDistractors = GT_DISTRACTOR_WORDS.slice().sort(function(){return Math.random()-0.5;});
   var numExtra = Math.min(2, Math.floor(item.words.length/3)+1);
@@ -2649,6 +2759,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.className = 'gt-result ok show';
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
+    awardInstantXp(1); // Har to'g'ri gapda +1 XP (haqiqiy) + floating animatsiya
     gapState.correct++;
     // MUHIM: ovoz TO'LIQ tugagandan keyin o'tamiz — aks holda yangi savol ovoz
     // tugamasdan chiqib, talaba qaysi matnga tegishli ekanini bilmay chalkashadi.
@@ -2811,6 +2922,8 @@ function offerExtraTime(){
   if(!mmState || mmState.extraTimeOffered || mmState.extraTimeUsed) return;
   mmState.extraTimeOffered = true;
   mmState.offerOpen = true; // vaqt to'xtaydi, plitkalar qulflanadi — bemalol o'ylang
+  var wv = document.getElementById('mmExtraWalletVal');
+  if(wv) wv.textContent = getWalletXP();
   var box = document.getElementById('mmExtraTimeOffer');
   if(box) box.style.display = 'flex';
 }
@@ -2907,6 +3020,7 @@ function mmTileClick(tile){
 
   if(isMatch){
     playCorrect();
+    awardInstantXp(1); // Har to'g'ri juftlikda +1 XP (haqiqiy) + floating animatsiya
     var arEl = (first.side === 'ar') ? first.el : tile;
     if(hasAudioFor('match')){
       speakArabic(arEl.textContent.trim());

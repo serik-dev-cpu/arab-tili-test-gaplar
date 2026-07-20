@@ -501,7 +501,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <button class="lugat-auto-btn" id="lugat-auto-btn" onclick="toggleLugatAutoPlay()"><i class="ti ti-player-play" id="lugat-auto-btn-icon"></i> <span id="lugat-auto-btn-text">Avto-o'qish</span></button>
     <button class="lugat-pause-btn" id="lugat-pause-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-pause-btn-icon"></i> <span id="lugat-pause-btn-text">Pauza</span></button>
     <div class="lugat-speed-row" id="lugat-speed-row">
-      <span class="lugat-speed-chip" data-spd="0.8" onclick="setLugatAudioSpeed(0.8)">0.8x</span>
+      <span class="lugat-speed-chip" data-spd="0.5" onclick="setLugatAudioSpeed(0.5)">0.5x</span>
       <span class="lugat-speed-chip" data-spd="1.0" onclick="setLugatAudioSpeed(1.0)">1.0x</span>
       <span class="lugat-speed-chip" data-spd="1.2" onclick="setLugatAudioSpeed(1.2)">1.2x</span>
     </div>
@@ -736,9 +736,6 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Gapni tinglang va arabchada tuzing:</div>
     <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="playListenSentence(this)"><i class="ti ti-volume"></i> Tinglash</span>
     <div class="spd-chips" id="spd-chips-listen" style="margin-top:12px;"></div>
-    <div style="margin-top:12px;">
-      <span style="font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer;" onclick="revealGapTranslation()">Tarjimani ko'rsatish</span>
-    </div>
   </div>
   <div class="sentence-box empty" id="gt-answer"></div>
   <div class="gt-result" id="gt-result-area"></div>
@@ -1258,7 +1255,7 @@ function updateLugatSpeedChips(){
 }
 function getAudioSpeedSafe(){
   var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
+  return (s === 0.5 || s === 1.0 || s === 1.2) ? s : 0.5;
 }
 function setLugatAudioSpeed(spd){
   localStorage.setItem('arabic_audio_speed', String(spd));
@@ -1272,7 +1269,7 @@ function renderSpeedChipsFor(mode){
   // "listen" ("Eshitib tuzish") rejimi bepul — Bozor xaridiga bog'liq emas, shu uchun har doim ko'rsatiladi
   if(mode !== 'listen' && !hasAudioFor(mode)){ box.classList.remove('show'); box.innerHTML = ''; return; }
   var cur = getAudioSpeedSafe();
-  var chips = [0.8, 1.0, 1.2].map(function(s){
+  var chips = [0.5, 1.0, 1.2].map(function(s){
     var active = (s === cur) ? ' active' : '';
     return '<span class="lugat-speed-chip'+active+'" data-spd="'+s+'" onclick="setLugatAudioSpeed('+s+')">'+s.toFixed(1)+'x</span>';
   }).join('');
@@ -2087,10 +2084,6 @@ function playListenSentence(btnEl){
     speakArabic(gapState.currentItem.answer.join(' '), btnEl);
   }
 }
-function revealGapTranslation(){
-  var uzWrap = document.getElementById('gt-translation');
-  if(uzWrap) uzWrap.style.display = '';
-}
 function gtShuffleIdx(n){
   var arr = []; for(var i=0;i<n;i++) arr.push(i);
   arr.sort(function(){return Math.random()-0.5;});
@@ -2381,7 +2374,7 @@ function speakArabic(text, btnEl, onEndCallback){
   else if(gender === 'male' && arabicVoiceMale) chosenVoice = arabicVoiceMale;
   if(chosenVoice) utter.voice = chosenVoice;
   var _spd = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  utter.rate = (_spd === 0.8 || _spd === 1.0 || _spd === 1.2) ? _spd : 0.8;
+  utter.rate = (_spd === 0.5 || _spd === 1.0 || _spd === 1.2) ? _spd : 0.5;
   if(btnEl) btnEl.classList.add('playing');
   utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };
   utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };

@@ -169,7 +169,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
       <button class="lugat-pause-btn" id="lugat-pause-btn" onclick="pauseResumeLugat()"><i class="ti ti-player-pause" id="lugat-pause-btn-icon"></i> <span id="lugat-pause-btn-text">Pauza</span></button>
     </div>
     <div class="lugat-speed-row" id="lugat-speed-row">
-      <span class="lugat-speed-chip" data-spd="0.8" onclick="setLugatAudioSpeed(0.8)">0.8x</span>
+      <span class="lugat-speed-chip" data-spd="0.5" onclick="setLugatAudioSpeed(0.5)">0.5x</span>
       <span class="lugat-speed-chip" data-spd="1.0" onclick="setLugatAudioSpeed(1.0)">1.0x</span>
       <span class="lugat-speed-chip" data-spd="1.2" onclick="setLugatAudioSpeed(1.2)">1.2x</span>
     </div>
@@ -375,7 +375,7 @@ function speakArabic(text, btnEl, onEndCallback){
 // ═══ Tezlik va Avto-o'qish ═══
 function getAudioSpeedSafe(){
   var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
+  return (s === 0.5 || s === 1.0 || s === 1.2) ? s : 0.5;
 }
 function updateLugatSpeedChips(){
   var cur = getAudioSpeedSafe();

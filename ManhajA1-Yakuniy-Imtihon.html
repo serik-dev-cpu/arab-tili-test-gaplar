@@ -303,7 +303,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <div class="exam-bolim-tag" id="examBolimTag">1-bo'lim</div>
     <div class="exam-spd-chips" id="examSpdChips">
       <span class="spd-label"><i class="ti ti-bolt"></i> Tezlik:</span>
-      <span class="exam-spd-chip" data-spd="0.8" onclick="setExamAudioSpeed(0.8)">0.8x</span>
+      <span class="exam-spd-chip" data-spd="0.5" onclick="setExamAudioSpeed(0.5)">0.5x</span>
       <span class="exam-spd-chip" data-spd="1.0" onclick="setExamAudioSpeed(1.0)">1.0x</span>
       <span class="exam-spd-chip" data-spd="1.2" onclick="setExamAudioSpeed(1.2)">1.2x</span>
     </div>
@@ -634,7 +634,7 @@ if('speechSynthesis' in window){
 }
 function getAudioSpeedSafe(){
   var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8;
+  return (s === 0.5 || s === 1.0 || s === 1.2) ? s : 0.5;
 }
 function updateExamSpeedChips(){
   var cur = getAudioSpeedSafe();

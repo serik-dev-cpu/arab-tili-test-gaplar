@@ -728,10 +728,10 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
         <div class="shop-item">
           <div class="shop-item-head"><div class="shop-item-icon">⚡</div><div class="shop-item-title">Tezlik sozlash</div></div>
-          <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.8x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
+          <div class="shop-item-desc">Barcha ovozlar uchun tezlikni tanlang: sekin (0.5x), oddiy (1.0x), tez (1.2x). Boshlang'ich daraja uchun sekin ideal.</div>
           <div class="shop-item-footer">
             <div class="confetti-btn-row" id="speedBtnRow">
-              <button class="shop-buy-btn" id="speedBtn08" onclick="setAudioSpeed(0.8)">Sekin 0.8x</button>
+              <button class="shop-buy-btn" id="speedBtn05" onclick="setAudioSpeed(0.5)">Sekin 0.5x</button>
               <button class="shop-buy-btn" id="speedBtn10" onclick="setAudioSpeed(1.0)">Oddiy 1.0x</button>
               <button class="shop-buy-btn" id="speedBtn12" onclick="setAudioSpeed(1.2)">Tez 1.2x</button>
             </div>
@@ -1781,17 +1781,17 @@ function buyAudio(mode, cost, btnId){
 // Ovoz tezligi (barcha rejimlarga umumiy) — localStorage'da saqlanadi
 function getAudioSpeed(){
   var s = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  return (s === 0.8 || s === 1.0 || s === 1.2) ? s : 0.8; // default sekin
+  return (s === 0.5 || s === 1.0 || s === 1.2) ? s : 0.5; // default sekin
 }
 function setAudioSpeed(speed){
   localStorage.setItem('arabic_audio_speed', String(speed));
   updateSpeedButtons();
-  var names = {0.8:'Sekin (0.8x)', 1.0:'Oddiy (1.0x)', 1.2:'Tez (1.2x)'};
+  var names = {0.5:'Sekin (0.5x)', 1.0:'Oddiy (1.0x)', 1.2:'Tez (1.2x)'};
   shopToast('Ovoz tezligi: ' + (names[speed]||speed));
 }
 function updateSpeedButtons(){
   var cur = getAudioSpeed();
-  [['speedBtn08',0.8],['speedBtn10',1.0],['speedBtn12',1.2]].forEach(function(pair){
+  [['speedBtn05',0.5],['speedBtn10',1.0],['speedBtn12',1.2]].forEach(function(pair){
     var el = document.getElementById(pair[0]);
     if(el){ el.className = 'shop-buy-btn' + (cur === pair[1] ? ' owned' : ''); }
   });

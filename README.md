@@ -1,1 +1,0 @@
-# arab-tili-test-gaplar

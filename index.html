@@ -23,7 +23,7 @@
   --ease:cubic-bezier(0.4, 0, 0.2, 1);
 }
 html,body{min-height:100%;background:#0B0E14;color:#EDEFF5;font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60px;position:relative;overflow-x:hidden}
+body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;position:relative;overflow-x:hidden}
 
 .bg-glow{position:fixed;top:0;left:0;right:0;height:520px;pointer-events:none;z-index:0;
   background-image:
@@ -35,7 +35,30 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 
 .wrap{width:100%;max-width:480px;position:relative;z-index:1}
 
-.header{text-align:center;margin-bottom:18px}
+.header{text-align:center;margin-bottom:14px}
+/* ═══ IMZO BELGISI — 8 qirrali yulduz (islomiy manuskript motivi) ═══ */
+.brand-mark{width:30px;height:30px;margin:0 auto 10px;opacity:0.92;}
+.brand-mark svg{width:100%;height:100%;display:block;}
+.kicker{color:#D4A23A;font-size:12.5px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;margin-bottom:6px}
+.title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:28px;font-weight:700;color:#EDEFF5;margin-bottom:5px;direction:rtl;line-height:1.7}
+.subtitle{color:#8A93A6;font-size:13px;font-weight:500;letter-spacing:0.2px}
+.change-name-link{
+  margin-top:8px;display:inline-block;color:#D4A23A;font-size:13px;font-weight:600;
+  cursor:pointer;text-decoration:underline;text-underline-offset:2px;
+}
+.header-actions-row{
+  display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;
+}
+.header-actions-row .change-name-link{margin-top:0;}
+/* ═══ Ixcham utility chip'lar (ism/zaxira) — matnli, lekin torroq ═══ */
+.header-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);
+  border-radius:16px;color:#9BA3B4;font-size:12px;font-weight:600;
+  padding:6px 11px;cursor:pointer;transition:all .2s ease;text-decoration:none;
+}
+.header-chip:active{transform:scale(.95);}
+.header-chip i{font-size:13px;color:#D4A23A;}
 /* ═══════════════ PAPKA (TAB) NAVIGATSIYASI ═══════════════ */
 .tab-bar{position:sticky; top:0; z-index:500; display:flex; gap:4px; justify-content:space-between; overflow-x:auto; padding:10px 2px 12px; margin:0 -16px 18px; padding-left:16px; padding-right:16px; background:linear-gradient(180deg, rgba(11,14,20,0.97) 75%, rgba(11,14,20,0)); scrollbar-width:none;}
 .tab-bar::-webkit-scrollbar{display:none;}
@@ -59,14 +82,14 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 @keyframes tabFadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 .quick-links-row{display:flex; gap:10px; margin-top:14px;}
 .milestones-row{display:flex; gap:10px; margin-bottom:4px;}
-.milestone-chip{flex:1; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.035); border:1px solid rgba(212,162,58,0.18); border-radius:14px; padding:10px 12px;}
+.milestone-chip{flex:1; display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.035); border:1px solid rgba(212,162,58,0.18); border-radius:14px; padding:9px 11px;}
 .milestone-chip i{font-size:20px; color:#D4A23A; flex-shrink:0;}
 .milestone-label{font-size:12px; color:#8A93A6; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;}
 .milestone-value{font-size:13px; color:#EDEFF5; font-weight:700; margin-top:1px;}
 .quick-link-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 8px; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; font-size:13px; font-weight:700; color:#D4A23A; transition:transform .15s var(--ease);}
 .quick-link-btn:active{transform:scale(.96);}
 .quick-link-btn i{font-size:22px;}
-.quick-link-full{flex-direction:row !important; gap:10px !important; padding:18px 12px !important; font-size:15px !important; background:linear-gradient(135deg, rgba(212,162,58,0.14), rgba(240,197,107,0.06)) !important; border-color:rgba(212,162,58,0.35) !important; color:#F0C56B !important;}
+.quick-link-full{flex-direction:row !important; gap:10px !important; padding:14px 12px !important; font-size:14.5px !important; background:linear-gradient(135deg, rgba(212,162,58,0.14), rgba(240,197,107,0.06)) !important; border-color:rgba(212,162,58,0.35) !important; color:#F0C56B !important;}
 .quick-link-full i{font-size:24px !important;}
 .tab-info-note{font-size:13px; color:#8A93A6; text-align:center; margin-top:14px; line-height:1.6; padding:0 8px;}
 /* ═══════════════ UNVON DARAJASI (Duolingo uslubida) ═══════════════ */
@@ -85,17 +108,6 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .rank-ladder-icon{font-size:20px;}
 .rank-ladder-name{font-size:10px; font-weight:700; color:#8A93A6; text-align:center;}
 .rank-ladder-item.achieved .rank-ladder-name, .rank-ladder-item.current .rank-ladder-name{color:#F0C56B;}
-.kicker{color:#D4A23A;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
-.title{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:30px;font-weight:700;color:#EDEFF5;margin-bottom:8px;direction:rtl;line-height:1.8}
-.subtitle{color:#8A93A6;font-size:14px;font-weight:500}
-.change-name-link{
-  margin-top:8px;display:inline-block;color:#D4A23A;font-size:13px;font-weight:600;
-  cursor:pointer;text-decoration:underline;text-underline-offset:2px;
-}
-.header-actions-row{
-  display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;
-}
-.header-actions-row .change-name-link{margin-top:0;}
 .home-alifbo-btn{
   display:inline-flex;align-items:center;gap:4px;
   background:linear-gradient(135deg,rgba(212,162,58,0.16),rgba(212,162,58,0.08));
@@ -205,16 +217,18 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .summary-sub b{color:#EDEFF5;font-weight:700}
 
 /* ═══ 1-TOPSHIRIQ: birlashtirilgan profil + natija kartasi (mobil formatga mos) ═══ */
-.hero-card-merged{gap:12px;padding:16px 16px;margin-bottom:6px;}
-.hero-ring-wrap{position:relative;flex-shrink:0;width:64px;height:64px;z-index:1}
+.hero-card-merged{flex-direction:column;align-items:stretch;gap:0;padding:16px 16px 14px;margin-bottom:14px;}
+.hero-card-top{display:flex;align-items:center;gap:12px;}
+.hero-ring-wrap{position:relative;flex-shrink:0;width:60px;height:60px;z-index:1}
 .hero-ring-wrap .summary-ring-svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.hero-ring-wrap .summary-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#F0C56B}
-.summary-sub-line{font-size:13px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0 4px 10px;}
+.hero-ring-wrap .summary-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14.5px;font-weight:800;color:#F0C56B}
+.hero-card-track{margin-top:13px;padding-top:13px;border-top:1px solid rgba(255,255,255,0.07);}
+.summary-sub-line{font-size:12.5px;color:#9BA3B4;line-height:1.5;text-align:center;margin:0;}
 .summary-sub-line b{color:#EDEFF5;font-weight:700}
 
 /* ═══ Bo'lim-yo'li tasmasi: 12 segment, har biri bitta bo'lim holatini ko'rsatadi ═══ */
-.bolim-track{display:flex;gap:3px;margin:0 4px 10px;}
-.bolim-seg{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;}
+.bolim-track{display:flex;gap:3px;margin:0 0 9px;}
+.bolim-seg{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.06);position:relative;overflow:hidden;}
 .bolim-seg.seg-done{background:linear-gradient(90deg,#F0C56B,#D4A23A);box-shadow:0 0 6px rgba(240,197,107,.35);}
 .bolim-seg.seg-progress{background:rgba(240,197,107,.22);}
 .bolim-seg.seg-progress::after{content:'';position:absolute;top:0;left:0;bottom:0;width:var(--fill,0%);
@@ -313,7 +327,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:44px 16px 60p
 .reward-card{
   position:relative;overflow:hidden;
   display:flex;align-items:center;gap:16px;
-  width:100%;padding:20px;margin-top:8px;
+  width:100%;padding:16px;margin-top:8px;
   border-radius:18px;cursor:pointer;
   background:linear-gradient(165deg, rgba(38,42,54,0.5) 0%, rgba(26,29,38,0.72) 70%);
   border:1px solid var(--gold-line);
@@ -476,12 +490,18 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 
 <div class="wrap fade-in" id="mainApp" style="display:none">
   <div class="header">
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 1 L23.4 14.6 L34.6 6.1 L26.1 17.4 L39.8 20 L26.1 22.6 L34.6 33.9 L23.4 25.4 L20 39 L16.6 25.4 L5.4 33.9 L13.9 22.6 L0.2 20 L13.9 17.4 L5.4 6.1 L16.6 14.6 Z" fill="url(#rosetteGrad)"/>
+        <defs><linearGradient id="rosetteGrad" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#F0C56B"/><stop offset="100%" stop-color="#D4A23A"/></linearGradient></defs>
+      </svg>
+    </div>
     <div class="kicker">Al-Manhajul Al-A'lamiy</div>
     <div class="title">المنهج الألمعي</div>
     <div class="subtitle">A1 darajasi · 12 bo'limlik sayohat</div>
     <div class="header-actions-row">
-      <div class="change-name-link" id="changeNameLink"><i class="ti ti-edit" style="font-size:13px;vertical-align:-1px"></i> Ismni o'zgartirish</div>
-      <div class="change-name-link" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download" style="font-size:13px;vertical-align:-1px"></i> Zaxira nusxa</div>
+      <div class="header-chip" id="changeNameLink"><i class="ti ti-edit"></i> Ism</div>
+      <div class="header-chip" id="backupOpenLink" onclick="openBackupModal()"><i class="ti ti-cloud-download"></i> Zaxira</div>
       <button class="home-alifbo-btn" id="homeAlifboBtn" onclick="toggleHomeAlifbo()">
         <i class="ti ti-language" style="font-size:14px;vertical-align:-2px"></i> <span id="homeAlifboLabel">Кирилл</span>
       </button>
@@ -537,31 +557,35 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
     <!-- ═══ PROFIL + NATIJA BITTA KARTADA (Duolingo/Busuu uslubi) ═══ -->
     <!-- 1-TOPSHIRIQ: umumiy natija (foiz halqasi) endi ism yonida, bitta chiroyli kartada. -->
     <div class="hero-card hero-card-merged">
-      <div class="hero-avatar" id="heroAvatar">?</div>
-      <div class="hero-info">
-        <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
-        <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
-        <div class="hero-stats">
-          <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
-          <div class="stat-pill stat-pill-xp"><i class="ti ti-star-filled"></i><span id="heroXp">0</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
+      <div class="hero-card-top">
+        <div class="hero-avatar" id="heroAvatar">?</div>
+        <div class="hero-info">
+          <div class="hero-greet" id="heroGreet">Xush kelibsiz!</div>
+          <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
+          <div class="hero-stats">
+            <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
+            <div class="stat-pill stat-pill-xp"><i class="ti ti-star-filled"></i><span id="heroXp">0</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
+          </div>
+        </div>
+        <div class="hero-ring-wrap">
+          <svg class="summary-ring-svg" viewBox="0 0 84 84">
+            <defs>
+              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F0C56B"/>
+                <stop offset="100%" stop-color="#D4A23A"/>
+              </linearGradient>
+            </defs>
+            <circle class="summary-ring-track" cx="42" cy="42" r="37"/>
+            <circle class="summary-ring-fill" id="summaryRing" cx="42" cy="42" r="37"/>
+          </svg>
+          <div class="summary-ring-pct" id="summaryPct">0%</div>
         </div>
       </div>
-      <div class="hero-ring-wrap">
-        <svg class="summary-ring-svg" viewBox="0 0 84 84">
-          <defs>
-            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#F0C56B"/>
-              <stop offset="100%" stop-color="#D4A23A"/>
-            </linearGradient>
-          </defs>
-          <circle class="summary-ring-track" cx="42" cy="42" r="37"/>
-          <circle class="summary-ring-fill" id="summaryRing" cx="42" cy="42" r="37"/>
-        </svg>
-        <div class="summary-ring-pct" id="summaryPct">0%</div>
+      <div class="hero-card-track">
+        <div class="bolim-track" id="bolimTrack" title="12 bo'lim yo'li"></div>
+        <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
       </div>
     </div>
-    <div class="bolim-track" id="bolimTrack" title="12 bo'lim yo'li"></div>
-    <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
 
     <!-- ═══ KEYINGI BOSQICHLAR: Imtihon va Unvongacha qancha qoldi ═══ -->
     <div class="milestones-row">

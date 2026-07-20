@@ -279,6 +279,8 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
 .victory-fx{position:fixed; inset:0; pointer-events:none; z-index:9000; overflow:hidden;}
 .confetti-piece{position:absolute; top:-20px; width:8px; height:14px; opacity:0; border-radius:2px; animation:confettiFall ease-in forwards;}
 @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg); opacity:1;} 100%{transform:translateY(110vh) rotate(540deg); opacity:0;}}
+@keyframes floatXpRise{0%{transform:translate(-50%,0) scale(0.7); opacity:0;} 18%{transform:translate(-50%,-10px) scale(1.1); opacity:1;} 45%{transform:translate(-50%,-34px) scale(1); opacity:1;} 100%{transform:translate(-50%,-92px) scale(0.95); opacity:0;}}
+.float-xp{position:fixed; left:50%; top:44%; transform:translate(-50%,0); z-index:99998; pointer-events:none; font-weight:800; font-size:26px; color:#F0C56B; text-shadow:0 2px 10px rgba(212,162,58,0.55), 0 0 22px rgba(240,197,107,0.4); animation:floatXpRise 1.5s cubic-bezier(.22,.61,.36,1) forwards;}
 .victory-trophy-pop{position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:70px; color:var(--gold2); z-index:9001; pointer-events:none; text-shadow:0 0 30px rgba(240,197,107,0.6); opacity:0; transition:opacity .5s ease;}
 .victory-trophy-pop.show{animation:trophyPop .6s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 @keyframes trophyPop{0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg); opacity:0;} 55%{transform:translate(-50%,-50%) scale(1.25) rotate(8deg); opacity:1;} 75%{transform:translate(-50%,-50%) scale(0.95) rotate(-3deg); opacity:1;} 100%{transform:translate(-50%,-50%) scale(1) rotate(0deg); opacity:1;}}
@@ -488,8 +490,12 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
   <div class="gt-translation" id="gt-translation"><span class="lbl">Quyidagi gapni arabchada tuzing:</span><span id="gt-uz-text">...</span></div>
   <div id="gt-listen-prompt" style="display:none; text-align:center; margin-bottom:14px; background:rgba(212,162,58,0.08); border:1px solid var(--gold-line); border-radius:14px; padding:16px;">
     <div style="font-size:11px; color:var(--muted); margin-bottom:10px;">Gapni tinglang va arabchada tuzing:</div>
-    <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="handleAudioClick('gap', gtState.currentSentence.ar, this)"><i class="ti ti-volume"></i> Tinglash</span>
-    <div style="margin-top:10px;">
+    <span class="gt-listen-btn" style="font-size:14px; padding:10px 20px;" onclick="playListenSentence(this)"><i class="ti ti-volume"></i> Tinglash</span>
+    <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+      <span class="gt-listen-btn" style="font-size:12.5px; padding:7px 14px;" onclick="playListenSentence(this)"><i class="ti ti-repeat"></i> Qayta eshitish</span>
+      <span class="gt-listen-btn" id="gt-listen-slow-btn" style="font-size:12.5px; padding:7px 14px;" onclick="playListenSentenceSlow(this)"><i class="ti ti-player-track-prev"></i> Sekin</span>
+    </div>
+    <div style="margin-top:12px;">
       <span style="font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer;" onclick="revealGapTranslation()">Tarjimani ko'rsatish</span>
     </div>
   </div>
@@ -743,6 +749,24 @@ function awardSessionXP(mode, fullXP){
   localStorage.setItem(key, JSON.stringify(log));
   addAchievementXP(earned);
   return earned;
+}
+
+// Ekranda "+N XP" belgisini ortada paydo qilib, sekin yuqoriga ko'tarib yo'qotadi.
+function showFloatXp(amount){
+  try{
+    var el = document.createElement('div');
+    el.className = 'float-xp';
+    el.textContent = '+' + amount + ' XP';
+    document.body.appendChild(el);
+    setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); }, 1550);
+  }catch(e){}
+}
+// Har to'g'ri javobda beriladigan tezkor XP: haqiqiy XP qo'shadi VA floating animatsiya ko'rsatadi.
+// Anti-farm: bu "instant" XP kunlik cheklovga tushmaydi, kichik (har javob uchun) miqdorda beriladi.
+function awardInstantXp(amount){
+  amount = amount || 1;
+  addAchievementXP(amount);
+  showFloatXp(amount);
 }
 
 // ═══ Test XP: savol soniga qarab (TEZ=5, ODATIY=8, SEKIN=10) ═══
@@ -2106,6 +2130,7 @@ function handleQuizAnswer(btn){
   if(isCorrect){
     playCorrect();
     quizState.correct++; markLearned(word.ar);
+    awardInstantXp(1); // Har to'g'ri javobda +1 XP (haqiqiy) + floating animatsiya
     // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
     // Oddiy Test rejimida faqat XP beriladi, foiz o'zgarmaydi.
     if(smartPath.active){ setBox(word.ar, box+1); }
@@ -2178,9 +2203,9 @@ function startGapTuzish(){
       gtState.correctCount = 0;
       if(lvl === 'eshitib' && !SENTENCES['eshitib']){
         // 4-TOPSHIRIQ (Acrab tahlili): "Eshitib tuzish" — barcha darajadagi gaplarni
-        // birlashtirib, tinglab-tuzish rejimi uchun bittalik massiv yasaymiz.
+        // birlashtirib, so'z-soni cheklovidan o'tkazib, tinglab-tuzish massivi yasaymiz.
         var allS = [].concat(SENTENCES.oson||[]).concat(SENTENCES.ortacha||[]).concat(SENTENCES.prof||[]);
-        SENTENCES['eshitib'] = shuffle(allS);
+        SENTENCES['eshitib'] = shuffle(filterListenSentences(allS));
       }
       gtState.order = shuffleIdx(SENTENCES[gtState.level].length);
       document.querySelectorAll('.level-tab').forEach(function(x){x.classList.remove('active');});
@@ -2222,7 +2247,9 @@ function renderGapCurrent(){
   document.getElementById('gt-uz-text').textContent = dtxt(sentence.uz);
   // 4-TOPSHIRIQ: "Eshitib tuzish" rejimida tarjima matni avval yashirin bo'ladi —
   // talaba avval ovozni tinglab, keyin gapni tuzadi (xohlasa "Tarjimani ko'rsatish" bosadi).
-  var isListenMode = (gtState.level === 'eshitib');
+  // Bu rejim ikki holatda faol: (1) oddiy Gap tuzishda "🎧 Eshitib" tabi tanlangan,
+  // (2) Turbo Dars ichidagi maxsus "Eshitib" bosqichida (gtState.turboListen).
+  var isListenMode = (gtState.level === 'eshitib') || (gtState.level === 'turbo' && gtState.turboListen);
   var uzWrap = document.getElementById('gt-translation');
   var promptEl = document.getElementById('gt-listen-prompt');
   if(isListenMode){
@@ -2305,6 +2332,36 @@ function revealGapTranslation(){
   var uzWrap = document.getElementById('gt-translation');
   if(uzWrap) uzWrap.style.display = '';
 }
+// "Eshitib tuzish" rejimida (oddiy tab yoki Turbo bosqichi) gapni tinglash — BEPUL,
+// chunki ovoz shu mashqning o'zagi; Bozor xaridiga bog'liq emas.
+// "Eshitib" gaplaridagi so'z sonini bo'lim guruhiga qarab cheklaydi:
+// 1-4 → 4 tagacha, 5-8 → 5 tagacha, 9-12 → 6 tagacha.
+// (Uzun gaplar eshitilganda esda qolmaydi — shuning uchun cheklov.)
+function listenMaxWords(){
+  var b = currentBolim || 1;
+  if(b <= 4) return 4;
+  if(b <= 8) return 5;
+  return 6;
+}
+function filterListenSentences(arr){
+  var max = listenMaxWords();
+  var filtered = arr.filter(function(s){
+    return s.ar && s.ar.split(' ').length <= max;
+  });
+  // Agar cheklovdan keyin gap qolmasa (kam ehtimol), asl ro'yxatni qaytaramiz.
+  return filtered.length ? filtered : arr;
+}
+function playListenSentence(btnEl){
+  if(gtState.currentSentence && gtState.currentSentence.ar){
+    speakArabic(gtState.currentSentence.ar, btnEl);
+  }
+}
+// "Sekin" tugmasi — gapni 0.5x tezlikda (juda sekin) o'qib beradi, yangi o'rganuvchilar uchun.
+function playListenSentenceSlow(btnEl){
+  if(gtState.currentSentence && gtState.currentSentence.ar){
+    speakArabic(gtState.currentSentence.ar, btnEl, null, 0.5);
+  }
+}
 document.getElementById('gt-clear-btn').addEventListener('click', function(){
   if(gtState.answered) return;
   gtState.selected.forEach(function(s){ s.used = false; });
@@ -2337,6 +2394,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
   document.getElementById('gt-clear-btn').style.display = 'none';
   if(correct){
     playCorrect();
+    awardInstantXp(1); // Har to'g'ri gapda +1 XP (haqiqiy) + floating animatsiya
     resultEl.className = 'gt-result ok show';
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(gtState.currentSentence.uz)+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
@@ -3351,6 +3409,7 @@ function mmTileClick(tile){
 
   if(isMatch){
     playCorrect();
+    awardInstantXp(1); // Har to'g'ri juftlikda +1 XP (haqiqiy) + floating animatsiya
     var arEl = (first.side === 'ar') ? first.el : tile;
     if(hasAudioFor('match')){
       speakArabic(arEl.textContent.trim());
@@ -3474,7 +3533,9 @@ function getTurboRoundSizes(){
   return {
     flash: Math.min(VOCAB.length, Math.max(8, Math.round(n / need * 2.13))),
     quiz: Math.min(testable.length, Math.max(5, Math.round(n / need * 1.28))),
-    gap: Math.max(4, Math.min(8, Math.round(n / need * 0.45)))
+    // Serik so'rovi: Gap va Eshitib bosqichlari Turboda 3 tadan tasodifiy gap bo'lsin.
+    gap: 3,
+    eshitib: 3
   };
 }
 // Box darajasi PASTROQ so'zlarga ustunlik beruvchi indekslar ro'yxati (Anki/Duolingo uslubi) —
@@ -3533,6 +3594,28 @@ function smartPathRunGap(){
   var gapCount = Math.min(allSentences.length, getTurboRoundSizes().gap);
   var picked = shuffle(allSentences).slice(0, gapCount);
   gtState.level = 'turbo';
+  gtState.turboListen = false; // oddiy (yozma) gap tuzish bosqichi
+  SENTENCES['turbo'] = picked;
+  gtState.order = picked.map(function(_,i){ return i; });
+  gtState.idx = 0;
+  gtState.correctCount = 0;
+  renderGapCurrent();
+}
+// Yangi Turbo bosqichi: "Eshitib tuzish" — Gap bosqichidan keyin, Test'dan oldin.
+// Xuddi Gap kabi so'z-plitkalardan gap tuziladi, lekin tarjima yashirin va avval ovoz tinglanadi.
+function smartPathRunListen(){
+  smartPath.step = 4;
+  showScreen('gaptuzish'); // yana gap ekrani, lekin bu safar "eshitib" rejimida
+  var allSentences = []
+    .concat(SENTENCES.oson || [])
+    .concat(SENTENCES.ortacha || [])
+    .concat(SENTENCES.prof || []);
+  // So'z-soni cheklovi: 1-4 → 4 ta, 5-8 → 5 ta, 9-12 → 6 tagacha (esda qolishi uchun).
+  var eligible = filterListenSentences(allSentences);
+  var listenCount = Math.min(eligible.length, getTurboRoundSizes().eshitib);
+  var picked = shuffle(eligible).slice(0, listenCount);
+  gtState.level = 'turbo';
+  gtState.turboListen = true; // eshitib rejimi bayrog'i
   SENTENCES['turbo'] = picked;
   gtState.order = picked.map(function(_,i){ return i; });
   gtState.idx = 0;
@@ -3540,19 +3623,21 @@ function smartPathRunGap(){
   renderGapCurrent();
 }
 function smartPathRunQuiz(){
-  smartPath.step = 4;
+  smartPath.step = 5;
   showScreen('test'); // bu avtomatik startQuiz() ni chaqiradi (to'liq navbat bilan) -
   // shuning uchun ANDAN KEYIN Turbo Dars uchun bo'lim hajmiga mos, hali mustahkamlanmagan
   // so'zlarga ustunlik beruvchi savollarni ustidan yozamiz
   var pool = VOCAB.filter(function(w){return w.turi!=='grammatika_atamasi';});
   var picked = buildWeightedQueue(pool).slice(0, getTurboRoundSizes().quiz);
-  quizState = {idx:0, total:picked.length, correct:0, current:null, queue:picked};
+  quizState = {idx:0, total:picked.length, correct:0, current:null, queue:picked, wrongItems:[]};
   nextQuizQuestion();
 }
 function smartPathAdvance(){
+  // Turbo zanjiri: 1) Flashcard  2) Match  3) Gap tuzish  4) Eshitib tuzish  5) Test
   if(smartPath.step === 1){ smartPathRunMatch(); }
   else if(smartPath.step === 2){ smartPathRunGap(); }
-  else if(smartPath.step === 3){ smartPathRunQuiz(); }
+  else if(smartPath.step === 3){ smartPathRunListen(); }
+  else if(smartPath.step === 4){ smartPathRunQuiz(); }
 }
 // Foizni 0'dan haqiqiy qiymatgacha "sanab" ko'rsatadi — natijani jonli va quvonchli qiladi.
 function animateUnlockPct(target){
@@ -3680,7 +3765,7 @@ function detectArabicGender(text){
   }
   return 'male';
 }
-function speakArabic(text, btnEl, onEndCallback){
+function speakArabic(text, btnEl, onEndCallback, rateOverride){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   document.querySelectorAll('.audio-btn.playing, .audio-mini.playing, .gt-listen-btn.playing, .lugat-audio-mini.playing').forEach(el=>el.classList.remove('playing'));
@@ -3691,8 +3776,12 @@ function speakArabic(text, btnEl, onEndCallback){
   if(gender === 'female' && arabicVoiceFemale) chosenVoice = arabicVoiceFemale;
   else if(gender === 'male' && arabicVoiceMale) chosenVoice = arabicVoiceMale;
   if(chosenVoice) utter.voice = chosenVoice;
-  var _spd = parseFloat(localStorage.getItem('arabic_audio_speed'));
-  utter.rate = (_spd === 0.8 || _spd === 1.0 || _spd === 1.2) ? _spd : 0.8;
+  if(typeof rateOverride === 'number'){
+    utter.rate = rateOverride;
+  } else {
+    var _spd = parseFloat(localStorage.getItem('arabic_audio_speed'));
+    utter.rate = (_spd === 0.8 || _spd === 1.0 || _spd === 1.2) ? _spd : 0.8;
+  }
   if(btnEl) btnEl.classList.add('playing');
   utter.onend = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };
   utter.onerror = ()=>{ if(btnEl) btnEl.classList.remove('playing'); if(typeof onEndCallback==='function') onEndCallback(); };

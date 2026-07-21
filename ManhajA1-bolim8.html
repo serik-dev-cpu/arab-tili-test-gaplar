@@ -1923,6 +1923,13 @@ function startMistakeRetry(){
     total: quizState.wrongItems.length,
     fixedQids: {}
   };
+  // MUHIM TUZATISH: oldingi safar finishMistakeRetry() shu qutining ICHINI
+  // butunlay "checkmark" bilan almashtirib yuborgan edi (qr-retry-progress/
+  // question/options/feedback elementlarini yo'q qilib). Shu sabab IKKINCHI
+  // marta (masalan Turboni qayta o'tganda) tugma bosilsa, kod mavjud bo'lmagan
+  // elementga murojaat qilib xato berar va ekran "qotib" qolardi. Shuning uchun
+  // har safar boshlanishda quti ICHINI asl holiga qaytaramiz.
+  if(retryBox) retryBox.innerHTML = '<div style="text-align:center; font-size:12.5px; color:#9BA3B4; margin-bottom:10px;" id="qr-retry-progress">0 / 0</div><div id="qr-retry-question" style="text-align:center; margin-bottom:6px;"></div><div id="qr-retry-options"></div><div id="qr-retry-feedback"></div>';
   if(retryBox) retryBox.style.display = 'block';
   renderRetryQuestion();
 }

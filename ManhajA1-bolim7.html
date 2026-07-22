@@ -170,6 +170,12 @@ p{line-height:1.6;}
 .opt-btn:active{transform:scale(.98);}
 .opt-btn-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:24px; line-height:2;}
 .uz-question{font-family:'Inter',sans-serif; font-size:22px; font-weight:700; direction:ltr;}
+/* MUHIM TUZATISH: .quiz-card .ar-big{line-height:2.2} .uz-question'dan ustunroq (specificity)
+   bo'lib, uzun o'zbekcha so'z birikmalari (masalan "shundan tashqari, qo'shimcha") bir necha
+   qatorga bo'lingach HAR BIR qatorga 2.2x bo'sh joy qo'shib, ekranga sig'may qolar edi.
+   Shu sabab bu yerda aynan .quiz-card .uz-question (bir xil specificity, keyin kelgani
+   uchun ustun) orqali qayta belgilaymiz — qisqa arab so'ziga emas, uzun frazaga mos. */
+.quiz-card .uz-question{font-size:19px; line-height:1.45; margin-bottom:14px;}
 .opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8; box-shadow:inset 0 0 18px rgba(111,191,139,0.15), 0 0 12px rgba(111,191,139,0.1);}
 .opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188; box-shadow:inset 0 0 18px rgba(232,118,92,0.15);}
 
@@ -189,6 +195,7 @@ p{line-height:1.6;}
 .gt-result.ok{background:rgba(63,191,127,0.15); border:1px solid #3FBF7F; color:#3FBF7F;}
 .gt-result.bad{background:rgba(224,86,107,0.15); border:1px solid #E0566B; color:#E0566B;}
 .gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:22px; color:var(--gold2); margin-top:8px; line-height:2.2;}
+.gt-result-uz{display:block; color:var(--text); font-size:14px; font-weight:600; margin-top:8px; opacity:0.85;}
 .gt-listen-row{margin-top:10px;}
 .gt-listen-btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); color:var(--gold2); font-size:12.5px; font-weight:700; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease);}
 .gt-listen-btn:active{transform:scale(.95);}
@@ -2253,7 +2260,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
   if(isCorrect){
     playCorrect();
     resultEl.className = 'gt-result ok show';
-    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(item.cyr)+
+    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! <span class="gt-result-uz">'+dtxt(item.cyr)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     awardInstantXp(1); // Har to'g'ri gapda +1 XP (haqiqiy) + floating animatsiya
     gapState.correct++;
@@ -2272,7 +2279,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     playWrong();
     if(smartPath.active) smartPath.hadAnyError = true;
     resultEl.className = 'gt-result bad show';
-    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div>'+dtxt(item.cyr)+
+    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div><span class="gt-result-uz">'+dtxt(item.cyr)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     if(hasAudioFor('gap')){
       setTimeout(function(){ speakArabic(correctAnswer, document.querySelector('.gt-listen-btn')); }, 300);

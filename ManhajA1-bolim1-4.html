@@ -162,6 +162,7 @@
   .gt-result.ok{background:rgba(63,191,127,0.15);border:1px solid var(--green);color:var(--green);}
   .gt-result.bad{background:rgba(224,86,107,0.15);border:1px solid var(--red);color:var(--red);}
   .gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:22px;color:var(--gold2);margin-top:8px;line-height:2.2;}
+  .gt-result-uz{display:block;color:var(--text);font-size:14px;font-weight:600;margin-top:8px;opacity:0.85;}
   .gt-listen-row{margin-top:10px;}
   .gt-listen-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;background:rgba(212,162,58,.14);border:1px solid var(--gold-line);color:var(--gold2);font-size:12.5px;font-weight:700;cursor:pointer;transition:transform .15s var(--ease), background .15s var(--ease);}
   .gt-listen-btn:active{transform:scale(.95);}
@@ -2398,7 +2399,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     playCorrect();
     awardInstantXp(1); // Har to'g'ri gapda +1 XP (haqiqiy) + floating animatsiya
     resultEl.className = 'gt-result ok show';
-    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! '+dtxt(gtState.currentSentence.uz)+
+    resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! <span class="gt-result-uz">'+dtxt(gtState.currentSentence.uz)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     // XP endi Gap Tuzish oxirida (finishSession) daraja bo'yicha beriladi
     gtState.correctCount++;
@@ -2419,7 +2420,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     playWrong();
     if(smartPath.active) smartPath.hadAnyError = true;
     resultEl.className = 'gt-result bad show';
-    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div>'+dtxt(gtState.currentSentence.uz)+
+    resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+gtState.currentSentence.ar+'</div><span class="gt-result-uz">'+dtxt(gtState.currentSentence.uz)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+gtState.currentSentence.ar.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     if(hasAudioFor('gap')){
       setTimeout(function(){ speakArabic(gtState.currentSentence.ar, document.querySelector('.gt-listen-btn')); }, 300);

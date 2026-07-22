@@ -672,7 +672,7 @@ function toggleSoundChip(){
 document.addEventListener('DOMContentLoaded', refreshMuteChip);
 function speakArabic(text, btnEl){
   if(!('speechSynthesis' in window)) return;
-  if(!soundEnabled()) return; // Ovoz o'chirilgan
+  if(!soundEnabled()) return; // Ovoz o'chirilgan (bu yerda callback ishlatilmaydi)
   window.speechSynthesis.cancel();
   document.querySelectorAll('.q-audio-btn.playing, .opt-audio-mini.playing').forEach(function(el){ el.classList.remove('playing'); });
   var utter = new SpeechSynthesisUtterance(text);

@@ -2463,7 +2463,12 @@ function detectArabicGender(text){
 }
 function speakArabic(text, btnEl, onEndCallback){
   if(!('speechSynthesis' in window)) return;
-  if(!soundEnabled()) return; // Ovoz o'chirilgan — arabcha talaffuz ham o'qilmaydi
+  if(!soundEnabled()){
+    // MUHIM: ovoz o'chirilgan bo'lsa ham "o'qish tugadi" signalini berishimiz SHART —
+    // aks holda Gap tuzish / Lug'at avto-o'qish kabi joylar callback'ni kutib qotib qoladi.
+    if(typeof onEndCallback === 'function') setTimeout(onEndCallback, 250);
+    return;
+  }
   window.speechSynthesis.cancel();
   document.querySelectorAll('.audio-btn.playing, .audio-mini.playing, .gt-listen-btn.playing, .lugat-audio-mini.playing').forEach(el=>el.classList.remove('playing'));
   const utter = new SpeechSynthesisUtterance(text);

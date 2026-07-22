@@ -221,7 +221,7 @@ p{line-height:1.6;}
    qatorga bo'lingach HAR BIR qatorga 2.2x bo'sh joy qo'shib, ekranga sig'may qolar edi.
    Shu sabab bu yerda aynan .quiz-card .uz-question (bir xil specificity, keyin kelgani
    uchun ustun) orqali qayta belgilaymiz — qisqa arab so'ziga emas, uzun frazaga mos. */
-.quiz-card .uz-question{font-size:19px; line-height:1.45; margin-bottom:14px;}
+.quiz-card .ar-big.uz-question{font-size:19px !important; line-height:1.45; margin-bottom:14px; font-weight:800; word-break:break-word;}
 .opt-btn.correct{border-color:#6FBF8B; background:rgba(111,191,139,.12); color:#8FD9A8; box-shadow:inset 0 0 18px rgba(111,191,139,0.15), 0 0 12px rgba(111,191,139,0.1);}
 .opt-btn.wrong{border-color:#E8765C; background:rgba(232,118,92,.12); color:#F0A188; box-shadow:inset 0 0 18px rgba(232,118,92,0.15);}
 
@@ -2523,14 +2523,21 @@ function smartPathRunGap(){
   // Turbo Gap: darajalar avtomat, OSONDAN QIYINGA qarab almashadi (3 ta gap).
   var gapCount = 3;
   var perLevel = Math.ceil(gapCount / 3);
-  var pOson = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='oson';})).slice(0, perLevel);
-  var pOrta = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='ortacha';})).slice(0, perLevel);
-  var pProf = shuffle(GAP_TUZISH_DATA.filter(function(g){return g.level==='profi';})).slice(0, perLevel);
+  // TURBO SO'Z-CHEKLOVI: Turboda gaplar 4 tadan ortiq so'zli BO'LMASIN.
+  // Avval "profi" darajasidan ham olinardi (5-9 so'z) — talaba uchun juda og'ir edi.
+  var TURBO_GAP_MAX_WORDS = 4;
+  function _shortOnly(arr){ return arr.filter(function(g){ return g.words && g.words.length <= TURBO_GAP_MAX_WORDS; }); }
+  var _pool = _shortOnly(GAP_TUZISH_DATA);
+  var pOson = shuffle(_pool.filter(function(g){return g.level==='oson';})).slice(0, perLevel);
+  var pOrta = shuffle(_pool.filter(function(g){return g.level==='ortacha';})).slice(0, perLevel);
+  var pProf = shuffle(_pool.filter(function(g){return g.level==='profi';})).slice(0, perLevel);
   var picked = pOson.concat(pOrta).concat(pProf).slice(0, gapCount);
   if(picked.length < gapCount){
-    var extra = shuffle(GAP_TUZISH_DATA.slice()).filter(function(s){ return picked.indexOf(s) === -1; });
+    // Yetmasa — yana FAQAT qisqa gaplardan to'ldiramiz (uzun gap kirmasin)
+    var extra = shuffle(_pool.slice()).filter(function(s){ return picked.indexOf(s) === -1; });
     picked = picked.concat(extra).slice(0, gapCount);
   }
+  if(picked.length === 0){ picked = shuffle(GAP_TUZISH_DATA.slice()).slice(0, gapCount); }
   gapState.list = picked;
   gapState.order = picked.map(function(_,i){ return i; }); // tartib SAQLANADI
   gapState.idx = 0;

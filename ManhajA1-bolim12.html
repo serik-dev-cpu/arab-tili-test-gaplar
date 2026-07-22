@@ -214,7 +214,7 @@ p{line-height:1.6;}
 .quiz-card .ar-big{font-size:34px; color:var(--gold2); margin-bottom:16px; line-height:2.2;}
 .opt-btn{display:block; width:100%; text-align:center; padding:16px; margin-top:10px; border-radius:14px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.14); color:var(--text); font-size:16px; cursor:pointer; transition:transform .15s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);}
 .opt-btn:active{transform:scale(.98);}
-.opt-btn-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:24px; line-height:2;}
+.opt-btn-ar{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; font-size:30px; line-height:2.1; font-weight:700;}
 .uz-question{font-family:'Inter',sans-serif; font-size:22px; font-weight:700; direction:ltr;}
 /* MUHIM TUZATISH: .quiz-card .ar-big{line-height:2.2} .uz-question'dan ustunroq (specificity)
    bo'lib, uzun o'zbekcha so'z birikmalari (masalan "shundan tashqari, qo'shimcha") bir necha
@@ -1083,13 +1083,34 @@ function hexToRgba(hex, a){
 }
 
 function loadProgress(){
+  // MUHIM TUZATISH: avval bu funksiya FAQAT {learned, box} qaytarardi va
+  // saveProgress() o'sha qisqargan obyektni qayta yozib, localStorage'dagi
+  // BOSHQA maydonlarni (turbo_good, turbo_count, test_done, fc_done, ...)
+  // butunlay o'chirib yuborardi. Natijada "Sifatli Turbo" hisoblagichi hech
+  // qachon to'planmasdi va keyingi bo'lim ochilmay qolardi.
+  // Endi butun obyekt saqlanadi, faqat learned/box mavjudligi kafolatlanadi.
   try{
     const d = JSON.parse(localStorage.getItem(LS_KEY)) || {};
-    return { learned: d.learned || [], box: d.box || {} };
+    if(!d.learned) d.learned = [];
+    if(!d.box) d.box = {};
+    return d;
   }catch(e){ return { learned: [], box: {} }; }
 }
 function saveProgress(state){
-  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  // MUHIM: bu funksiya endi ALMASHTIRMAYDI, balki BIRLASHTIRADI (merge).
+  // Sabab: ilova bir necha joyda progressni saqlaydi va agar biror joyda
+  // eskirgan/qisqargan obyekt uzatilsa, avval turbo_good / turbo_count /
+  // test_done kabi maydonlar butunlay o'chib ketardi — natijada "Sifatli
+  // Turbo" hisoblagichi hech qachon to'planmasdi. Endi diskdagi mavjud
+  // maydonlar saqlanib qoladi, faqat uzatilganlari yangilanadi.
+  try{
+    var disk = {};
+    try{ disk = JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ disk = {}; }
+    for(var k in state){ if(Object.prototype.hasOwnProperty.call(state, k)) disk[k] = state[k]; }
+    localStorage.setItem(LS_KEY, JSON.stringify(disk));
+  }catch(e){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
 }
 // ═══ Ikki hisobli XP tizimi ═══
 // total_xp — unvon (Epic Profile) uchun, HECH QACHON kamaymaydi

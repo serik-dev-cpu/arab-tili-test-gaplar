@@ -2117,8 +2117,18 @@ function buildCard(item, isLocked, pct){
   return '<div class="g-card ' + state + '"' + clickAttr + ' data-bolim="' + item.num + '">' + inner + '</div>';
 }
 // Gating bilan qulflangan bo'limga bosilganda — qaysi bo'limni tugatish kerakligini ko'rsatadi
+// MUHIM TUZATISH: avval bu funksiya doim (num - 1) ni ko'rsatardi. Lekin oldingi
+// bo'limning O'ZI ham qulflangan bo'lishi mumkin — masalan talaba 1-bo'limni
+// tugatmasdan 12-bo'limga bossa, "11-bo'limni yakunlang" deb 11-ni OCHIB yuborardi.
+// Endi eng birinchi tugatilmagan bo'limni topamiz va aynan o'shanga yo'naltiramiz.
+function firstIncompleteBolim(num){
+  for(var i = 1; i < num; i++){
+    if(!isBolimComplete(i)) return i;
+  }
+  return num - 1;
+}
 function openGatingLockedModal(num){
-  var prev = num - 1;
+  var prev = firstIncompleteBolim(num);
   var prevData = BOLIMLAR.filter(function(x){ return x.num === prev; })[0];
   var prevDesc = prevData ? prevData.desc : '';
   var st = getBolimStatus(prev);
@@ -2146,7 +2156,7 @@ function openGatingLockedModal(num){
     // Yaxshi ketyapti, oz qoldi
     head = '🌟 Ajoyib ketyapsiz!';
     sub = 'Sifatli Turbo: <b style="color:#6FBF8B;">' + st.turboGood + ' / ' + st.turboNeeded + '</b>. Eng yaxshingiz: <b style="color:#F0C56B;">' + st.bestPct + '%</b>.' + (st.perfect > 0 ? ' 🏆 <b style="color:#F0C56B;">' + st.perfect + ' marta mukammal (90%+)!</b>' : '');
-    tip = 'Yana <b style="color:#F0C56B;">' + st.turboLeft + ' ta sifatli Turbo</b> — va ' + num + '-bo\'lim ochiladi! 📚';
+    tip = 'Yana <b style="color:#F0C56B;">' + st.turboLeft + ' ta sifatli Turbo</b> — va keyingi bo\'lim ochiladi! 📚';
   }
 
   var html =

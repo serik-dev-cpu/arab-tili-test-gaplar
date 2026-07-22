@@ -109,6 +109,13 @@
   .lugat-scrolltop-btn.show{display:flex;}
   .lugat-scrolltop-btn.paused{background:linear-gradient(135deg,#6FBF8B,#4E9E6E);}
   .spd-chips{display:none;align-items:center;justify-content:center;gap:6px;margin:4px 0 7px;flex-wrap:wrap;}
+/* ═══ Ovozni o'chirish/yoqish tugmasi — tezlik chiplari yonida ═══ */
+.mute-chip{display:inline-flex; align-items:center; justify-content:center; width:28px; height:26px;
+  border-radius:12px; background:rgba(212,162,58,.08); border:1px solid var(--border);
+  color:var(--gold2); cursor:pointer; font-size:14px; margin-left:4px;}
+.mute-chip.is-off{background:rgba(232,118,92,.14); border-color:rgba(232,118,92,.45); color:#F0A188;}
+.mute-chip:active{transform:scale(.92);}
+
   .spd-chips.show{display:flex;}
   .spd-chips .spd-label{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-right:2px;}
   .spd-chips .lugat-speed-chip{font-size:11px;font-weight:700;padding:5px 10px;border-radius:12px;background:rgba(212,162,58,.08);border:1px solid var(--border);color:var(--muted);cursor:pointer;}
@@ -934,7 +941,7 @@ var VOCAB_1 = [
   {id:52, turi:'feil', ar:'دَرَسَ', ar2:'يَدْرُسُ', uz:'Ўқимоқ (дарс)', icon:'activity'},
   {id:53, turi:'feil', ar:'سَكَنَ', ar2:'يَسْكُنُ', uz:'Яшамоқ', icon:'activity'},
   {id:54, turi:'feil', ar:'ذَهَبَ', ar2:'يَذْهَبُ', uz:'Бормоқ', icon:'activity'},
-  {id:55, turi:'feil', ar:'تَحَدَّثَ', ar2:'يَتَحَدَّثُ', uz:'Гаплашмоқ, сўзламоқ', icon:'activity'}
+  {id:55, turi:'feil', ar:'تَحَدَّثَ', ar2:'يَتَحَدَّثُ', uz:'Гаплашмоқ', icon:'activity'}
 ];
 var SENTENCES_1 = {
   oson: [
@@ -1353,7 +1360,7 @@ var VOCAB_4 = [
   {id:82, turi:'ibora', ar:'خِزَانَةُ الصَّفِّ', uz:'Синф шкафи', icon:'map-pin'},
   {id:83, turi:'ot', ar:'مَلْعَبٌ', uz:'Спорт майдони', icon:'map-pin'},
   {id:84, turi:'ot', ar:'حَقْلٌ', uz:'Ер, дала, экин майдони', icon:'map-pin'},
-  {id:85, turi:'feil', ar:'تَنَاوَلَ', ar2:'يَتَنَاوَلُ', uz:'Емоқ, тановул қилмоқ', icon:'activity'},
+  {id:85, turi:'feil', ar:'تَنَاوَلَ', ar2:'يَتَنَاوَلُ', uz:'Емоқ', icon:'activity'},
   {id:86, turi:'feil', ar:'صَلَّى', ar2:'يُصَلِّي', uz:'Намоз ўқимоқ', icon:'activity'},
   {id:87, turi:'feil', ar:'رَجَعَ', ar2:'يَرْجِعُ', uz:'Қайтмоқ', icon:'activity'},
   {id:88, turi:'feil', ar:'اِشْتَرَى', ar2:'يَشْتَرِي', uz:'Сотиб олмоқ', icon:'activity'},
@@ -1546,6 +1553,16 @@ function selectBolim(n){
   currentBolim = n;
   VOCAB = BOLIM_META[n].vocab;
   SENTENCES = BOLIM_META[n].sentences;
+  // SO'Z-SONI CHEKLOVI: "Oson" va "O'rtacha" darajalarda gaplar 4 tadan ortiq so'z
+  // bo'lmasin (talabalar so'rovi bo'yicha — uzun gaplar ekranga sig'may, qiyin
+  // o'qilar edi). "Prof" (Profi) darajada deyarli barcha gaplar 5+ so'zdan iborat —
+  // shu sababli unga cheklov qo'llanmadi, aks holda bu daraja butunlay bo'sh qolardi.
+  ['oson','ortacha'].forEach(function(lvl){
+    if(SENTENCES[lvl]){
+      var capped = SENTENCES[lvl].filter(function(s){ return s.ar && s.ar.split(' ').length <= 4; });
+      if(capped.length) SENTENCES[lvl] = capped;
+    }
+  });
   PROGRESS_KEY = 'arabic_uz_'+n+'bolim_v1';
   document.getElementById('menu-bolim-badge').textContent = n+'-bo\u2018lim';
   document.getElementById('menu-bolim-ar').textContent = BOLIM_META[n].titleAr;
@@ -1816,6 +1833,26 @@ function setLugatAudioSpeed(spd){
   syncAllSpeedChips();
 }
 // Har bir ovoz ekranidagi kichik tezlik qatorini chizadi — FAQAT o'sha rejim ovozi sotib olingan bo'lsa ko'rinadi
+
+// ═══ Ovozni o'chirish/yoqish (barcha ovozli rejimlar uchun umumiy) ═══
+// Holat core.js dagi soundEnabled()/toggleSound() orqali localStorage'da saqlanadi,
+// shuning uchun bir joyda o'chirilsa — butun platformada o'chgan bo'ladi.
+function muteChipHtml(){
+  var off = !soundEnabled();
+  return '<span class="mute-chip'+(off?' is-off':'')+'" onclick="toggleSoundChip()" '+
+         'title="'+(off?"Ovozni yoqish":"Ovozni o'chirish")+'">'+
+         '<i class="ti ti-'+(off?'volume-off':'volume')+'"></i></span>';
+}
+function toggleSoundChip(){
+  toggleSound();
+  if(!soundEnabled() && ('speechSynthesis' in window)) window.speechSynthesis.cancel();
+  // Ekrandagi barcha tezlik qatorlarini yangilaymiz (belgi darhol o'zgarsin)
+  ['flashcard','test','gap','match','listen'].forEach(function(m){
+    var b = document.getElementById('spd-chips-' + m);
+    if(b && b.classList.contains('show')) renderSpeedChipsFor(m);
+  });
+  if(typeof updateLugatSpeedChips === 'function'){ try{ updateLugatSpeedChips(); }catch(e){} }
+}
 function renderSpeedChipsFor(mode){
   var box = document.getElementById('spd-chips-' + mode);
   if(!box) return;
@@ -1826,7 +1863,7 @@ function renderSpeedChipsFor(mode){
     var active = (s === cur) ? ' active' : '';
     return '<span class="lugat-speed-chip'+active+'" data-spd="'+s+'" onclick="setLugatAudioSpeed('+s+')">'+s.toFixed(1)+'x</span>';
   }).join('');
-  box.innerHTML = '<span class="spd-label"><i class="ti ti-bolt"></i> Tezlik:</span>' + chips;
+  box.innerHTML = '<span class="spd-label"><i class="ti ti-bolt"></i> Tezlik:</span>' + chips + muteChipHtml();
   box.classList.add('show');
 }
 function syncAllSpeedChips(){
@@ -2443,7 +2480,17 @@ function startFlashkard(){
 }
 function renderFlashcard(){
   var word = VOCAB[fkState.order[fkState.idx]];
-  document.getElementById('fk-progress').textContent = (fkState.idx+1)+' / '+VOCAB.length;
+  // So'z-hisoblagich FAQAT oddiy rejimda ko'rinadi. Turbo Darsda (smartPath.active)
+  // butunlay yashiriladi — Turbo diqqatni so'z soniga emas, mashqning o'ziga qaratsin.
+  var fkProgEl = document.getElementById('fk-progress');
+  if(fkProgEl){
+    if(smartPath && smartPath.active){
+      fkProgEl.style.display = 'none';
+    } else {
+      fkProgEl.style.display = '';
+      fkProgEl.textContent = (fkState.idx+1)+' / '+VOCAB.length;
+    }
+  }
   document.getElementById('flash-icon').innerHTML = '<i class="ti ti-'+word.icon+'"></i>';
   document.getElementById('flash-ar').textContent = word.ar;
   document.getElementById('flash-ar2').textContent = word.ar2 || '';
@@ -3793,6 +3840,7 @@ function detectArabicGender(text){
 }
 function speakArabic(text, btnEl, onEndCallback, rateOverride){
   if(!('speechSynthesis' in window)) return;
+  if(!soundEnabled()) return; // Ovoz o'chirilgan — arabcha talaffuz ham o'qilmaydi
   window.speechSynthesis.cancel();
   document.querySelectorAll('.audio-btn.playing, .audio-mini.playing, .gt-listen-btn.playing, .lugat-audio-mini.playing').forEach(el=>el.classList.remove('playing'));
   const utter = new SpeechSynthesisUtterance(text);

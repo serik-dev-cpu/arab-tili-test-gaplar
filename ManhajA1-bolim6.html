@@ -1674,7 +1674,7 @@ function renderGramMiniResults(byTopic, totalCorrect, totalCount, xpEarned, isFi
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
 }
-var TURBO_NEEDED_LOCAL = 8; // Bu bo'lim uchun kerakli sifatli Turbo soni
+var TURBO_NEEDED_LOCAL = 6; // Bu bo'lim uchun kerakli sifatli Turbo soni
 function getGatingInfo(){
   var need = TURBO_NEEDED_LOCAL;
   var good = 0;
@@ -3177,8 +3177,8 @@ function getTurboRoundSizes(){
   var testableCount = ALL_WORDS.length + GRAMMAR_ITEMS.length;
   var need = TURBO_NEEDED_LOCAL;
   return {
-    flash: Math.min(ALL_WORDS.length, Math.max(8, Math.round(testableCount/need*2.13))),
-    quiz: Math.min(testableCount, Math.max(5, Math.round(testableCount/need*1.28))),
+    flash: Math.min(ALL_WORDS.length, 24, Math.max(8, Math.round(testableCount/need*2.13))),
+    quiz: Math.min(testableCount, 14, Math.max(5, Math.round(testableCount/need*1.28))),
     gap: Math.min(GAP_TUZISH_DATA.length, 8, Math.max(4, Math.round(testableCount/need*0.45)))
   };
 }

@@ -1752,7 +1752,7 @@ function getGatingInfo(){
   }
   return { turboGood: good, turboNeeded: need, turboLeft: Math.max(0, need - good), done: good >= need };
 }
-var TURBO_NEEDED_BY_BOLIM = {1:5, 2:5, 3:5, 4:8};
+var TURBO_NEEDED_BY_BOLIM = {1:3, 2:3, 3:3, 4:6};
 
 function renderStats(){
   var p = loadProgress();
@@ -3595,9 +3595,11 @@ function getTurboRoundSizes(){
   var testable = VOCAB.filter(function(w){ return w.turi!=='grammatika_atamasi'; });
   var need = (currentBolim && TURBO_NEEDED_BY_BOLIM[currentBolim]) ? TURBO_NEEDED_BY_BOLIM[currentBolim] : 5;
   var n = testable.length;
+  var flashCap = (currentBolim === 4) ? 24 : 27;
+  var quizCap = (currentBolim === 4) ? 14 : 16;
   return {
-    flash: Math.min(VOCAB.length, Math.max(8, Math.round(n / need * 2.13))),
-    quiz: Math.min(testable.length, Math.max(5, Math.round(n / need * 1.28))),
+    flash: Math.min(VOCAB.length, flashCap, Math.max(8, Math.round(n / need * 2.13))),
+    quiz: Math.min(testable.length, quizCap, Math.max(5, Math.round(n / need * 1.28))),
     // Serik so'rovi: Gap va Eshitib bosqichlari Turboda 3 tadan tasodifiy gap bo'lsin.
     gap: 3,
     eshitib: 3

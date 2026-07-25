@@ -2033,8 +2033,10 @@ var mistakeRetryState = null;
 var shownMistakeList = [];
 function renderMistakesBox(wrongItems){
   shownMistakeList = (wrongItems || []).slice();
-  var _tfp = document.getElementById('turbo-final-panel');
-  if(_tfp) _tfp.style.display = 'none'; // oddiy Test natijasida ko'rinmasin
+  var _tp = document.getElementById('turbo-panel');
+  if(_tp) _tp.style.display = 'none';
+  var _va = document.getElementById('vc-actions-qr');
+  if(_va) _va.style.display = '';
   var box = document.getElementById('qr-mistakes-box');
   var retryBox = document.getElementById('qr-mistake-retry-box');
   if(retryBox) retryBox.style.display = 'none';
@@ -3386,66 +3388,96 @@ function spawnUnlockBurst(container){
   setTimeout(function(){ container.innerHTML = ''; }, 2200);
 }
 
-// ==== TURBO YAKUNIY PANELI ====
-// Har raund oxirida ko'rinadi. Kerakli raundlar to'planган bo'lsa — maqtov +
-// keyingi bo'lim huquqi; yetmagan bo'lsa — rag'batlantiruvchi matn.
+
+// ==== TURBO NATIJA PANELI (Variant B — "Fokus") ====
+// IKKI HOLAT ARALASHMAYDI:
+//   good < need  -> RAUND OXIRI (qisqa: shu raund xatolari + keyingi raund)
+//   good >= need -> OXIRGI RAUND (bo'lim bo'yicha jami xatolar + keyingi bo'lim)
 function getBolimMistakes(){
-  try{
-    return getMistakes().filter(function(m){ return m.bolim === BOLIM_NUM; });
-  }catch(e){ return []; }
+  try{ return getMistakes().filter(function(m){ return m.bolim === BOLIM_NUM; }); }
+  catch(e){ return []; }
+}
+function startRoundMistakeReview(){
+  if(!shownMistakeList || !shownMistakeList.length) return;
+  window._retryCustomList = shownMistakeList;
+  var p = document.getElementById('turbo-panel'); if(p) p.style.display = 'none';
+  startMistakeRetry();
 }
 function startBolimMistakeReview(){
   var all = getBolimMistakes();
   if(!all.length) return;
   window._retryCustomList = all;
-  var p = document.getElementById('turbo-final-panel');
-  if(p) p.style.display = 'none';
+  var p = document.getElementById('turbo-panel'); if(p) p.style.display = 'none';
   startMistakeRetry();
 }
-function renderTurboFinalPanel(){
-  var host = document.getElementById('qr-mistake-retry-box');
-  if(!host || !host.parentNode) return;
-  var panel = document.getElementById('turbo-final-panel');
+function turboRing(good, need){
+  var pct = need > 0 ? Math.round(Math.min(good, need) / need * 100) : 0;
+  return '<div style="width:104px;height:104px;border-radius:50%;margin:2px auto 12px;'+
+    'background:conic-gradient(#F0C56B '+pct+'%, rgba(255,255,255,0.07) 0);'+
+    'display:flex;align-items:center;justify-content:center;">'+
+    '<div style="width:84px;height:84px;border-radius:50%;background:#0B0D12;'+
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;">'+
+    '<b style="font-size:22px;font-weight:800;color:#F0C56B;line-height:1;">'+
+      Math.min(good,need)+'/'+need+'</b>'+
+    '<span style="font-size:10px;color:#8B93A5;margin-top:3px;">Turbo</span>'+
+    '</div></div>';
+}
+function renderTurboPanel(roundMistakes, examCorrect, examTotal){
+  shownMistakeList = (roundMistakes || []).slice();
+  // Eski xatolar ro'yxati va standart tugmalar Turboda ko'rinmasin — panel o'zi hal qiladi
+  var oldBox = document.getElementById('qr-mistakes-box'); if(oldBox) oldBox.style.display = 'none';
+  var oldAct = document.getElementById('vc-actions-qr'); if(oldAct) oldAct.style.display = 'none';
+  var oldUnl = document.getElementById('unlockBanner'); if(oldUnl) oldUnl.style.display = 'none';
+  var retryBox = document.getElementById('qr-mistake-retry-box');
+  if(retryBox) retryBox.style.display = 'none';
+  if(!retryBox || !retryBox.parentNode) return;
+
+  var panel = document.getElementById('turbo-panel');
   if(!panel){
     panel = document.createElement('div');
-    panel.id = 'turbo-final-panel';
-    host.parentNode.insertBefore(panel, host.nextSibling);
+    panel.id = 'turbo-panel';
+    retryBox.parentNode.insertBefore(panel, retryBox.nextSibling);
   }
   var good = 0;
   try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
   var need = TURBO_NEEDED_LOCAL;
-  var done = good >= need;
-  var mistakes = getBolimMistakes();
-  var mc = mistakes.length;
+  var isFinal = good >= need;
+  var rc = shownMistakeList.length;
 
-  var praise = done
-    ? ['\u2728 Ajoyib! Bu bo\u2018limni sifatli yakunladingiz.',
-       '\ud83c\udf1f Zo\u2018r natija — mehnatingiz o\u2018z samarasini berdi.',
-       '\ud83c\udfaf Barakalla! Bo\u2018lim to\u2018liq egallandi.'][Math.floor(Math.random()*3)]
-    : ['\ud83d\udcaa Yaxshi ketyapsiz — davom eting!',
-       '\ud83d\udd25 Har raund sizni maqsadga yaqinlashtiryapti.',
-       '\u23f3 Shoshmang, sifat tezlikdan muhimroq.'][Math.floor(Math.random()*3)];
+  var h = '<div style="margin:14px 0 4px; padding:18px 16px; border-radius:22px;'+
+    'background:linear-gradient(165deg, rgba(240,197,107,0.09), rgba(21,24,33,0.92));'+
+    'border:1px solid rgba(240,197,107,0.20); text-align:center;">';
+  h += turboRing(good, need);
 
-  var h = '<div style="margin:16px 0; padding:18px; border-radius:20px; background:linear-gradient(160deg, rgba(240,197,107,0.10), rgba(26,29,38,0.85)); border:1px solid var(--gold-line); text-align:center;">';
-  h += '<div style="font-size:17px; font-weight:800; color:var(--gold); margin-bottom:6px;">'+praise+'</div>';
-  h += '<div style="font-size:13px; color:#9BA3B4; margin-bottom:14px;">Sifatli Turbo: <b style="color:#F0C56B;">'+Math.min(good,need)+' / '+need+'</b></div>';
-
-  if(mc > 0){
-    h += '<div style="padding:12px; border-radius:14px; background:rgba(232,118,92,0.10); border:1px solid rgba(232,118,92,0.28); margin-bottom:12px;">';
-    h += '<div style="font-size:14.5px; font-weight:800; color:#F0A188; margin-bottom:4px;">\ud83d\udcd6 Bo\u2018lim bo\u2018yicha jami '+mc+' ta xato to\u2018plandi</div>';
-    h += '<div style="font-size:12.5px; color:#C7CCD8; line-height:1.6;">Bu xatolarni hozir qayta ishlab chiqsangiz — eng foydali takrorlash shu bo\u2018ladi. Har bir tuzatilgan so\u2018z xotirada mustahkam qoladi.</div>';
-    h += '</div>';
-    h += '<button class="premium-btn-primary" style="width:100%; margin-bottom:8px; background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startBolimMistakeReview()">\ud83d\udd01 '+mc+' ta xatoni yechish</button>';
+  if(isFinal){
+    var all = getBolimMistakes(), ac = all.length;
+    h += '<div style="font-size:16.5px;font-weight:800;margin-bottom:5px;">Bo\u2018lim yakunlandi \u2728</div>';
+    h += '<div style="font-size:12.5px;color:#8B93A5;line-height:1.6;margin-bottom:14px;">Bu bo\u2018limni sifatli tugatdingiz.</div>';
+    if(ac > 0){
+      h += '<div style="display:inline-block;background:rgba(232,118,92,0.13);border:1px solid rgba(232,118,92,0.30);'+
+        'color:#F0A188;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:99px;margin-bottom:12px;">'+
+        '\ud83d\udcd6 Bo\u2018lim bo\u2018yicha '+ac+' ta xato</div>';
+      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+
+        'background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startBolimMistakeReview()">'+
+        ac+' ta xatoni takrorlash</button>';
+    }
+    h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;" onclick="location.href=\'ManhajA1-bolim11.html\'">Keyingi bo\u2018limga o\u2018tish</button>';
+    h += '<button class="premium-btn-secondary" style="width:100%;background:transparent;border:none;color:#8B93A5;font-size:12.5px;" onclick="startSmartPath()">Turboni qayta o\u2018tish</button>';
   } else {
-    h += '<div style="padding:12px; border-radius:14px; background:rgba(111,191,139,0.10); border:1px solid rgba(111,191,139,0.28); margin-bottom:12px; font-size:14px; color:#7ED8A0; font-weight:700;">\u2705 Xatolar daftaringiz toza!</div>';
-  }
-
-  h += '<button class="premium-btn-secondary" style="width:100%; margin-bottom:8px;" onclick="startSmartPath()">\ud83d\udd25 Turboni qayta o\u2018tish</button>';
-
-  if(done){
-    h += '<button class="premium-btn-primary" style="width:100%;" onclick="location.href=\'ManhajA1-bolim11.html\'">\u27a1\ufe0f Keyingi bo\u2018limga o\u2018tish</button>';
-  } else {
-    h += '<div style="margin-top:6px; padding:11px; border-radius:14px; background:rgba(255,255,255,0.04); font-size:12.5px; color:#9BA3B4; line-height:1.6;">Keyingi bo\u2018lim uchun natija hali yetmadi — yana <b style="color:#F0C56B;">'+(need-good)+' ta</b> sifatli Turbo kerak. Shoshmasdan, sifatli qayta urinib ko\u2018ring. Eslatma: faqat lug\u2018at emas, Juftlashtirish va Gap tuzishda ham faol bo\u2018lish shart.</div>';
+    var wrong = (examTotal||0) - (examCorrect||0);
+    h += '<div style="font-size:16.5px;font-weight:800;margin-bottom:5px;">Yaxshi ketyapsiz</div>';
+    h += '<div style="font-size:12.5px;color:#8B93A5;line-height:1.6;margin-bottom:14px;">'+
+      (examCorrect||0)+' to\u2018g\u2018ri \u00b7 '+wrong+' xato \u00b7 yana '+(need-good)+' ta Turbo</div>';
+    if(rc > 0){
+      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+
+        'background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startRoundMistakeReview()">'+
+        '\u21bb '+rc+' ta xatoni tuzatish</button>';
+    }
+    h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;" onclick="startSmartPath()">Keyingi raund</button>';
+    h += '<button class="premium-btn-secondary" style="width:100%;background:transparent;border:none;color:#8B93A5;font-size:12.5px;" onclick="goScreen(\'home\')">Tayyor</button>';
+    h += '<div style="margin-top:10px;padding:11px;border-radius:14px;background:rgba(255,255,255,0.04);'+
+      'font-size:11.5px;color:#8B93A5;line-height:1.6;">Keyingi bo\u2018lim uchun faqat lug\u2018at yetmaydi \u2014 '+
+      'Juftlashtirish va Gap tuzishda ham faol bo\u2018lish shart.</div>';
   }
   h += '</div>';
   panel.innerHTML = h;
@@ -3493,8 +3525,7 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
     for(var i=0;i<_roundAll.length;i++){ if(_roundAll[i].qid === m.qid) return; }
     _roundAll.push(m);
   });
-  renderMistakesBox(_roundAll);
-  renderTurboFinalPanel();
+  renderTurboPanel(_roundAll, examCorrect, examTotal);
   if(justUnlockedNext){
     var ub = document.getElementById('unlockBanner');
     if(ub){

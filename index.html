@@ -23,7 +23,7 @@
   --ease:cubic-bezier(0.4, 0, 0.2, 1);
 }
 html,body{min-height:100%;background:#0B0E14;color:#EDEFF5;font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;position:relative;overflow-x:hidden}
+body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 110px;position:relative;overflow-x:hidden}
 
 .bg-glow{position:fixed;top:0;left:0;right:0;height:520px;pointer-events:none;z-index:0;
   background-image:
@@ -60,7 +60,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60p
 .header-chip:active{transform:scale(.95);}
 .header-chip i{font-size:13px;color:#D4A23A;}
 /* ═══════════════ PAPKA (TAB) NAVIGATSIYASI ═══════════════ */
-.tab-bar{position:sticky; top:0; z-index:500; display:flex; gap:4px; justify-content:space-between; overflow-x:auto; padding:10px 2px 12px; margin:0 -16px 18px; padding-left:16px; padding-right:16px; background:linear-gradient(180deg, rgba(11,14,20,0.97) 75%, rgba(11,14,20,0)); scrollbar-width:none;}
+.tab-bar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:500; display:flex; gap:4px; justify-content:space-around; width:100%; max-width:480px; box-sizing:border-box; padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); background:rgba(11,14,20,.9); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-top:1px solid rgba(255,255,255,0.08); background:linear-gradient(180deg, rgba(11,14,20,0.97) 75%, rgba(11,14,20,0)); scrollbar-width:none;}
 .tab-bar::-webkit-scrollbar{display:none;}
 .tab-btn{flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 3px; border-radius:14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:transform .15s var(--ease), background .15s ease, border-color .15s ease; white-space:nowrap; min-width:0;}
 .tab-btn:active{transform:scale(.95);}
@@ -250,14 +250,14 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60p
 .roadmap{position:relative;padding:6px 0 6px}
 
 .bolim-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  display:flex;
+  flex-direction:column;
   gap:10px;
 }
 
 .g-card{
-  display:block;text-decoration:none;
-  padding:14px 8px 12px;border-radius:16px;text-align:center;
+  display:flex;align-items:center;gap:12px;text-decoration:none;
+  padding:12px 14px;border-radius:16px;text-align:left;
   background:linear-gradient(165deg, rgba(38,42,54,0.5) 0%, rgba(26,29,38,0.7) 100%);
   border:1px solid var(--gold-line);
   box-shadow:var(--shadow-soft);
@@ -269,7 +269,7 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60p
 .g-card.is-locked{opacity:.5;box-shadow:none}
 
 .g-ring{
-  width:44px;height:44px;margin:0 auto 8px;border-radius:50%;
+  width:40px;height:40px;margin:0;border-radius:12px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:800;
 }
@@ -278,13 +278,17 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60p
 .g-ring.is-locked{background:rgba(255,255,255,0.05);color:#5A6275}
 .g-ring i{font-size:16px}
 
-.g-name{font-size:13px;font-weight:700;color:#EDEFF5}
+.g-body{flex:1;min-width:0}
+.g-name{font-size:14px;font-weight:700;color:#EDEFF5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .g-card.is-locked .g-name{color:#7A8296}
-.g-pct{font-size:12px;color:#8A93A6;margin-top:2px}
+.g-pct{font-size:11.5px;color:#8A93A6;margin-top:2px}
+.g-trail{flex-shrink:0;font-size:18px;color:#8A93A6}
+.g-card.is-done .g-trail{color:#F0C56B}
+.g-card.is-active .g-trail{color:#D4A23A}
 .g-card.is-active .g-pct{color:#D4A23A;font-weight:700}
 .g-card.is-locked .g-pct{color:#5A6275;font-style:italic}
 
-.g-bar{width:100%;height:4px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}
+.g-bar{width:100%;height:4px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden;order:99}
 .g-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#D4A23A,#F0C56B)}
 
 .footer-note{
@@ -1349,8 +1353,8 @@ function renderMistakesListHTML(list){
     var e = list[i];
     var q = String(e.question || '');
     var c = String(e.correct || '');
-    var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:16px; line-height:2.0; direction:rtl;" : "font-size:13px;";
-    var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:15px; line-height:2.0; direction:rtl;" : "font-size:13px;";
+    var qStyle = e.questionIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:19px; line-height:2.0; direction:rtl;" : "font-size:13px;";
+    var cStyle = e.correctIsArabic ? "font-family:'Noto Naskh Arabic','Amiri',serif; font-size:18px; line-height:2.0; direction:rtl;" : "font-size:13px;";
     rows += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.06);">' +
       '<span style="color:#EDEFF5; ' + qStyle + '">\uD83D\uDCDD ' + q + '</span>' +
       '<span style="color:#7ED8A0; ' + cStyle + '">' + c + '</span>' +
@@ -2097,11 +2101,16 @@ function buildCard(item, isLocked, pct){
     ? '<div class="g-bar"><div class="g-bar-fill" style="width:' + pct + '%"></div></div>'
     : '';
 
+  var trailIcon = isLocked ? 'ti-lock' : (pct >= 100 ? 'ti-circle-check-filled' : 'ti-chevron-right');
+
   var inner =
     '<div class="g-ring ' + state + '">' + ringInner + '</div>' +
-    '<div class="g-name">' + item.num + '-bo\'lim</div>' +
-    '<div class="g-pct">' + pctLine + '</div>' +
-    bar;
+    '<div class="g-body">' +
+      '<div class="g-name">' + item.num + '-bo\'lim · ' + (item.desc || '') + '</div>' +
+      '<div class="g-pct">' + pctLine + '</div>' +
+      bar +
+    '</div>' +
+    '<i class="ti ' + trailIcon + ' g-trail"></i>';
 
   var href = item.href || ('ManhajA1-bolim' + item.num + '.html');
   var clickAttr;

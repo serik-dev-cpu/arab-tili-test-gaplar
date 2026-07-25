@@ -76,7 +76,7 @@
   .bolim-num{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--gold1),var(--gold2));color:#1a1408;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;flex:0 0 48px;}
   .bolim-info{flex:1;min-width:0;}
   .bolim-title-uz{font-weight:700;font-size:15px;}
-  .bolim-title-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:15px;color:var(--gold2);margin-top:2px;line-height:1.8;}
+  .bolim-title-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:19px;color:var(--gold2);margin-top:2px;line-height:1.8;}
   .bolim-progress{font-size:11px;color:var(--muted);margin-top:6px;}
   .progress-wrap{background:linear-gradient(160deg, rgba(38,42,54,0.5), rgba(26,29,38,0.72));border:1px solid var(--gold-line);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow-soft);}
   .progress-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;}
@@ -123,7 +123,7 @@
   .word-icon{width:44px;height:44px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(212,162,58,0.12);color:var(--gold2);}
   .word-main{min-width:0;}
   .word-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:28px;font-weight:700;color:var(--text);line-height:2.2;overflow-wrap:break-word;word-break:break-word;}
-  .word-ar2{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:24px;color:var(--gold2);margin-top:2px;line-height:2;overflow-wrap:break-word;word-break:break-word;}
+  .word-ar2{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:27px;color:var(--gold2);margin-top:2px;line-height:2;overflow-wrap:break-word;word-break:break-word;}
   .word-tag{font-size:9px;color:var(--muted);margin-top:2px;}
   .word-uz{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;}
   .box-pips{display:flex;gap:3px;margin-top:8px;justify-content:center;}
@@ -131,8 +131,8 @@
   .pip.on{background:var(--gold1);}
   /* Kichik ekranlarda arabcha shrift kichrayadi (harflar ustma-ust tushmasligi uchun) */
   @media (max-width:380px){
-    .word-ar{font-size:24px;}
-    .word-ar2{font-size:20px;}
+    .word-ar{font-size:26px;}
+    .word-ar2{font-size:27px;}
   }
   .quiz-progress{font-size:12px;color:var(--muted);margin-bottom:10px;text-align:center;}
   .quiz-card{background:linear-gradient(160deg, rgba(212,162,58,0.14), rgba(38,42,54,0.6));border:1px solid rgba(212,162,58,0.45);border-radius:20px;padding:20px 18px 18px;text-align:center;margin-bottom:14px;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:var(--shadow-soft);}
@@ -153,7 +153,7 @@
   .sentence-box{background:linear-gradient(160deg, rgba(38,42,54,0.4), rgba(26,29,38,0.65));border:1px solid var(--gold-line);border-radius:16px;padding:18px 14px;min-height:76px;margin-bottom:16px;direction:rtl;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;box-shadow:var(--shadow-soft);}
   .sentence-box.empty::before{content:'So\'z hovuzidan tanlang \2193';color:var(--muted);font-size:13px;font-family:'Inter',sans-serif;direction:ltr;margin:auto;}
   .word-pool{display:flex;flex-wrap:wrap;gap:8px;direction:rtl;margin-bottom:18px;}
-  .tile{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:700;background:linear-gradient(135deg,var(--gold1),var(--gold2));color:#1a1408;box-shadow:0 3px 10px rgba(0,0,0,0.3), 0 0 14px rgba(212,162,58,0.15);transition:all .2s var(--ease);user-select:none;line-height:1.8;position:relative;}
+  .tile{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:700;background:linear-gradient(135deg,var(--gold1),var(--gold2));color:#1a1408;box-shadow:0 3px 10px rgba(0,0,0,0.3), 0 0 14px rgba(212,162,58,0.15);transition:all .2s var(--ease);user-select:none;line-height:1.8;position:relative;font-size:23px;}
 .audio-btn{position:absolute; top:12px; left:14px; width:34px; height:34px; border-radius:50%; background:rgba(212,162,58,.14); border:1px solid var(--gold-line); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s var(--ease), background .15s var(--ease); z-index:2; color:var(--gold2); font-size:16px;}
 .audio-btn:active{transform:scale(.9);}
 .audio-btn.playing{background:var(--gold1); color:#0B0E14; animation:audioPulse 1s ease-in-out infinite;}
@@ -168,7 +168,7 @@
   .gt-result.show{display:block;}
   .gt-result.ok{background:rgba(63,191,127,0.15);border:1px solid var(--green);color:var(--green);}
   .gt-result.bad{background:rgba(224,86,107,0.15);border:1px solid var(--red);color:var(--red);}
-  .gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:22px;color:var(--gold2);margin-top:8px;line-height:2.2;}
+  .gt-correct-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:28px;color:var(--gold2);margin-top:8px;line-height:2.2;}
   .gt-result-uz{display:block;color:var(--text);font-size:14px;font-weight:600;margin-top:8px;opacity:0.85;}
   .gt-listen-row{margin-top:10px;}
   .gt-listen-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;background:rgba(212,162,58,.14);border:1px solid var(--gold-line);color:var(--gold2);font-size:12.5px;font-weight:700;cursor:pointer;transition:transform .15s var(--ease), background .15s var(--ease);}
@@ -181,7 +181,7 @@
   .flash-cat-icon{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(212,162,58,0.15);color:var(--gold2);font-size:22px;margin-bottom:6px;animation:fcPop .35s ease;}
   @keyframes fcPop{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
   .flash-ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:34px;font-weight:700;line-height:2.2;}
-  .flash-ar2{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:22px;color:var(--gold2);line-height:2;}
+  .flash-ar2{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:25px;color:var(--gold2);line-height:2;}
   .flash-uz{font-size:21px;font-weight:800;color:#F0C56B;display:none;}
   .flash-card.flipped .flash-uz{display:block;animation:popIn .3s var(--ease);}
   .flash-card.flipped .flash-ar,.flash-card.flipped .flash-ar2{opacity:0.32;transition:opacity .25s ease;}
@@ -196,11 +196,11 @@
   .gram-example .uz{font-size:12px;color:var(--muted);}
   .gram-table{width:100%;border-collapse:collapse;margin-top:8px;}
   .gram-table td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
-  .gram-table td.ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:24px;text-align:right;line-height:2;padding-top:12px;padding-bottom:12px;}
+  .gram-table td.ar{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:27px;text-align:right;line-height:2;padding-top:12px;padding-bottom:12px;}
   .gram-mini-q{background:var(--card2);border:1px solid var(--gold-line);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow-soft);}
-  .gram-mini-q .qtext{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:22px;margin-bottom:10px;line-height:2;}
+  .gram-mini-q .qtext{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;font-size:26px;margin-bottom:10px;line-height:2;}
   .gram-mini-opts{display:flex;gap:8px;flex-wrap:wrap;}
-  .gram-mini-opt{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;padding:8px 14px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);font-size:18px;line-height:1.8;}
+  .gram-mini-opt{font-family:'Noto Naskh Arabic','Amiri',serif;direction:rtl;padding:8px 14px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);font-size:24px;line-height:1.8;}
   .gram-mini-opt.correct{background:rgba(63,191,127,0.2);border-color:var(--green);}
   .gram-mini-opt.wrong{background:rgba(224,86,107,0.2);border-color:var(--red);}
   .gram-banner-top{background:linear-gradient(135deg, rgba(212,162,58,.16), rgba(212,162,58,.05));border:1px solid var(--gold-line);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6;}
@@ -244,7 +244,7 @@
   overflow:hidden; word-break:break-word; overflow-wrap:break-word; line-height:1.5;
 }
 .mm-tile:active{transform:scale(0.96);}
-.mm-tile.ar-tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; line-height:1.9; color:var(--gold2);}
+.mm-tile.ar-tile{font-family:'Noto Naskh Arabic','Amiri',serif; direction:rtl; line-height:1.9; color:var(--gold2); font-size:23px;}
 .mm-tile.uz-tile{font-family:'Inter',sans-serif; color:var(--text); font-weight:500;}
 .mm-tile.selected{border-color:var(--gold1); background:rgba(212,162,58,0.18); box-shadow:0 0 14px rgba(212,162,58,0.25);}
 .mm-tile.correct{border-color:#6FBF8B; background:rgba(111,191,139,0.2); color:#8FD9A8; box-shadow:0 0 14px rgba(111,191,139,0.25);}
@@ -338,10 +338,7 @@ html.theme-ruby{ --gold1:#D43A4A; --gold2:#F06B7E; }
     <div class="menu-hero-ar" id="menu-bolim-ar"></div>
     <div class="menu-hero-uz" id="menu-bolim-uz"></div>
   </div>
-  <div class="quick-nav-row" style="display:flex; gap:8px; margin-bottom:14px;">
-    <div class="quick-nav-btn" onclick="location.href='index.html'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-home"></i> Bosh sahifa</div>
-    <div class="quick-nav-btn" onclick="location.href='index.html#bolimlar'" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); color:#C7CCD8; font-size:13px; font-weight:700; cursor:pointer;"><i class="ti ti-books"></i> Bo'limlar</div>
-  </div>
+  <div style="position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:500;display:flex;gap:4px;justify-content:space-around;width:100%;max-width:480px;box-sizing:border-box;padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px));background:rgba(11,14,20,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,0.08);"><div onclick="location.href='index.html'" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 3px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:#8A93A6;font-size:11px;font-weight:700;cursor:pointer;"><i class="ti ti-home-2" style="font-size:20px;color:#F0C56B"></i>Bosh sahifa</div><div onclick="location.href='index.html#bolimlar'" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 3px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:#8A93A6;font-size:11px;font-weight:700;cursor:pointer;"><i class="ti ti-books" style="font-size:20px;color:#F0C56B"></i>Bo'limlar</div></div>
   <div class="epic-profile" id="epic-profile-menu" style="cursor:pointer" title="Ismni o'zgartirish">
     <div class="epic-avatar" id="epic-avatar-menu">?</div>
     <div class="epic-info">
@@ -2763,7 +2760,7 @@ function renderMistakesBox(wrongItems){
   var html = '';
   wrongItems.forEach(function(m){
     html += '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.07);">'+
-      '<span style="'+(m.questionIsArabic?'font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;direction:rtl;font-size:16px;':'font-size:13px;color:#C7CCD8;')+'">'+m.question+'</span>'+
+      '<span style="'+(m.questionIsArabic?'font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;direction:rtl;font-size:19px;':'font-size:13px;color:#C7CCD8;')+'">'+m.question+'</span>'+
       '<span style="font-size:12px; color:#6FBF8B; white-space:nowrap;">→ '+(m.correctIsArabic?('<span style="font-family:\'Noto Naskh Arabic\',\'Amiri\',serif;">'+m.correct+'</span>'):m.correct)+'</span>'+
       '</div>';
   });

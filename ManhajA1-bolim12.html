@@ -1730,7 +1730,43 @@ function shuffle(arr){
 
 /* ---------------- Flashkard rejimi ---------------- */
 /* ═══════════════ AQLLI YO'L (Smart Path) - global holat ═══════════════ */
-var smartPath = { active:false, step:0, hadAnyError:false, pctBefore:0 };
+var smartPath = { active:false, step:0, hadAnyError:false, pctBefore:0, roundMistakes:[], mmWrong:{} };
+// ==== BOSQICHLAR BO'YICHA O'ZLASHTIRISH (box) VA XATO DAFTARI ====
+// Flashkard : faqat ko'rish — box O'ZGARMAYDI, xato yozilmaydi
+// Test      : to'g'ri +1 / xato -2
+// Match     : to'g'ri +1 / 1-2-xato jazosiz, 3-xatodan -1
+// Gap+Eshit : to'g'ri +1 / xato -1  (qiyinroq bo'lgani uchun kam jazo)
+function turboBox(key, delta){
+  if(!smartPath.active || !key) return;
+  try{
+    var st = loadProgress();
+    var bx = st.box || {};
+    var cur = bx[key] || 1;
+    bx[key] = Math.max(1, Math.min(5, cur + delta));
+    st.box = bx;
+    saveProgress(st);
+  }catch(e){}
+}
+function turboMistake(obj){
+  if(!smartPath.active || !obj) return;
+  try{ addMistake(obj); }catch(e){}
+  if(!smartPath.roundMistakes) smartPath.roundMistakes = [];
+  for(var i=0;i<smartPath.roundMistakes.length;i++){
+    if(smartPath.roundMistakes[i].qid === obj.qid) return;
+  }
+  smartPath.roundMistakes.push(obj);
+}
+// Gap/Eshitib gapidagi so'zlarni ALL_WORDS ichidan topib, ko'pi bilan 2 tasiga ta'sir qiladi
+function turboSentenceBox(sentence, delta){
+  if(!smartPath.active || !sentence) return;
+  var hit = 0;
+  for(var i=0;i<ALL_WORDS.length && hit<2;i++){
+    var bare = String(ALL_WORDS[i].ar||'').replace(/[\u064B-\u0652]/g,'');
+    if(bare.length >= 3 && sentence.replace(/[\u064B-\u0652]/g,'').indexOf(bare) !== -1){
+      turboBox(ALL_WORDS[i].ar, delta); hit++;
+    }
+  }
+}
 var SMART_PATH_CHAIN_SCREENS = ['flashcard','match','gap','quiz','quiz-result'];
 
 let fcState = null;
@@ -1786,20 +1822,9 @@ function answerFlashcard(knew){
   const curBox = newBox[w.ar]||1;
   // Faqat Turbo rejimida (smartPath.active) box (o'zlashtirish darajasi) o'zgaradi.
   // Oddiy Flashkard rejimida bosilganda faqat XP beriladi, foiz o'zgarmaydi.
-  if(smartPath.active){
-    newBox[w.ar] = knew ? Math.min(5,curBox+1) : Math.max(1,curBox-2);
-    state.box = newBox;
-    if(!knew){
-      // Xato daftariga qo'shamiz — talaba keyinroq pullik "Takrorlash" mashqi orqali tuzatadi.
-      try{
-        addMistake({
-          qid: w.ar, bolim: BOLIM_NUM, kind: 'word',
-          question: w.ar, questionIsArabic: true,
-          sub: '', correct: dtxt(w.uz), correctIsArabic: false, options: []
-        });
-      }catch(e){}
-    }
-  }
+  // YANGI QOIDA: Flashkard endi faqat KO'RISH/TANISHISH bosqichi —
+  // box (o'zlashtirish foizi) o'zgarmaydi va xato daftariga hech narsa yozilmaydi.
+  // Foiz faqat Test, Match, Gap va Eshitib bosqichlarida o'zgaradi.
   if(knew){
     fcState.know++;
   } else {
@@ -2296,7 +2321,11 @@ function finishQuiz(){
 }
 
 var mistakeRetryState = null;
+var shownMistakeList = [];
 function renderMistakesBox(wrongItems){
+  shownMistakeList = (wrongItems || []).slice();
+  var _tfp = document.getElementById('turbo-final-panel');
+  if(_tfp) _tfp.style.display = 'none'; // oddiy Test natijasida ko'rinmasin
   var box = document.getElementById('qr-mistakes-box');
   var retryBox = document.getElementById('qr-mistake-retry-box');
   if(retryBox) retryBox.style.display = 'none';
@@ -2322,9 +2351,13 @@ function startMistakeRetry(){
   if(box) box.style.display = 'none';
   if(actions) actions.style.display = 'none';
   if(hint) hint.style.display = 'none';
+  var _src = (window._retryCustomList && window._retryCustomList.length)
+    ? window._retryCustomList
+    : ((shownMistakeList && shownMistakeList.length) ? shownMistakeList : quizState.wrongItems);
+  window._retryCustomList = null;
   mistakeRetryState = {
-    queue: quizState.wrongItems.slice(),
-    total: quizState.wrongItems.length,
+    queue: _src.slice(),
+    total: _src.length,
     fixedQids: {}
   };
   // MUHIM TUZATISH: oldingi safar finishMistakeRetry() shu qutining ICHINI
@@ -2486,6 +2519,8 @@ function startSmartPath(){
   smartPath.active = true;
   smartPath.step = 1;
   smartPath.hadAnyError = false;
+  smartPath.roundMistakes = []; // shu raunddagi Match/Gap/Eshitib xatolari
+  smartPath.mmWrong = {};       // Match: har so'z bo'yicha xato bosishlar soni
   smartPath.pctBefore = getCourseProgressPct();
   var sizes = getTurboRoundSizes();
   var idxs = weightedWordIndices().slice(0, sizes.flash);
@@ -2607,6 +2642,73 @@ function spawnUnlockBurst(container){
   }
   setTimeout(function(){ container.innerHTML = ''; }, 2200);
 }
+
+// ==== TURBO YAKUNIY PANELI ====
+// Har raund oxirida ko'rinadi. Kerakli raundlar to'planган bo'lsa — maqtov +
+// keyingi bo'lim huquqi; yetmagan bo'lsa — rag'batlantiruvchi matn.
+function getBolimMistakes(){
+  try{
+    return getMistakes().filter(function(m){ return m.bolim === BOLIM_NUM; });
+  }catch(e){ return []; }
+}
+function startBolimMistakeReview(){
+  var all = getBolimMistakes();
+  if(!all.length) return;
+  window._retryCustomList = all;
+  var p = document.getElementById('turbo-final-panel');
+  if(p) p.style.display = 'none';
+  startMistakeRetry();
+}
+function renderTurboFinalPanel(){
+  var host = document.getElementById('qr-mistake-retry-box');
+  if(!host || !host.parentNode) return;
+  var panel = document.getElementById('turbo-final-panel');
+  if(!panel){
+    panel = document.createElement('div');
+    panel.id = 'turbo-final-panel';
+    host.parentNode.insertBefore(panel, host.nextSibling);
+  }
+  var good = 0;
+  try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
+  var need = TURBO_NEEDED_LOCAL;
+  var done = good >= need;
+  var mistakes = getBolimMistakes();
+  var mc = mistakes.length;
+
+  var praise = done
+    ? ['\u2728 Ajoyib! Bu bo\u2018limni sifatli yakunladingiz.',
+       '\ud83c\udf1f Zo\u2018r natija — mehnatingiz o\u2018z samarasini berdi.',
+       '\ud83c\udfaf Barakalla! Bo\u2018lim to\u2018liq egallandi.'][Math.floor(Math.random()*3)]
+    : ['\ud83d\udcaa Yaxshi ketyapsiz — davom eting!',
+       '\ud83d\udd25 Har raund sizni maqsadga yaqinlashtiryapti.',
+       '\u23f3 Shoshmang, sifat tezlikdan muhimroq.'][Math.floor(Math.random()*3)];
+
+  var h = '<div style="margin:16px 0; padding:18px; border-radius:20px; background:linear-gradient(160deg, rgba(240,197,107,0.10), rgba(26,29,38,0.85)); border:1px solid var(--gold-line); text-align:center;">';
+  h += '<div style="font-size:17px; font-weight:800; color:var(--gold); margin-bottom:6px;">'+praise+'</div>';
+  h += '<div style="font-size:13px; color:#9BA3B4; margin-bottom:14px;">Sifatli Turbo: <b style="color:#F0C56B;">'+Math.min(good,need)+' / '+need+'</b></div>';
+
+  if(mc > 0){
+    h += '<div style="padding:12px; border-radius:14px; background:rgba(232,118,92,0.10); border:1px solid rgba(232,118,92,0.28); margin-bottom:12px;">';
+    h += '<div style="font-size:14.5px; font-weight:800; color:#F0A188; margin-bottom:4px;">\ud83d\udcd6 Bo\u2018lim bo\u2018yicha jami '+mc+' ta xato to\u2018plandi</div>';
+    h += '<div style="font-size:12.5px; color:#C7CCD8; line-height:1.6;">Bu xatolarni hozir qayta ishlab chiqsangiz — eng foydali takrorlash shu bo\u2018ladi. Har bir tuzatilgan so\u2018z xotirada mustahkam qoladi.</div>';
+    h += '</div>';
+    h += '<button class="premium-btn-primary" style="width:100%; margin-bottom:8px; background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startBolimMistakeReview()">\ud83d\udd01 '+mc+' ta xatoni yechish</button>';
+  } else {
+    h += '<div style="padding:12px; border-radius:14px; background:rgba(111,191,139,0.10); border:1px solid rgba(111,191,139,0.28); margin-bottom:12px; font-size:14px; color:#7ED8A0; font-weight:700;">\u2705 Xatolar daftaringiz toza!</div>';
+  }
+
+  h += '<button class="premium-btn-secondary" style="width:100%; margin-bottom:8px;" onclick="startSmartPath()">\ud83d\udd25 Turboni qayta o\u2018tish</button>';
+
+  if(done){
+    h += '<button class="premium-btn-primary" style="width:100%;" onclick="location.href=\'index.html\'">\u27a1\ufe0f Keyingi bo\u2018limga o\u2018tish</button>';
+  } else {
+    h += '<div style="margin-top:6px; padding:11px; border-radius:14px; background:rgba(255,255,255,0.04); font-size:12.5px; color:#9BA3B4; line-height:1.6;">Keyingi bo\u2018lim uchun natija hali yetmadi — yana <b style="color:#F0C56B;">'+(need-good)+' ta</b> sifatli Turbo kerak. Shoshmasdan, sifatli qayta urinib ko\u2018ring. Eslatma: faqat lug\u2018at emas, Juftlashtirish va Gap tuzishda ham faol bo\u2018lish shart.</div>';
+  }
+  h += '</div>';
+  panel.innerHTML = h;
+  panel.style.display = 'block';
+}
+
 function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   var totalBefore = getAchievementXP();
   var baseEarned = awardSessionXP('smartpath', 15);
@@ -2642,7 +2744,14 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ startSmartPath(); }; }
 
   goScreen('quiz-result');
-  renderMistakesBox(quizState.wrongItems);
+  // Raund oxiri: Test xatolari + Match/Gap/Eshitib xatolari birga ko'rsatiladi
+  var _roundAll = (quizState.wrongItems || []).slice();
+  (smartPath.roundMistakes || []).forEach(function(m){
+    for(var i=0;i<_roundAll.length;i++){ if(_roundAll[i].qid === m.qid) return; }
+    _roundAll.push(m);
+  });
+  renderMistakesBox(_roundAll);
+  renderTurboFinalPanel();
   if(justUnlockedNext){
     var ub = document.getElementById('unlockBanner');
     if(ub){
@@ -2841,6 +2950,7 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
     resultEl.innerHTML = '<i class="ti ti-check"></i> To\u2019g\u2018ri! <span class="gt-result-uz">'+dtxt(item.cyr)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
     awardInstantXp(1); // Har to'g'ri gapda +1 XP (haqiqiy) + floating animatsiya
+    turboSentenceBox(correctAnswer, 1); // to'g'ri gap: gapdagi so'zlar box +1
     gapState.correct++;
     // MUHIM: ovoz TO'LIQ tugagandan keyin o'tamiz — aks holda yangi savol ovoz
     // tugamasdan chiqib, talaba qaysi matnga tegishli ekanini bilmay chalkashadi.
@@ -2856,6 +2966,13 @@ document.getElementById('gt-check-btn').addEventListener('click', function(){
   } else {
     playWrong();
     if(smartPath.active) smartPath.hadAnyError = true;
+    turboSentenceBox(correctAnswer, -1); // xato gap: kam jazo (-1), chunki qiyinroq
+    turboMistake({
+      qid: 'gap:' + correctAnswer, bolim: BOLIM_NUM,
+      kind: (gapState && gapState.turboListen) ? 'listen' : 'gap',
+      question: dtxt(item.cyr), questionIsArabic: false,
+      sub: '', correct: correctAnswer, correctIsArabic: true, options: []
+    });
     resultEl.className = 'gt-result bad show';
     resultEl.innerHTML = 'Xato. To\u2019g\u2018ri javob:<div class="gt-correct-ar">'+correctAnswer+'</div><span class="gt-result-uz">'+dtxt(item.cyr)+'</span>'+
       '<div class="gt-listen-row"><span class="gt-listen-btn" onclick="event.stopPropagation(); handleAudioClick(\'gap\', \''+correctAnswer.replace(/'/g,"\\'")+'\', this);"><i class="ti ti-volume"></i> To\u2018liq gapni eshitish</span></div>';
@@ -3110,6 +3227,11 @@ function mmTileClick(tile){
     if(mmState.combo > mmState.maxCombo) mmState.maxCombo = mmState.combo;
     mmState.roundMatched++;
     mmState.totalMatched++;
+    (function(){ // to'g'ri juftlik: o'sha so'z box'i +1
+      var w = null;
+      for(var i=0;i<ALL_WORDS.length;i++){ if(ALL_WORDS[i].id === first.id){ w = ALL_WORDS[i]; break; } }
+      if(w) turboBox(w.ar, 1);
+    })();
     first.el.classList.remove('selected');
     first.el.classList.add('correct');
     tile.classList.add('correct');
@@ -3139,6 +3261,22 @@ function mmTileClick(tile){
   } else {
     playWrong();
     if(smartPath.active) smartPath.hadAnyError = true;
+    (function(){ // Match qoidasi: 1- va 2-xato JAZOSIZ, 3-xatodan box -1 + xato daftariga
+      if(!smartPath.active) return;
+      var w = null;
+      for(var i=0;i<ALL_WORDS.length;i++){ if(ALL_WORDS[i].id === first.id){ w = ALL_WORDS[i]; break; } }
+      if(!w) return;
+      if(!smartPath.mmWrong) smartPath.mmWrong = {};
+      smartPath.mmWrong[w.ar] = (smartPath.mmWrong[w.ar] || 0) + 1;
+      if(smartPath.mmWrong[w.ar] >= 3){
+        turboBox(w.ar, -1);
+        turboMistake({
+          qid: w.ar, bolim: BOLIM_NUM, kind: 'word',
+          question: w.ar, questionIsArabic: true,
+          sub: '', correct: dtxt(w.uz), correctIsArabic: false, options: []
+        });
+      }
+    })();
     mmState.combo = 0;
     updateMmCombo();
     mmState.locked = true;

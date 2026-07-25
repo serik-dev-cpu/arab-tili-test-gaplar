@@ -1419,9 +1419,33 @@ function turboBox(key, delta){
     saveProgress(st);
   }catch(e){}
 }
+function logBolimMistake(entry){
+  if(!entry || !entry.qid) return;
+  try{
+    var st = loadProgress();
+    var arr = st.bolim_mistakes || [];
+    for(var i=0;i<arr.length;i++){ if(arr[i].qid === entry.qid) return; }
+    arr.push(entry);
+    st.bolim_mistakes = arr;
+    saveProgress(st);
+  }catch(e){}
+}
+function getBolimJournal(){
+  try{ var st = loadProgress(); return Array.isArray(st.bolim_mistakes) ? st.bolim_mistakes : []; }
+  catch(e){ return []; }
+}
+function clearFromBolimJournal(qids){
+  try{
+    var st = loadProgress();
+    var arr = st.bolim_mistakes || [];
+    st.bolim_mistakes = arr.filter(function(m){ return qids.indexOf(m.qid) === -1; });
+    saveProgress(st);
+  }catch(e){}
+}
 function turboMistake(obj){
   if(!smartPath.active || !obj) return;
   try{ addMistake(obj); }catch(e){}
+  logBolimMistake(obj);
   if(!smartPath.roundMistakes) smartPath.roundMistakes = [];
   for(var i=0;i<smartPath.roundMistakes.length;i++){
     if(smartPath.roundMistakes[i].qid === obj.qid) return;
@@ -1816,6 +1840,7 @@ function recordQuizMistake(q, dir, wrap, correctText, correctIsArabic){
       options: opts
     };
     addMistake(mistakeObj);
+    logBolimMistake(mistakeObj);
     if(quizState && quizState.wrongItems){ quizState.wrongItems.push(mistakeObj); }
   }catch(e){}
 }
@@ -2023,6 +2048,25 @@ function startMistakeRetry(){
   if(retryBox) retryBox.style.display = 'block';
   renderRetryQuestion();
 }
+function buildRetryOptions(item){
+  if(item.options && item.options.length >= 2) return item.options.slice();
+  var pool = [], seen = {};
+  if(String(item.qid || '').indexOf('gap:') === 0){
+    try{
+      GAP_TUZISH_DATA.forEach(function(g){
+        var s = (g.answer && g.answer.join) ? g.answer.join(' ') : '';
+        if(s && s !== item.correct && !seen[s]){ seen[s] = 1; pool.push(s); }
+      });
+    }catch(e){}
+  } else {
+    ALL_WORDS.forEach(function(w){
+      var v = item.correctIsArabic ? w.ar : dtxt(w.uz);
+      if(v && v !== item.correct && !seen[v]){ seen[v] = 1; pool.push(v); }
+    });
+  }
+  pool = pool.sort(function(){ return Math.random()-0.5; }).slice(0, 3);
+  return [item.correct].concat(pool);
+}
 function renderRetryQuestion(){
   var st = mistakeRetryState;
   if(!st) return;
@@ -2037,7 +2081,7 @@ function renderRetryQuestion(){
   var optWrap = document.getElementById('qr-retry-options');
   optWrap.innerHTML = '';
   document.getElementById('qr-retry-feedback').innerHTML = '';
-  var opts = (item.options && item.options.length ? item.options.slice() : [item.correct]).sort(function(){return Math.random()-0.5;});
+  var opts = buildRetryOptions(item).sort(function(){return Math.random()-0.5;});
   opts.forEach(function(optText){
     var btn = document.createElement('button');
     btn.className = item.correctIsArabic ? 'opt-btn opt-btn-ar' : 'opt-btn';
@@ -2097,6 +2141,12 @@ function finishMistakeRetry(){
       }
     });
     if(idxToRemove.length && typeof removeMistakesByIndex === 'function'){ removeMistakesByIndex(idxToRemove); }
+    // Bo'lim jurnalidan faqat YAKUNIY takrorlashda o'chadi (raundda tuzatilsa saqlanib qoladi)
+    try{
+      var _good = 0;
+      try{ var _d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); _good = Number(_d.turbo_good) || 0; }catch(e){}
+      if(_good >= TURBO_NEEDED_LOCAL){ clearFromBolimJournal(Object.keys(st.fixedQids)); }
+    }catch(e){}
   }catch(e){}
   var retryBox = document.getElementById('qr-mistake-retry-box');
   var actions = document.getElementById('vc-actions-qr');
@@ -2107,8 +2157,16 @@ function finishMistakeRetry(){
       '<div style="font-weight:800; color:#7ED8A0; font-size:15px;">Barcha xatolar mustahkamlandi!</div>'+
       '</div>';
   }
-  if(actions) actions.style.display = '';
-  if(hint) hint.style.display = '';
+  if(smartPath.active){
+    // TURBO: yangi panel dizayni oxirigacha saqlanadi — eski tugmalar qaytmaydi
+    var _rem = (shownMistakeList || []).filter(function(m){ return !st.fixedQids[m.qid]; });
+    setTimeout(function(){
+      renderTurboPanel(_rem, smartPath.lastCorrect, smartPath.lastTotal);
+    }, 1100);
+  } else {
+    if(actions) actions.style.display = '';
+    if(hint) hint.style.display = '';
+  }
   try{
     var newPct = getCourseProgressPct();
     var fillEl = document.getElementById('vc-course-fill-qr');
@@ -3335,10 +3393,7 @@ function spawnUnlockBurst(container){
 // IKKI HOLAT ARALASHMAYDI:
 //   good < need  -> RAUND OXIRI (qisqa: shu raund xatolari + keyingi raund)
 //   good >= need -> OXIRGI RAUND (bo'lim bo'yicha jami xatolar + keyingi bo'lim)
-function getBolimMistakes(){
-  try{ return getMistakes().filter(function(m){ return m.bolim === BOLIM_NUM; }); }
-  catch(e){ return []; }
-}
+function getBolimMistakes(){ return getBolimJournal(); }
 function startRoundMistakeReview(){
   if(!shownMistakeList || !shownMistakeList.length) return;
   window._retryCustomList = shownMistakeList;
@@ -3366,10 +3421,15 @@ function turboRing(good, need){
 }
 function renderTurboPanel(roundMistakes, examCorrect, examTotal){
   shownMistakeList = (roundMistakes || []).slice();
-  // Eski xatolar ro'yxati va standart tugmalar Turboda ko'rinmasin — panel o'zi hal qiladi
+  if(typeof examCorrect === 'number'){ smartPath.lastCorrect = examCorrect; smartPath.lastTotal = examTotal; }
+  else { examCorrect = smartPath.lastCorrect || 0; examTotal = smartPath.lastTotal || 0; }
+  var rc = shownMistakeList.length;
+  // Yuqoridagi "Xato" plitkasi ham UMUMIY raund xatolarini ko'rsatsin (Test + Match + Gap)
+  var wEl = document.getElementById('result-wrong'); if(wEl) wEl.textContent = rc;
   var oldBox = document.getElementById('qr-mistakes-box'); if(oldBox) oldBox.style.display = 'none';
   var oldAct = document.getElementById('vc-actions-qr'); if(oldAct) oldAct.style.display = 'none';
-  var oldUnl = document.getElementById('unlockBanner'); if(oldUnl) oldUnl.style.display = 'none';
+  function hideUnlock(){ var u = document.getElementById('unlockBanner'); if(u) u.style.display = 'none'; }
+  hideUnlock(); setTimeout(hideUnlock, 0); setTimeout(hideUnlock, 400);
   var retryBox = document.getElementById('qr-mistake-retry-box');
   if(retryBox) retryBox.style.display = 'none';
   if(!retryBox || !retryBox.parentNode) return;
@@ -3384,48 +3444,42 @@ function renderTurboPanel(roundMistakes, examCorrect, examTotal){
   try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
   var need = TURBO_NEEDED_LOCAL;
   var isFinal = good >= need;
-  var rc = shownMistakeList.length;
 
-  var h = '<div style="margin:14px 0 4px; padding:18px 16px; border-radius:22px;'+
+  var CORAL = 'background:linear-gradient(135deg,#E8765C,#F0A188);';
+  var GHOST = 'width:100%;background:transparent;border:none;color:#8B93A5;font-size:12.5px;';
+  var h = '<div style="margin:14px 0 4px;padding:18px 16px;border-radius:22px;'+
     'background:linear-gradient(165deg, rgba(240,197,107,0.09), rgba(21,24,33,0.92));'+
-    'border:1px solid rgba(240,197,107,0.20); text-align:center;">';
+    'border:1px solid rgba(240,197,107,0.20);text-align:center;">';
   h += turboRing(good, need);
 
   if(isFinal){
-    var all = getBolimMistakes(), ac = all.length;
+    var ac = getBolimMistakes().length;
     h += '<div style="font-size:16.5px;font-weight:800;margin-bottom:5px;">Bo\u2018lim yakunlandi \u2728</div>';
-    h += '<div style="font-size:12.5px;color:#8B93A5;line-height:1.6;margin-bottom:14px;">Bu bo\u2018limni sifatli tugatdingiz.</div>';
+    h += '<div style="font-size:12.5px;color:#8B93A5;margin-bottom:14px;">'+
+      (ac > 0 ? ('Bo\u2018lim davomida '+ac+' ta xato bo\u2018lgan') : 'Xatosiz yakunladingiz')+'</div>';
     if(ac > 0){
-      h += '<div style="display:inline-block;background:rgba(232,118,92,0.13);border:1px solid rgba(232,118,92,0.30);'+
-        'color:#F0A188;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:99px;margin-bottom:12px;">'+
-        '\ud83d\udcd6 Bo\u2018lim bo\u2018yicha '+ac+' ta xato</div>';
-      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+
-        'background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startBolimMistakeReview()">'+
+      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+CORAL+'" onclick="startBolimMistakeReview()">'+
         ac+' ta xatoni takrorlash</button>';
     }
-    h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;" onclick="location.href=\'ManhajA1-bolim10.html\'">Keyingi bo\u2018limga o\u2018tish</button>';
-    h += '<button class="premium-btn-secondary" style="width:100%;background:transparent;border:none;color:#8B93A5;font-size:12.5px;" onclick="startSmartPath()">Turboni qayta o\u2018tish</button>';
+    h += '<button class="premium-btn-secondary" style="'+GHOST+'margin-bottom:10px;" onclick="startSmartPath()">Turboni qayta o\u2018tish</button>';
+    h += '<button class="premium-btn-primary" style="width:100%;" onclick="location.href=\'ManhajA1-bolim10.html\'">Keyingi bo\u2018limga o\u2018tish</button>';
   } else {
-    var wrong = (examTotal||0) - (examCorrect||0);
     h += '<div style="font-size:16.5px;font-weight:800;margin-bottom:5px;">Yaxshi ketyapsiz</div>';
-    h += '<div style="font-size:12.5px;color:#8B93A5;line-height:1.6;margin-bottom:14px;">'+
-      (examCorrect||0)+' to\u2018g\u2018ri \u00b7 '+wrong+' xato \u00b7 yana '+(need-good)+' ta Turbo</div>';
+    h += '<div style="font-size:12.5px;color:#8B93A5;margin-bottom:14px;">'+
+      (examCorrect||0)+' to\u2018g\u2018ri \u00b7 '+rc+' xato</div>';
     if(rc > 0){
-      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+
-        'background:linear-gradient(135deg,#E8765C,#F0A188);" onclick="startRoundMistakeReview()">'+
-        '\u21bb '+rc+' ta xatoni tuzatish</button>';
+      h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:10px;'+CORAL+'" onclick="startRoundMistakeReview()">'+
+        rc+' ta xatoni tuzatish</button>';
     }
-    h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;" onclick="startSmartPath()">Keyingi raund</button>';
-    h += '<button class="premium-btn-secondary" style="width:100%;background:transparent;border:none;color:#8B93A5;font-size:12.5px;" onclick="goScreen(\'home\')">Tayyor</button>';
-    h += '<div style="margin-top:10px;padding:11px;border-radius:14px;background:rgba(255,255,255,0.04);'+
-      'font-size:11.5px;color:#8B93A5;line-height:1.6;">Keyingi bo\u2018lim uchun faqat lug\u2018at yetmaydi \u2014 '+
-      'Juftlashtirish va Gap tuzishda ham faol bo\u2018lish shart.</div>';
+    h += '<div style="margin-bottom:12px;padding:10px;border-radius:14px;background:rgba(255,255,255,0.04);'+
+      'font-size:11.5px;color:#8B93A5;line-height:1.55;">Juftlashtirish va Gap tuzishda ham faol bo\u2018ling \u2014 '+
+      'bo\u2018lim faqat lug\u2018at bilan ochilmaydi.</div>';
+    h += '<button class="premium-btn-primary" style="width:100%;" onclick="startSmartPath()">Keyingi raund</button>';
   }
   h += '</div>';
   panel.innerHTML = h;
   panel.style.display = 'block';
 }
-
 function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   var totalBefore = getAchievementXP();
   var baseEarned = awardSessionXP('smartpath', 15);

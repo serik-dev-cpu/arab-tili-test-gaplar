@@ -202,6 +202,23 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 110
 }
 .stat-pill i{font-size:14px}
 
+/* ═══ XP: "$ CASH" uslubi — tanga tasviri yo'q, faqat belgi + oltin gradiyent raqam ═══ */
+.cash-mark{font-size:13px;font-weight:900;line-height:1;
+  background:linear-gradient(180deg,#FFF0C4,#F0C56B 55%,#C99A3E);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat-pill-xp #heroXp{
+  background:linear-gradient(180deg,#FFF0C4,#F0C56B 55%,#C99A3E);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.cash-word{font-size:8.5px;font-weight:800;letter-spacing:.08em;color:#9BA3B4;margin-left:1px;}
+
+/* ═══ Keyingi unvon — yorqin oltin shkala ═══ */
+.rank-progress-track{height:6px;border-radius:99px;background:rgba(255,255,255,.08);
+  overflow:hidden;margin-top:7px;}
+.rank-progress-fill{height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#B8863A,#F0C56B 55%,#FFF0C4);
+  box-shadow:0 0 8px rgba(240,197,107,.5);transition:width .8s cubic-bezier(.16,1,.3,1);}
+
 /* ═══ UMUMIY NATIJA — HERO RING ═══ */
 .summary-card{
   display:flex;align-items:center;gap:18px;
@@ -243,6 +260,20 @@ body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 110
 .bolim-seg.seg-progress::after{content:'';position:absolute;top:0;left:0;bottom:0;width:var(--fill,0%);
   background:linear-gradient(90deg,#F0C56B,#D4A23A);border-radius:4px;}
 .bolim-seg.seg-locked{background:rgba(255,255,255,.03);}
+
+/* ═══ Variant C: ikki alohida progress kartochka (Bo'limlar / So'zlar) ═══ */
+.split-progress-row{display:flex;gap:10px;}
+.split-card{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;padding:10px 11px;min-width:0;}
+.split-top{font-size:9.5px;color:#8A93A6;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.split-num{font-size:17px;font-weight:800;color:#F0C56B;line-height:1;}
+.split-num span{font-size:11px;color:#8A93A6;font-weight:700;}
+.split-track{display:flex;gap:2px;margin-top:8px;}
+.split-seg{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.07);}
+.split-seg.d{background:linear-gradient(90deg,#F0C56B,#D4A23A);}
+.split-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:8px;overflow:hidden;}
+.split-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#F0C56B,#D4A23A);
+  transition:width .8s cubic-bezier(.16,1,.3,1);}
 
 @media (max-width:360px){
   .hero-greet{font-size:15px}
@@ -588,7 +619,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
           <div class="hero-sub"><span class="epic-title" id="heroRankLabel">🌟 Navqiron</span><span class="level-badge">A1</span></div>
           <div class="hero-stats">
             <div class="stat-pill"><i class="ti ti-flame"></i><span id="heroStreak">0</span></div>
-            <div class="stat-pill stat-pill-xp"><i class="ti ti-star-filled"></i><span id="heroXp">0</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
+            <div class="stat-pill stat-pill-xp"><span class="cash-mark">$</span><span id="heroXp">0</span><span class="cash-word">CASH</span><span class="hero-xp-wallet" id="heroWalletXp"></span></div>
           </div>
         </div>
         <div class="hero-ring-wrap">
@@ -606,8 +637,18 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         </div>
       </div>
       <div class="hero-card-track">
-        <div class="bolim-track" id="bolimTrack" title="12 bo'lim yo'li"></div>
-        <div class="summary-sub-line" id="summarySub">Hali hech qanday bo'lim boshlanmagan</div>
+        <div class="split-progress-row">
+          <div class="split-card">
+            <div class="split-top">Bo'limlar</div>
+            <div class="split-num" id="splitBolimNum">0<span>/12</span></div>
+            <div class="split-track" id="splitBolimTrack"></div>
+          </div>
+          <div class="split-card">
+            <div class="split-top">So'zlar</div>
+            <div class="split-num" id="splitWordsNum">0<span>/0</span></div>
+            <div class="split-bar"><div class="split-bar-fill" id="splitWordsFill" style="width:0%;"></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -625,6 +666,7 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
         <div class="milestone-text">
           <div class="milestone-label">Keyingi unvon</div>
           <div class="milestone-value" id="rankMilestoneValue">—</div>
+          <div class="rank-progress-track"><div class="rank-progress-fill" id="rankProgressFill" style="width:0%;"></div></div>
         </div>
       </div>
     </div>
@@ -2298,30 +2340,30 @@ function initRoadmap(){
   var roadRowsEl = document.getElementById('roadRows');
   if(roadRowsEl) roadRowsEl.innerHTML = cardsHtml || '<div style="padding:16px;color:#8A93A6;font-size:13px;text-align:center">Bo\'limlar yuklanmadi. Sahifani yangilang.</div>';
 
-  var trackEl = document.getElementById('bolimTrack');
-  if(trackEl){
-    trackEl.innerHTML = segStates.map(function(s){
-      if(typeof s === 'object'){
-        return '<div class="bolim-seg seg-progress" style="--fill:'+s.fill+'%"></div>';
-      }
-      return '<div class="bolim-seg seg-'+s+'"></div>';
+  // Variant C: "Bo'limlar" va "So'zlar" — ikkita mutlaqo alohida karta
+  var bolimDoneCount = segStates.filter(function(s){ return s === 'done'; }).length;
+  var splitBolimNum = document.getElementById('splitBolimNum');
+  if(splitBolimNum) splitBolimNum.innerHTML = bolimDoneCount + '<span>/' + nums.length + '</span>';
+  var splitBolimTrack = document.getElementById('splitBolimTrack');
+  if(splitBolimTrack){
+    splitBolimTrack.innerHTML = segStates.map(function(s){
+      var isDone = (s === 'done');
+      return '<div class="split-seg' + (isDone ? ' d' : '') + '"></div>';
     }).join('');
   }
+  var splitWordsNum = document.getElementById('splitWordsNum');
+  if(splitWordsNum) splitWordsNum.innerHTML = totalLearned + '<span>/' + totalWords + '</span>';
+  var splitWordsFill = document.getElementById('splitWordsFill');
+  if(splitWordsFill) splitWordsFill.style.width = (totalWords ? Math.round(totalLearned/totalWords*100) : 0) + '%';
 
   var overallPct = totalWords ? Math.round(totalLearned / totalWords * 100) : 0;
   var SUMMARY_C = 2 * Math.PI * 37;
 
   var summaryRing = document.getElementById('summaryRing');
   var summaryPct = document.getElementById('summaryPct');
-  var summarySub = document.getElementById('summarySub');
 
   if(summaryRing) animateRing(summaryRing, overallPct, SUMMARY_C);
   if(summaryPct) summaryPct.textContent = overallPct + '%';
-  if(summarySub){
-    summarySub.innerHTML = anyStarted
-      ? '<b>' + totalLearned + '</b> / ' + totalWords + ' so\'z o\'rganildi'
-      : 'Bo\'limlardan birini boshlang — natija shu yerda ko\'rinadi';
-  }
 
   updateExamCard(allComplete, incompleteCount);
   updateLugatCard(allComplete, incompleteCount);
@@ -2333,6 +2375,7 @@ function initRoadmap(){
       : incompleteCount + ' ta bo\'lim qoldi';
   }
   var rankChip = document.getElementById('rankMilestoneValue');
+  var rankFill = document.getElementById('rankProgressFill');
   if(rankChip){
     try{
       var _xp = getAchievementXP();
@@ -2340,10 +2383,18 @@ function initRoadmap(){
       var _achData = JSON.parse(localStorage.getItem(ACH_KEY)||'{}');
       if(_achData.manhaj_fotihi_a1 || _idx >= RANK_THRESHOLDS.length - 1){
         rankChip.textContent = '👑 Eng yuqori unvondasiz!';
+        if(rankFill) rankFill.style.width = '100%';
       } else {
-        var _need = RANK_THRESHOLDS[_idx + 1] - _xp;
-        var _nextRank = getRank(RANK_THRESHOLDS[_idx + 1]).label;
+        var _curFloor = RANK_THRESHOLDS[_idx];
+        var _nextFloor = RANK_THRESHOLDS[_idx + 1];
+        var _need = _nextFloor - _xp;
+        var _nextRank = getRank(_nextFloor).label;
         rankChip.textContent = _nextRank + ' — ' + fmtXP(_need) + ' XP qoldi';
+        if(rankFill){
+          var _span = Math.max(1, _nextFloor - _curFloor);
+          var _rankPct = Math.max(0, Math.min(100, Math.round((_xp - _curFloor) / _span * 100)));
+          rankFill.style.width = _rankPct + '%';
+        }
       }
     }catch(e){ rankChip.textContent = '—'; }
   }

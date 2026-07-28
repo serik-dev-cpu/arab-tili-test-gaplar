@@ -515,6 +515,23 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
 /* ═══ FRONTEND: qisqa tablar bo‘sh joyda markazda, uzun tablar odatdagidek ═══ */
 /* justify-content:center + min-height => KALTA kontent markazlashadi, UZUN kontent */
 /* (Bozor, roadmap, Bosh) o‘z-o‘zidan tepadan boshlanib scroll bo‘ladi (klip yo‘q). */
+
+/* ═══ QARZDOR BO'LIM: eski huquq bilan ochiq, lekin foizi 70% dan past ═══ */
+@keyframes debtNeon{
+  0%,100%{ box-shadow:0 0 5px rgba(255,59,48,.85), 0 0 12px rgba(255,59,48,.55);
+           border-color:rgba(255,59,48,.95); opacity:1; }
+  50%    { box-shadow:0 0 14px rgba(255,59,48,1), 0 0 30px rgba(255,59,48,.8);
+           border-color:#FF6B5E; opacity:.62; }
+}
+.g-debt{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:900; letter-spacing:.03em;
+  color:#FF6B5E; background:rgba(255,59,48,.12);
+  border:1px solid rgba(255,59,48,.9); border-radius:99px;
+  padding:2px 8px; margin-top:5px;
+  animation:debtNeon 1.05s ease-in-out infinite;
+}
+.g-row.has-debt{ border-color:rgba(255,59,48,.45) !important; }
 </style>
 </head>
 <body>
@@ -2078,8 +2095,44 @@ function getTurboCount(num){
   try{ var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}'); return Number(d.turbo_good) || 0; }catch(e){ return 0; }
 }
 // Bo'lim TO'LIQ yakunlanganmi: sifatli Turbo soni kerakli songa yetganmi
+// VA o'zlashtirish foizi 70% dan OSHGANMI (ikkalasi ham shart).
+var UNLOCK_MIN_PCT = 70; // keyingi bo'lim ochilishi uchun kerakli minimal foiz
+var LEGACY_KEY = 'arabic_legacy_unlocked_v1';
+function getBolimPct(num){
+  try{
+    var d = JSON.parse(localStorage.getItem(getBolimKey(num)) || '{}');
+    if(typeof d.course_pct === 'number') return Math.max(0, Math.min(100, d.course_pct));
+  }catch(e){}
+  return 0;
+}
+// GRANDFATHER: 70% qoidasi kiritilgunga qadar ochilgan bo'limlar OCHIQ qoladi.
+// Bir marta (birinchi yuklashda) eski qoida bo'yicha ochiq bo'lganlar ro'yxati saqlanadi.
+function getLegacyUnlocked(){
+  try{ var a = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null'); return Array.isArray(a) ? a : null; }
+  catch(e){ return null; }
+}
+function ensureLegacySnapshot(){
+  if(getLegacyUnlocked() !== null) return;
+  var list = [];
+  try{
+    for(var n = 1; n <= 12; n++){
+      // eski qoida: faqat raundlar soni
+      if(n <= 1 || getTurboCount(n - 1) >= getTurboNeeded(n - 1)) list.push(n);
+    }
+    localStorage.setItem(LEGACY_KEY, JSON.stringify(list));
+  }catch(e){}
+}
+function isLegacyUnlocked(num){
+  var a = getLegacyUnlocked();
+  return !!(a && a.indexOf(num) !== -1);
+}
+// Foizi yetmagan, lekin eski huquq bilan ochiq turgan bo'lim — "qarzdor"
+function isBolimBehind(num){
+  return isLegacyUnlocked(num + 1) && !(getBolimPct(num) > UNLOCK_MIN_PCT)
+         && getTurboCount(num) >= getTurboNeeded(num);
+}
 function isBolimComplete(num){
-  return getTurboCount(num) >= getTurboNeeded(num);
+  return getTurboCount(num) >= getTurboNeeded(num) && getBolimPct(num) > UNLOCK_MIN_PCT;
 }
 // Bo'lim holati (chiroyli xabar uchun)
 function getBolimStatus(num){
@@ -2102,7 +2155,9 @@ function isGatingOff(){
 }
 function isBolimUnlocked(num){
   if(num <= 1) return true;            // 1-bo'lim doim ochiq
-  return isBolimComplete(num - 1);     // Oldingi bo'lim sifatli Turbolar bilan tugatilganmi
+  ensureLegacySnapshot();
+  if(isLegacyUnlocked(num)) return true; // eski huquq — hech kim narsa yo'qotmaydi
+  return isBolimComplete(num - 1);     // yangi qoida: raundlar + 70% dan oshgan foiz
 }
 function shouldOfferGatingChoice(){
   return false; // Eski talaba taklifi o'chirilgan — hamma bir xil Turbo yo'lidan o'tadi
@@ -2165,12 +2220,20 @@ function buildCard(item, isLocked, pct){
 
   var trailIcon = isLocked ? 'ti-lock' : (pct >= 100 ? 'ti-circle-check-filled' : 'ti-chevron-right');
 
+  // Qarzdor: eski huquq bilan ochiq, lekin foizi 70% dan past — qizil neon undov
+  var debtHtml = '';
+  try{
+    if(!isLocked && isBolimBehind(item.num)){
+      debtHtml = '<div class="g-debt">\u26a0 Foiz past \u2014 ' + UNLOCK_MIN_PCT + '% ga to\'ldiring</div>';
+    }
+  }catch(e){}
+
   var inner =
     '<div class="g-ring ' + state + '">' + ringInner + '</div>' +
     '<div class="g-body">' +
       '<div class="g-name">' + item.num + '-bo\'lim · ' + (item.desc || '') + '</div>' +
       '<div class="g-pct">' + pctLine + '</div>' +
-      bar +
+      bar + debtHtml +
     '</div>' +
     '<i class="ti ' + trailIcon + ' g-trail"></i>';
 

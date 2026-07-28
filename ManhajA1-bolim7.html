@@ -1764,12 +1764,18 @@ function renderGramMiniResults(byTopic, totalCorrect, totalCount, xpEarned, isFi
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
 }
+var UNLOCK_MIN_PCT = 70; // keyingi bo'lim uchun kerakli minimal foiz
 var TURBO_NEEDED_LOCAL = 6; // Bu bo'lim uchun kerakli sifatli Turbo soni
 function getGatingInfo(){
   var need = TURBO_NEEDED_LOCAL;
   var good = 0;
   try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
-  return { turboGood: good, turboNeeded: need, turboLeft: Math.max(0, need - good), done: good >= need };
+  var pct = 0; try{ pct = getCourseProgressPct(); }catch(e){}
+  var pctOk = pct > UNLOCK_MIN_PCT;
+  return { turboGood: good, turboNeeded: need, turboLeft: Math.max(0, need - good),
+           pct: pct, pctNeeded: UNLOCK_MIN_PCT, pctOk: pctOk,
+           roundsDone: good >= need,
+           done: (good >= need) && pctOk };
 }
 let quizState = null;
 // Tezlikka qarab savollar sonini hisoblash: Tez=eng kam, Odatiy=o'rtacha, Sekin=eng ko'p (barchasi)
@@ -3141,8 +3147,9 @@ function mmNextRound(){
   document.getElementById('mm-timer').classList.remove('warn');
 
   // 4 juft tanlaymiz (mobil uchun qulay)
-  var pool = ALL_WORDS.filter(function(w){ return w.uz && w.ar && dtxt(w.uz).length <= 30; });
-  if(pool.length < 4) pool = ALL_WORDS.slice();
+  var _src = roundPool();
+  var pool = _src.filter(function(w){ return w.uz && w.ar && dtxt(w.uz).length <= 30; });
+  if(pool.length < 4) pool = _src.slice();
   var picked = shuffle(pool).slice(0, 4);
   mmState.roundTotal = picked.length;
 
@@ -3381,7 +3388,7 @@ var ROUND_PLANS = [
   {name:"Istimo'",       desc:"Eshitib tanish — sekin sur'atda",     stages:["listen"]},
   {name:"Qurilish",      desc:"Qisqa gaplar tuzish",                 stages:["gap"]},
   {name:"Grammatika",    desc:"Qoidalarni amalda sinash",            stages:["match"]},
-  {name:"Ustalik",       desc:"Hammasi aralash — yakuniy sinov",     stages:["gap","listen"]}
+  {name:"Ustalik",       desc:"Hammasi aralash — yakuniy sinov",     stages:["gap","match","listen"]}
 ];
 function getCurrentRoundIndex(){
   var good = 0;
@@ -3426,50 +3433,114 @@ function closeTurboOverlay(){
 }
 // ===== TURBO BOSH EKRANI: raundlar ro'yxati =====
 function openTurbo(){ showRoundList(); }
+function getRoundStats(){
+  try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); return d.round_stats || {}; }
+  catch(e){ return {}; }
+}
+function starsFor(pct){
+  if(pct >= 90) return 3;
+  if(pct >= 75) return 2;
+  if(pct >= 60) return 1;
+  return 0;
+}
+function starsHtml(n){
+  var s = '';
+  for(var k=1;k<=3;k++){
+    s += '<span style="opacity:' + (k<=n ? '1' : '.22') + ';">\u2b50</span>';
+  }
+  return s;
+}
 function showRoundList(){
   var need = TURBO_NEEDED_LOCAL;
   var doneCount = getCompletedRoundCount();
   var curIdx = getCurrentRoundIndex();
-  var rows = '';
-  for(var i=1; i<=need; i++){
+  var stats = getRoundStats();
+  var pct = 0; try{ pct = getCourseProgressPct(); }catch(e){}
+  var learned = 0, totalW = ALL_WORDS.length, perfect = 0;
+  try{
+    var st = loadProgress(); var bx = st.box || {};
+    ALL_WORDS.forEach(function(w){ var b = Number(bx[w.ar])||0; if(b>0) learned++; if(b>=5) perfect++; });
+  }catch(e){}
+  var scores = [], sum = 0, cnt = 0;
+  for(var i=1;i<=need;i++){
+    var b = (stats[i] && Number(stats[i].best)) || 0;
+    scores.push(b);
+    if(b>0){ sum += b; cnt++; }
+  }
+  var avg = cnt ? Math.round(sum/cnt) : 0;
+
+  // ==== Sarlavha paneli ====
+  var head =
+    '<div style="background:linear-gradient(160deg,rgba(240,197,107,.10),rgba(21,24,33,.94));border:1px solid rgba(240,197,107,.22);border-radius:20px;padding:14px;margin-bottom:14px;">' +
+      '<div style="display:flex;align-items:center;gap:14px;">' +
+        '<div style="width:64px;height:64px;flex:0 0 64px;border-radius:50%;background:conic-gradient(#F0C56B '+pct+'%, rgba(255,255,255,.07) 0);display:flex;align-items:center;justify-content:center;">' +
+          '<div style="width:50px;height:50px;border-radius:50%;background:#0B0D12;display:flex;align-items:center;justify-content:center;">' +
+            '<b style="font-size:15px;font-weight:900;color:#F0C56B;">'+pct+'%</b>' +
+          '</div></div>' +
+        '<div style="flex:1;display:flex;flex-direction:column;gap:6px;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:11.5px;"><span style="color:#8B93A5;">Sayohat</span><b>'+doneCount+' / '+need+' raund</b></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:11.5px;"><span style="color:#8B93A5;">O\'rtacha natija</span><b>'+(avg?avg+'%':'\u2014')+'</b></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:11.5px;"><span style="color:#8B93A5;">Mukammal (5-box)</span><b>'+perfect+' so\'z</b></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-top:11px;height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;">' +
+        '<div style="height:100%;width:'+Math.min(100,Math.round(pct/UNLOCK_MIN_PCT*100))+'%;border-radius:99px;background:linear-gradient(90deg,#B8863A,#F0C56B);"></div></div>' +
+      '<div style="font-size:10.5px;color:#8B93A5;text-align:center;margin-top:6px;">Keyingi bo\'lim uchun <b style="color:#F0C56B;">'+UNLOCK_MIN_PCT+'%</b> dan oshishi kerak</div>' +
+    '</div>';
+
+  // ==== Yo'l xaritasi ====
+  var donePart = need > 1 ? Math.round(doneCount/(need-1)*100) : 0;
+  var rows = '<div style="position:relative;padding-left:38px;">' +
+    '<div style="position:absolute;left:16px;top:14px;bottom:14px;width:2px;background:linear-gradient(180deg,#6FBF8B 0%,#6FBF8B '+donePart+'%,rgba(255,255,255,.08) '+donePart+'%);"></div>';
+  for(var i=1;i<=need;i++){
     var p = getRoundPlanByIndex(i);
+    var s = stats[i] || {best:0, plays:0};
     var isDone = (i <= doneCount);
     var isCur = (i === curIdx && !isDone);
     var isLocked = (i > curIdx);
-    var bg = isCur ? 'linear-gradient(135deg,rgba(240,197,107,.14),rgba(21,24,33,.92))' : 'rgba(21,24,33,.85)';
-    var border = isCur ? 'rgba(240,197,107,.42)' : 'rgba(255,255,255,.07)';
-    var badgeBg = isDone ? 'rgba(111,191,139,.20)' : (isCur ? 'linear-gradient(135deg,#F0C56B,#D4A23A)' : 'rgba(255,255,255,.06)');
-    var badgeCol = isDone ? '#7ED8A0' : (isCur ? '#0B0D12' : '#6B7280');
-    var badgeTxt = isDone ? '\u2713' : (isLocked ? '\ud83d\udd12' : String(i));
-    var titleCol = isLocked ? '#6B7280' : '#EDEFF3';
-    var pills = p.stages.concat(['quiz']).map(function(s){
-      return '<span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;margin:3px 4px 0 0;background:rgba(255,255,255,.06);color:'+(isLocked?'#5C6474':'#9BA3B4')+';">'+(STAGE_LABELS[s]||s)+'</span>';
-    }).join('');
+    var nodeBg = isDone ? '#6FBF8B' : (isCur ? 'linear-gradient(135deg,#F0C56B,#D4A23A)' : '#232733');
+    var nodeCol = isDone ? '#0B2617' : (isCur ? '#0B0D12' : '#5C6474');
+    var nodeTxt = isDone ? '\u2713' : (isLocked ? '\ud83d\udd12' : String(i));
+    var nodeShadow = isCur ? 'box-shadow:0 0 0 4px rgba(240,197,107,.18);' : '';
+    var cardBg = isCur ? 'linear-gradient(135deg,rgba(240,197,107,.13),rgba(21,24,33,.92))' : '#151821';
+    var cardBorder = isCur ? 'rgba(240,197,107,.42)' : 'rgba(255,255,255,.07)';
+    var scoreHtml = isDone
+      ? '<div style="font-size:12px;font-weight:900;color:#6FBF8B;">'+s.best+'%</div>'
+      : (isCur ? '<div style="font-size:12px;font-weight:900;color:#F0C56B;">Boshlash \u203a</div>' : '');
+    var fillW = isDone ? s.best : 0;
+    var fillCol = isDone ? 'linear-gradient(90deg,#6FBF8B,#9BE0B6)' : 'linear-gradient(90deg,#F0C56B,#D4A23A)';
+    var meta = isDone
+      ? ('<span>'+starsHtml(starsFor(s.best))+'</span><span>'+s.plays+' marta</span><span>+'+roundWordCountFor(p)+' so\'z</span>')
+      : ('<span>'+p.stages.concat(['quiz']).map(function(x){return STAGE_LABELS[x]||x;}).join(' \u00b7 ')+'</span>');
     rows +=
-      '<div ' + (isLocked ? '' : 'onclick="pickTurboRound('+i+')" ') +
-        'style="display:flex;align-items:flex-start;gap:11px;background:'+bg+';border:1px solid '+border+';border-radius:17px;padding:12px 13px;margin-bottom:9px;'+(isLocked?'opacity:.55;':'cursor:pointer;')+'">' +
-        '<div style="width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:'+badgeBg+';color:'+badgeCol+';">'+badgeTxt+'</div>' +
-        '<div style="flex:1;min-width:0;">' +
-          '<div style="font-size:14px;font-weight:800;color:'+titleCol+';">'+i+' \u00b7 '+p.name+'</div>' +
-          '<div style="font-size:11.5px;color:#8B93A5;margin-top:2px;">'+(p.desc||'')+'</div>' +
-          '<div>'+pills+'</div>' +
+      '<div style="position:relative;margin-bottom:11px;">' +
+        '<div style="position:absolute;left:-33px;top:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;border:3px solid #06070A;background:'+nodeBg+';color:'+nodeCol+';'+nodeShadow+'">'+nodeTxt+'</div>' +
+        '<div ' + (isLocked ? '' : 'onclick="pickTurboRound('+i+')" ') +
+          'style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:16px;padding:12px 13px;'+(isLocked?'opacity:.45;':'cursor:pointer;')+'">' +
+          '<div style="display:flex;justify-content:space-between;align-items:baseline;">' +
+            '<div style="font-size:13.5px;font-weight:800;">'+i+' \u00b7 '+p.name+'</div>' + scoreHtml +
+          '</div>' +
+          '<div style="font-size:10.5px;color:#8B93A5;margin-top:2px;">'+(p.desc||'')+'</div>' +
+          '<div style="height:5px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:8px;overflow:hidden;">' +
+            '<div style="height:100%;width:'+fillW+'%;border-radius:99px;background:'+fillCol+';"></div></div>' +
+          '<div style="display:flex;gap:10px;margin-top:6px;font-size:9.5px;color:#8B93A5;">'+meta+'</div>' +
         '</div>' +
-        '<div style="font-size:11px;font-weight:800;color:'+(isLocked?'#5C6474':'#F0C56B')+';white-space:nowrap;">+'+roundWordCountFor(p)+' so\'z</div>' +
       '</div>';
   }
+  rows += '</div>';
+
   var ov = turboOverlay();
   ov.innerHTML =
     '<div style="max-width:400px;margin:0 auto;padding:8px 0 24px;">' +
       '<div onclick="closeTurboOverlay()" style="display:inline-flex;align-items:center;gap:5px;font-size:13.5px;color:#8B93A5;padding:8px 4px;margin-bottom:6px;cursor:pointer;">\u2039 Orqaga</div>' +
-      '<div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0C56B;margin-bottom:4px;">Turbo yo\'li</div>' +
-      '<div style="font-size:12.5px;color:#8B93A5;margin-bottom:14px;">'+doneCount+' / '+need+' raund tugadi \u2014 raundni tanlang</div>' +
-      rows +
+      '<div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0C56B;margin-bottom:10px;">Turbo yo\'li</div>' +
+      head + rows +
     '</div>';
   ov.style.display = 'block';
 }
 function pickTurboRound(i){
   var plan = getRoundPlanByIndex(i);
-  showRoundIntro(i, plan, function(){ startSmartPath(i); });
+  showRoundIntro(i, plan, function(withIntro){ startSmartPath(i, withIntro); });
 }
 function showRoundIntro(idx, plan, onStart){
   var need = TURBO_NEEDED_LOCAL;
@@ -3486,42 +3557,68 @@ function showRoundIntro(idx, plan, onStart){
         '<div style="font-size:21px;font-weight:900;color:#F0C56B;margin-bottom:5px;">' + idx + ' \u00b7 ' + plan.name + '</div>' +
         '<div style="font-size:13px;color:#9BA3B4;margin-bottom:15px;">' + (plan.desc||'') + '</div>' +
         '<div style="text-align:left;margin-bottom:13px;">' + pillsHtml + '</div>' +
-        (wc ? ('<div style="font-size:13px;font-weight:800;color:#F0C56B;margin-bottom:14px;">+' + wc + " so'z</div>") : '') +
-        '<button id="roundIntroStartBtn" style="width:100%;padding:13px;border:none;border-radius:15px;font-size:15px;font-weight:800;color:#0B0D12;background:linear-gradient(135deg,#F0C56B,#D4A23A);">Boshlash \u2192</button>' +
+        '<div style="padding:12px;border-radius:14px;background:rgba(240,197,107,.08);border:1px solid rgba(240,197,107,.22);margin-bottom:14px;">' +
+          '<div style="font-size:13.5px;font-weight:800;color:#F0C56B;margin-bottom:5px;">Bu bosqichda ' + wc + " ta so'zni o'zlashtirasiz</div>" +
+          '<div style="font-size:11.5px;color:#9BA3B4;line-height:1.6;">Avval shu so\'zlar bilan tanishib chiqishni tavsiya qilaman \u2014 keyin mashqlar ancha oson ketadi.</div>' +
+        '</div>' +
+        '<button id="roundIntroLearnBtn" style="width:100%;padding:13px;border:none;border-radius:15px;font-size:15px;font-weight:800;color:#0B0D12;background:linear-gradient(135deg,#F0C56B,#D4A23A);margin-bottom:9px;">\ud83d\udcd6 So\'zlar bilan tanishaman</button>' +
+        '<button id="roundIntroSkipBtn" style="width:100%;padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:15px;font-size:13.5px;font-weight:700;color:#C7CCD8;background:transparent;">Bu so\'zlarni bilaman \u2014 boshlash \u2192</button>' +
       '</div>' +
     '</div>';
   ov.style.display = 'block';
-  document.getElementById('roundIntroStartBtn').onclick = function(){
+  document.getElementById('roundIntroLearnBtn').onclick = function(){
     closeTurboOverlay();
-    onStart();
+    onStart(true);   // Flashkard bilan tanishib boshlanadi
   };
+  document.getElementById('roundIntroSkipBtn').onclick = function(){
+    closeTurboOverlay();
+    onStart(false);  // To'g'ridan-to'g'ri mashqlar
+  };
+}
+// ===== RAUND SO'Z HAVZASI =====
+// Turbo raundida Flashkard, Juftlashtirish, Test va Gap/Eshitib AYNAN shu
+// so'zlar bilan ishlaydi — shuning uchun "tanishib chiqish" haqiqiy foyda beradi.
+function buildRoundWords(){
+  var n = currentRoundWordCount();
+  var idxs = weightedWordIndices().slice(0, n);
+  smartPath.roundWords = idxs.map(function(i){ return ALL_WORDS[i]; });
+  return smartPath.roundWords;
+}
+function roundPool(){
+  return (smartPath.active && smartPath.roundWords && smartPath.roundWords.length)
+    ? smartPath.roundWords : ALL_WORDS;
 }
 function runPlanStage(stage){
   if(stage === 'flash'){
     smartPath.step = 1;
-    var sizes = getTurboRoundSizes();
-    var idxs = weightedWordIndices().slice(0, sizes.flash);
-    fcState = { words: idxs.map(function(i){ return ALL_WORDS[i]; }), idx:0, know:0, dontknow:0, flipped:false };
+    fcState = { words: (smartPath.roundWords || []).slice(), idx:0, know:0, dontknow:0, flipped:false };
     goScreen('flashcard');
     renderFlashcard();
   } else if(stage === 'match'){ smartPathRunMatch(); }
   else if(stage === 'gap'){ smartPathRunGap(); }
   else if(stage === 'listen'){ smartPathRunListen(); }
 }
-function startSmartPath(roundIdx){
+function startSmartPath(roundIdx, withIntro){
   smartPath.active = true;
   smartPath.hadAnyError = false;
   smartPath.roundMistakes = []; // shu raunddagi Match/Gap/Eshitib xatolari
   smartPath.mmWrong = {};       // Match: har so'z bo'yicha xato bosishlar soni
   smartPath.pctBefore = getCourseProgressPct();
-  smartPath.plan = (typeof roundIdx === 'number') ? getRoundPlanByIndex(roundIdx) : getRoundPlan();
+  smartPath.roundIdx = (typeof roundIdx === 'number') ? roundIdx : getCurrentRoundIndex();
+  smartPath.plan = getRoundPlanByIndex(smartPath.roundIdx);
+  buildRoundWords();
+  // "So'zlar bilan tanishaman" tanlansa — bosqichlar oldiga Flashkard qo'shiladi
+  var _stages = smartPath.plan.stages.slice();
+  if(withIntro && _stages.indexOf('flash') === -1){ _stages.unshift('flash'); }
+  if(withIntro === false){ _stages = _stages.filter(function(s){ return s !== 'flash'; }); }
+  smartPath.stages = _stages.length ? _stages : smartPath.plan.stages.slice();
   smartPath.planIdx = 0;
-  runPlanStage(smartPath.plan.stages[0]);
+  runPlanStage(smartPath.stages[0]);
 }
 function smartPathRunMatch(){
   smartPath.step = 2;
   mmState = {
-    round:0, maxRounds:2, totalMatched:0, maxCombo:0, combo:0,
+    round:0, maxRounds:4, totalMatched:0, maxCombo:0, combo:0,
     timeLeft: MM_ROUND_TIMES[0], finished:false, locked:false, selected:null,
     roundMatched:0, roundTotal:0
   };
@@ -3596,8 +3693,9 @@ function smartPathRunQuiz(){
 function smartPathAdvance(){
   // Yangi mavzuli zanjir: smartPath.plan.stages bo'yicha yuradi, oxirida doim Test.
   smartPath.planIdx = (smartPath.planIdx || 0) + 1;
-  if(smartPath.plan && smartPath.planIdx < smartPath.plan.stages.length){
-    runPlanStage(smartPath.plan.stages[smartPath.planIdx]);
+  var _st = smartPath.stages || (smartPath.plan ? smartPath.plan.stages : []);
+  if(_st && smartPath.planIdx < _st.length){
+    runPlanStage(_st[smartPath.planIdx]);
   } else {
     smartPathRunQuiz();
   }
@@ -3743,6 +3841,16 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   try{
     var _tp = examTotal > 0 ? (examCorrect / examTotal * 100) : 0;
     var _dt = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    // RAUND STATISTIKASI: har raundning eng yaxshi natijasi va necha marta o'ynalgani
+    try{
+      var _ri = smartPath.roundIdx || 1;
+      var _rs = _dt.round_stats || {};
+      var _cur = _rs[_ri] || {best:0, plays:0};
+      _cur.plays = (Number(_cur.plays)||0) + 1;
+      _cur.best = Math.max(Number(_cur.best)||0, Math.round(_tp));
+      _rs[_ri] = _cur;
+      _dt.round_stats = _rs;
+    }catch(e){}
     var _goodBefore = Number(_dt.turbo_good) || 0;
     _dt.turbo_count = (Number(_dt.turbo_count) || 0) + 1;
     if(_tp >= 60) _dt.turbo_good = (Number(_dt.turbo_good) || 0) + 1;

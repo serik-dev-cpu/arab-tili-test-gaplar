@@ -339,6 +339,36 @@ body{padding-bottom:96px;} /*bottombar-pad*/
 .quiz-card{padding:14px 13px !important; margin-top:5px !important;}
 .opt-btn{padding:11px !important; margin-top:7px !important;}
 .spd-chips{margin-bottom:4px !important;}
+
+/* ═══ SHRIFT SHKALASI: savol va variantlar aniq farqlansin, ekranga sig'sin ═══
+   Savol  = kattaroq + OLTIN rang   ·   Variantlar = kichikroq + OQ rang
+   O'lchov "sha-hi-da" darajasidagi qulay kattalikka moslandi. */
+.quiz-card .ar-big{
+  font-size:29px !important; line-height:1.85 !important;
+  color:#F0C56B !important; font-weight:700 !important;
+  margin-bottom:6px !important;
+}
+.quiz-card .ar-big.uz-question{ font-size:18px !important; line-height:1.45 !important; }
+.opt-btn{
+  font-size:21px !important; line-height:1.75 !important;
+  padding:9px 12px !important; margin-top:6px !important;
+  color:#EDEFF3 !important; font-weight:600 !important;
+}
+.opt-btn.correct, .opt-btn.wrong{ font-weight:700 !important; }
+.tile{ font-size:21px !important; line-height:1.5 !important; padding:6px 11px !important; }
+.quiz-card{ padding:12px 12px !important; margin-top:4px !important; }
+.quiz-card-label{ margin-bottom:4px !important; }
+.quiz-sublabel{ font-size:12px !important; margin:0 0 6px !important; }
+.quiz-timer-wrap{ margin:3px 0 !important; }
+.spd-chips{ margin-bottom:3px !important; }
+.gt-correct-ar{ font-size:22px !important; line-height:1.6 !important; }
+
+/* Turbo yo'li ro'yxati — 6 raund bitta ekranga sig'sin */
+#roundIntroOverlay .rl-card{ padding:8px 10px !important; margin-bottom:6px !important; }
+#roundIntroOverlay .rl-title{ font-size:12.5px !important; }
+#roundIntroOverlay .rl-desc{ font-size:9.5px !important; margin-top:1px !important; }
+#roundIntroOverlay .rl-bar{ margin-top:5px !important; height:4px !important; }
+#roundIntroOverlay .rl-meta{ margin-top:4px !important; font-size:9px !important; }
 </style>
 </head>
 <body>
@@ -3843,7 +3873,7 @@ var ROUND_PLANS_6 = [
   {name:"Mustahkamlash", desc:"Ko'rganingizni esda saqlash",         stages:["match"]},
   {name:"Istimo'",       desc:"Eshitib tanish — sekin sur'atda",     stages:["listen"]},
   {name:"Qurilish",      desc:"Qisqa gaplar tuzish",                 stages:["gap"]},
-  {name:"Grammatika",    desc:"Qoidalarni amalda sinash",            stages:["match"]},
+  {name:"Takrorlash",    desc:"O'rganilganlarni qayta ishlash",     stages:["match"]},
   {name:"Ustalik",       desc:"Hammasi aralash — yakuniy sinov",     stages:["gap","match","listen"]}
 ];
 var ROUND_PLANS_3 = [
@@ -3916,7 +3946,7 @@ function showRoundList(){
   var avg = cnt ? Math.round(sum/cnt) : 0;
 
   var head =
-    '<div style="background:linear-gradient(160deg,rgba(240,197,107,.10),rgba(21,24,33,.94));border:1px solid rgba(240,197,107,.22);border-radius:20px;padding:14px;margin-bottom:14px;">' +
+    '<div style="background:linear-gradient(160deg,rgba(240,197,107,.10),rgba(21,24,33,.94));border:1px solid rgba(240,197,107,.22);border-radius:16px;padding:10px 12px;margin-bottom:9px;">' +
       '<div style="display:flex;align-items:center;gap:14px;">' +
         '<div style="width:64px;height:64px;flex:0 0 64px;border-radius:50%;background:conic-gradient(#F0C56B '+pct+'%, rgba(255,255,255,.07) 0);display:flex;align-items:center;justify-content:center;">' +
           '<div style="width:50px;height:50px;border-radius:50%;background:#0B0D12;display:flex;align-items:center;justify-content:center;">' +
@@ -3954,16 +3984,16 @@ function showRoundList(){
       ? ('<span>'+starsHtml(starsFor(s.best))+'</span><span>'+s.plays+' marta</span><span>+'+roundWordCountFor(p)+' so\'z</span>')
       : ('<span>'+p.stages.concat(['quiz']).map(function(x){return STAGE_LABELS[x]||x;}).join(' \u00b7 ')+'</span>');
     rows +=
-      '<div style="position:relative;margin-bottom:11px;">' +
+      '<div style="position:relative;margin-bottom:6px;">' +
         '<div style="position:absolute;left:-33px;top:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;border:3px solid #06070A;background:'+nodeBg+';color:'+nodeCol+';'+nodeShadow+'">'+nodeTxt+'</div>' +
         '<div ' + (isLocked ? '' : 'onclick="pickTurboRound('+i+')" ') +
-          'style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:16px;padding:12px 13px;'+(isLocked?'opacity:.45;':'cursor:pointer;')+'">' +
+          'style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:14px;padding:8px 10px;'+(isLocked?'opacity:.45;':'cursor:pointer;')+'">' +
           '<div style="display:flex;justify-content:space-between;align-items:baseline;">' +
-            '<div style="font-size:13.5px;font-weight:800;">'+i+' \u00b7 '+p.name+'</div>' + scoreHtml + '</div>' +
-          '<div style="font-size:10.5px;color:#8B93A5;margin-top:2px;">'+(p.desc||'')+'</div>' +
-          '<div style="height:5px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:8px;overflow:hidden;">' +
+            '<div class="rl-title" style="font-size:12.5px;font-weight:800;">'+i+' \u00b7 '+p.name+'</div>' + scoreHtml + '</div>' +
+          '<div class="rl-desc" style="font-size:9.5px;color:#8B93A5;margin-top:1px;">'+(p.desc||'')+'</div>' +
+          '<div class="rl-bar" style="height:4px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:5px;overflow:hidden;">' +
             '<div style="height:100%;width:'+fillW+'%;border-radius:99px;background:'+fillCol+';"></div></div>' +
-          '<div style="display:flex;gap:10px;margin-top:6px;font-size:9.5px;color:#8B93A5;">'+meta+'</div>' +
+          '<div class="rl-meta" style="display:flex;gap:8px;margin-top:4px;font-size:9px;color:#8B93A5;">'+meta+'</div>' +
         '</div></div>';
   }
   rows += '</div>';

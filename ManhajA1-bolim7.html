@@ -424,6 +424,21 @@ html.theme-ruby{ --gold:#D43A4A; --gold2:#F06B7E; }
   min-height:calc(100dvh - 16px);
 }
 body{padding-bottom:96px;} /*bottombar-pad*/
+
+/* ═══ 5-TOPSHIRIQ: xato javobdan keyin "Keyingisi" tugmasi ekranga sig'sin ═══
+   MUHIM: arabcha shrift o'lchamlari (.tile, .gt-correct-ar, .ar-big) O'ZGARMAYDI.
+   Faqat padding / margin / bo'shliqlar qisqartiriladi. */
+.gt-translation{padding:10px !important; margin-bottom:9px !important;}
+.gt-result{padding:10px !important; margin-bottom:9px !important;}
+.gt-correct-ar{margin-top:5px !important; line-height:1.75 !important;}
+.gt-result-uz{margin-top:5px !important;}
+.gt-listen-row{margin-top:6px !important;}
+.gt-actions{padding:10px 16px 8px !important; margin-top:6px !important;}
+.tile{padding:6px 11px !important; line-height:1.55 !important;}
+.quiz-card{padding:14px 13px !important; margin-top:5px !important;}
+.opt-btn{padding:11px !important; margin-top:7px !important;}
+.spd-chips{margin-bottom:4px !important;}
+.quiz-timer-wrap{margin:4px 0 !important;}
 </style>
 </head>
 <body>
@@ -462,7 +477,7 @@ body{padding-bottom:96px;} /*bottombar-pad*/
   </div>
 
   <!-- 4-TOPSHIRIQ: Turbo Dars endi progress bilan bir joyda, eng tepada. -->
-  <div class="menu-card turbo-menu-card" onclick="startSmartPath()" style="margin-top:14px;">
+  <div class="menu-card turbo-menu-card" onclick="openTurbo()" style="margin-top:14px;">
     <i class="ti ti-bolt" style="color:#F0C56B;"></i>
     <div class="t">🔥 Turbo Dars <span style="font-size:11px; font-weight:600; color:#6FBF8B;">(keyingi bo'lim ochish yo'li)</span></div>
     <div class="s">Flashkard → Match → Gap → Test — barchasi bitta zanjirда</div>
@@ -1185,11 +1200,16 @@ function updateTurboStatusBadge(){
   }
   // MUHIM UX TUZATISH: badge endi FIXED overlay emas — hozirgi faol ekranning
   // header'i (top-header yoki back-row) ostiga in-flow qilib ko'chiriladi.
+  // 3-TOPSHIRIQ: badge BARCHA mashq ekranlarida (Flashkard, Juftlashtirish,
+  // Gap tuzish, Eshitib, Test) doim ko'rinsin — avval faqat header topilganda
+  // ko'chirilardi, Test ekranida esa siljib g'oyib bo'lardi.
   var activeScreen = document.querySelector('.screen.active');
   if(activeScreen){
     var header = activeScreen.querySelector('.top-header') || activeScreen.querySelector('.back-row');
-    if(header && header.nextElementSibling !== badge){
-      header.insertAdjacentElement('afterend', badge);
+    if(header){
+      if(header.nextElementSibling !== badge){ header.insertAdjacentElement('afterend', badge); }
+    } else if(badge.parentNode !== activeScreen){
+      activeScreen.insertBefore(badge, activeScreen.firstChild);
     }
   }
   badge.style.display = 'flex';
@@ -2329,9 +2349,17 @@ function renderGapCurrent(){
   var promptEl = document.getElementById('gt-listen-prompt');
   var tabsEl = document.getElementById('gt-level-tabs');
   if(tabsEl) tabsEl.style.display = (gapState.level === 'turbo') ? 'none' : 'flex';
+  if(!isListenMode){
+    var gapChipsBack = document.getElementById('spd-chips-gap');
+    if(gapChipsBack) gapChipsBack.style.display = '';
+  }
   if(isListenMode){
     if(uzWrap) uzWrap.style.display = 'none';
     if(promptEl) promptEl.style.display = 'block';
+    // DUBLIKAT TUZATISH: tinglash rejimida tezlik qatori FAQAT "Tinglash" tugmasi
+    // bilan bitta blokda bo'lsin — sarlavha ostidagi nusxasi yashiriladi.
+    var gapChips = document.getElementById('spd-chips-gap');
+    if(gapChips){ gapChips.classList.remove('show'); gapChips.style.display = 'none'; }
     renderSpeedChipsFor('listen');
     if(item && item.answer){
       setTimeout(function(){
@@ -2522,7 +2550,7 @@ updateAlifboLabel();
 renderHome();
 // 🔥 Turbo Dars: index.html'dan '?turbo=1' bilan kelingan bo'lsa - avtomatik ishga tushadi
 if(new URLSearchParams(location.search).get('turbo') === '1'){
-  setTimeout(function(){ startSmartPath(); }, 150);
+  setTimeout(function(){ openTurbo(); }, 150);
 }
 
 /* ===== Global "tap" effekti (mobil qurilmalar uchun) ===== */
@@ -3360,45 +3388,111 @@ function getCurrentRoundIndex(){
   try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
   return Math.min(TURBO_NEEDED_LOCAL, good + 1);
 }
-function getRoundPlan(){
-  var idx = getCurrentRoundIndex();
-  return ROUND_PLANS[idx-1] || ROUND_PLANS[ROUND_PLANS.length-1];
+function getCompletedRoundCount(){
+  var good = 0;
+  try{ var d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); good = Number(d.turbo_good) || 0; }catch(e){}
+  return good;
 }
+function getRoundPlanByIndex(i){
+  return ROUND_PLANS[i-1] || ROUND_PLANS[ROUND_PLANS.length-1];
+}
+function getRoundPlan(){ return getRoundPlanByIndex(getCurrentRoundIndex()); }
 function currentRoundWordCount(){
   var sizes = getTurboRoundSizes();
   var stages = (smartPath.plan && smartPath.plan.stages) || [];
   return stages.indexOf('flash') !== -1 ? sizes.flash : sizes.quiz;
 }
+function roundWordCountFor(plan){
+  var sizes = getTurboRoundSizes();
+  return (plan.stages.indexOf('flash') !== -1) ? sizes.flash : sizes.quiz;
+}
 var STAGE_LABELS = {
   flash:"Flashkard", match:"Juftlashtirish", gap:"Gap tuzish (3 ta)",
   listen:"Eshitib (3 ta)", quiz:"Test"
 };
-function showRoundIntro(onStart){
-  var plan = smartPath.plan;
-  var wc = 0; try{ wc = currentRoundWordCount(); }catch(e){}
-  var need = TURBO_NEEDED_LOCAL;
-  var idx = getCurrentRoundIndex();
-  var allStages = plan.stages.concat(['quiz']);
-  var pillsHtml = allStages.map(function(s){ return '<div style="padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.06);font-size:14px;font-weight:700;color:#EDEFF3;margin-bottom:8px;">'+(STAGE_LABELS[s]||s)+'</div>'; }).join('');
+function turboOverlay(){
   var ov = document.getElementById('roundIntroOverlay');
   if(!ov){
     ov = document.createElement('div');
     ov.id = 'roundIntroOverlay';
-    ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(6,7,10,.94);display:flex;align-items:center;justify-content:center;padding:20px;';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(6,7,10,.96);overflow-y:auto;padding:16px;';
     document.body.appendChild(ov);
   }
+  return ov;
+}
+function closeTurboOverlay(){
+  var ov = document.getElementById('roundIntroOverlay');
+  if(ov) ov.style.display = 'none';
+}
+// ===== TURBO BOSH EKRANI: raundlar ro'yxati =====
+function openTurbo(){ showRoundList(); }
+function showRoundList(){
+  var need = TURBO_NEEDED_LOCAL;
+  var doneCount = getCompletedRoundCount();
+  var curIdx = getCurrentRoundIndex();
+  var rows = '';
+  for(var i=1; i<=need; i++){
+    var p = getRoundPlanByIndex(i);
+    var isDone = (i <= doneCount);
+    var isCur = (i === curIdx && !isDone);
+    var isLocked = (i > curIdx);
+    var bg = isCur ? 'linear-gradient(135deg,rgba(240,197,107,.14),rgba(21,24,33,.92))' : 'rgba(21,24,33,.85)';
+    var border = isCur ? 'rgba(240,197,107,.42)' : 'rgba(255,255,255,.07)';
+    var badgeBg = isDone ? 'rgba(111,191,139,.20)' : (isCur ? 'linear-gradient(135deg,#F0C56B,#D4A23A)' : 'rgba(255,255,255,.06)');
+    var badgeCol = isDone ? '#7ED8A0' : (isCur ? '#0B0D12' : '#6B7280');
+    var badgeTxt = isDone ? '\u2713' : (isLocked ? '\ud83d\udd12' : String(i));
+    var titleCol = isLocked ? '#6B7280' : '#EDEFF3';
+    var pills = p.stages.concat(['quiz']).map(function(s){
+      return '<span style="display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;margin:3px 4px 0 0;background:rgba(255,255,255,.06);color:'+(isLocked?'#5C6474':'#9BA3B4')+';">'+(STAGE_LABELS[s]||s)+'</span>';
+    }).join('');
+    rows +=
+      '<div ' + (isLocked ? '' : 'onclick="pickTurboRound('+i+')" ') +
+        'style="display:flex;align-items:flex-start;gap:11px;background:'+bg+';border:1px solid '+border+';border-radius:17px;padding:12px 13px;margin-bottom:9px;'+(isLocked?'opacity:.55;':'cursor:pointer;')+'">' +
+        '<div style="width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:'+badgeBg+';color:'+badgeCol+';">'+badgeTxt+'</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:14px;font-weight:800;color:'+titleCol+';">'+i+' \u00b7 '+p.name+'</div>' +
+          '<div style="font-size:11.5px;color:#8B93A5;margin-top:2px;">'+(p.desc||'')+'</div>' +
+          '<div>'+pills+'</div>' +
+        '</div>' +
+        '<div style="font-size:11px;font-weight:800;color:'+(isLocked?'#5C6474':'#F0C56B')+';white-space:nowrap;">+'+roundWordCountFor(p)+' so\'z</div>' +
+      '</div>';
+  }
+  var ov = turboOverlay();
   ov.innerHTML =
-    '<div style="width:100%;max-width:380px;background:linear-gradient(160deg,rgba(240,197,107,.10),rgba(21,24,33,.96));border:1px solid rgba(240,197,107,.30);border-radius:22px;padding:22px 20px;text-align:center;">' +
-      '<div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0C56B;margin-bottom:10px;">Turbo raundi ' + idx + ' / ' + need + '</div>' +
-      '<div style="font-size:22px;font-weight:900;color:#F0C56B;margin-bottom:6px;">' + idx + ' · ' + plan.name + '</div>' +
-      '<div style="font-size:13.5px;color:#9BA3B4;margin-bottom:18px;">' + (plan.desc||'') + '</div>' +
-      '<div style="text-align:left;margin-bottom:16px;">' + pillsHtml + '</div>' +
-      (wc ? ('<div style="font-size:13px;font-weight:800;color:#F0C56B;margin-bottom:16px;">+' + wc + " so'z</div>") : '') +
-      '<button id="roundIntroStartBtn" style="width:100%;padding:14px;border:none;border-radius:15px;font-size:15px;font-weight:800;color:#0B0D12;background:linear-gradient(135deg,#F0C56B,#D4A23A);">Boshlash →</button>' +
+    '<div style="max-width:400px;margin:0 auto;padding:8px 0 24px;">' +
+      '<div onclick="closeTurboOverlay()" style="display:inline-flex;align-items:center;gap:5px;font-size:13.5px;color:#8B93A5;padding:8px 4px;margin-bottom:6px;cursor:pointer;">\u2039 Orqaga</div>' +
+      '<div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0C56B;margin-bottom:4px;">Turbo yo\'li</div>' +
+      '<div style="font-size:12.5px;color:#8B93A5;margin-bottom:14px;">'+doneCount+' / '+need+' raund tugadi \u2014 raundni tanlang</div>' +
+      rows +
     '</div>';
-  ov.style.display = 'flex';
+  ov.style.display = 'block';
+}
+function pickTurboRound(i){
+  var plan = getRoundPlanByIndex(i);
+  showRoundIntro(i, plan, function(){ startSmartPath(i); });
+}
+function showRoundIntro(idx, plan, onStart){
+  var need = TURBO_NEEDED_LOCAL;
+  var wc = roundWordCountFor(plan);
+  var pillsHtml = plan.stages.concat(['quiz']).map(function(s){
+    return '<div style="padding:9px 13px;border-radius:12px;background:rgba(255,255,255,.06);font-size:13.5px;font-weight:700;color:#EDEFF3;margin-bottom:7px;">'+(STAGE_LABELS[s]||s)+'</div>';
+  }).join('');
+  var ov = turboOverlay();
+  ov.innerHTML =
+    '<div style="max-width:380px;margin:0 auto;padding:8px 0 24px;">' +
+      '<div onclick="showRoundList()" style="display:inline-flex;align-items:center;gap:5px;font-size:13.5px;color:#8B93A5;padding:8px 4px;margin-bottom:6px;cursor:pointer;">\u2039 Orqaga</div>' +
+      '<div style="background:linear-gradient(160deg,rgba(240,197,107,.10),rgba(21,24,33,.96));border:1px solid rgba(240,197,107,.30);border-radius:22px;padding:20px 18px;text-align:center;">' +
+        '<div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0C56B;margin-bottom:9px;">Turbo raundi ' + idx + ' / ' + need + '</div>' +
+        '<div style="font-size:21px;font-weight:900;color:#F0C56B;margin-bottom:5px;">' + idx + ' \u00b7 ' + plan.name + '</div>' +
+        '<div style="font-size:13px;color:#9BA3B4;margin-bottom:15px;">' + (plan.desc||'') + '</div>' +
+        '<div style="text-align:left;margin-bottom:13px;">' + pillsHtml + '</div>' +
+        (wc ? ('<div style="font-size:13px;font-weight:800;color:#F0C56B;margin-bottom:14px;">+' + wc + " so'z</div>") : '') +
+        '<button id="roundIntroStartBtn" style="width:100%;padding:13px;border:none;border-radius:15px;font-size:15px;font-weight:800;color:#0B0D12;background:linear-gradient(135deg,#F0C56B,#D4A23A);">Boshlash \u2192</button>' +
+      '</div>' +
+    '</div>';
+  ov.style.display = 'block';
   document.getElementById('roundIntroStartBtn').onclick = function(){
-    ov.style.display = 'none';
+    closeTurboOverlay();
     onStart();
   };
 }
@@ -3414,15 +3508,15 @@ function runPlanStage(stage){
   else if(stage === 'gap'){ smartPathRunGap(); }
   else if(stage === 'listen'){ smartPathRunListen(); }
 }
-function startSmartPath(){
+function startSmartPath(roundIdx){
   smartPath.active = true;
   smartPath.hadAnyError = false;
   smartPath.roundMistakes = []; // shu raunddagi Match/Gap/Eshitib xatolari
   smartPath.mmWrong = {};       // Match: har so'z bo'yicha xato bosishlar soni
   smartPath.pctBefore = getCourseProgressPct();
-  smartPath.plan = getRoundPlan();
+  smartPath.plan = (typeof roundIdx === 'number') ? getRoundPlanByIndex(roundIdx) : getRoundPlan();
   smartPath.planIdx = 0;
-  showRoundIntro(function(){ runPlanStage(smartPath.plan.stages[0]); });
+  runPlanStage(smartPath.plan.stages[0]);
 }
 function smartPathRunMatch(){
   smartPath.step = 2;
@@ -3614,7 +3708,7 @@ function renderTurboPanel(roundMistakes, examCorrect, examTotal){
       h += '<button class="premium-btn-primary" style="width:100%;margin-bottom:8px;'+CORAL+'" onclick="startBolimMistakeReview()">'+
         ac+' ta xatoni takrorlash</button>';
     }
-    h += '<button class="premium-btn-secondary" style="'+GHOST+'margin-bottom:10px;" onclick="startSmartPath()">Turboni qayta o\u2018tish</button>';
+    h += '<button class="premium-btn-secondary" style="'+GHOST+'margin-bottom:10px;" onclick="openTurbo()">Turboni qayta o\u2018tish</button>';
     h += '<button class="premium-btn-primary" style="width:100%;" onclick="location.href=\'ManhajA1-bolim8.html\'">Keyingi bo\u2018limga o\u2018tish</button>';
   } else {
     h += '<div style="font-size:16.5px;font-weight:800;margin-bottom:5px;">Yaxshi ketyapsiz</div>';
@@ -3627,7 +3721,7 @@ function renderTurboPanel(roundMistakes, examCorrect, examTotal){
     h += '<div style="margin-bottom:12px;padding:10px;border-radius:14px;background:rgba(255,255,255,0.04);'+
       'font-size:11.5px;color:#8B93A5;line-height:1.55;">Juftlashtirish va Gap tuzishda ham faol bo\u2018ling \u2014 '+
       'bo\u2018lim faqat lug\u2018at bilan ochilmaydi.</div>';
-    h += '<button class="premium-btn-primary" style="width:100%;" onclick="startSmartPath()">Keyingi raund</button>';
+    h += '<button class="premium-btn-primary" style="width:100%;" onclick="openTurbo()">Keyingi raund</button>';
   }
   h += '</div>';
   panel.innerHTML = h;
@@ -3665,7 +3759,7 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
   document.getElementById('result-percent').textContent = examTotal>0 ? Math.round((examCorrect/examTotal)*100)+'%' : '0%';
   var qrTitle = document.getElementById('qr-title'); if(qrTitle) qrTitle.textContent = "🔥 Turbo Dars tugadi!";
   var qrBtn = document.getElementById('qr-retry-btn');
-  if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ startSmartPath(); }; }
+  if(qrBtn){ qrBtn.textContent = 'Yana boshlash'; qrBtn.onclick = function(){ openTurbo(); }; }
 
   goScreen('quiz-result');
   // Raund oxiri: Test xatolari + Match/Gap/Eshitib xatolari birga ko'rsatiladi
@@ -3680,7 +3774,7 @@ function finishSmartPath(examCorrect, examTotal, pctBefore, pctAfter){
     if(ub){
       document.getElementById('unlockBannerSub').textContent = "Keyingi bo'lim endi ochiq!";
       document.getElementById('unlockBannerBtn').onclick = function(){ location.href = 'ManhajA1-bolim8.html'; };
-      document.getElementById('unlockBannerStayBtn').onclick = function(){ ub.style.display = 'none'; startSmartPath(); };
+      document.getElementById('unlockBannerStayBtn').onclick = function(){ ub.style.display = 'none'; openTurbo(); };
       ub.classList.add('unlock-banner-pop');
       ub.style.display = 'block';
       animateUnlockPct(pctAfter);
